@@ -35,7 +35,7 @@ export default function LoginPage() {
 
         const success = login(email, password);
         if (success) {
-            router.push('/');
+            router.push('/admin');
         } else {
             setPasswordError('Invalid Email or Password');
         }
@@ -62,6 +62,7 @@ export default function LoginPage() {
                                         setEmail(e.target.value);
                                         if (emailError) setEmailError('');
                                     }}
+                                    required
                                 />
                                 {emailError && (
                                     <p className="text-destructive text-sm mt-1">{emailError}</p>
@@ -79,6 +80,7 @@ export default function LoginPage() {
                                             setPassword(e.target.value);
                                             if (passwordError) setPasswordError('');
                                         }}
+                                        required
                                         className="pr-10"
                                     />
                                     <button

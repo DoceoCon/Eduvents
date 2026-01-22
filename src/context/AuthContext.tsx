@@ -30,7 +30,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             toast.success('Login Successful ');
             return true;
         } else {
-            toast.error('Invalid Email or Password');
             return false;
         }
     };

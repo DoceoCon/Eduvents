@@ -46,22 +46,24 @@ const Header = () => {
                 key={link.path}
                 href={link.path}
                 className={`text-sm font-medium transition-colors hover:text-primary ${isActive(link.path)
-                    ? 'text-primary'
-                    : 'text-muted-foreground'
+                  ? 'text-primary'
+                  : 'text-muted-foreground'
                   }`}
               >
                 {link.label}
               </Link>
             ))}
-            <button
-              onClick={handleAdminClick}
-              className={`text-sm font-medium transition-colors hover:text-primary ${pathname.startsWith('/admin') || pathname === '/login'
+            {pathname !== '/login' && !pathname.startsWith('/admin') && (
+              <button
+                onClick={handleAdminClick}
+                className={`text-sm font-medium transition-colors hover:text-primary ${pathname.startsWith('/admin') || pathname === '/login'
                   ? 'text-primary'
                   : 'text-muted-foreground'
-                }`}
-            >
-              Admin
-            </button>
+                  }`}
+              >
+                {isAuthenticated ? 'Admin' : 'Login'}
+              </button>
+            )}
             {isAuthenticated && (
               <button
                 onClick={logout}
@@ -92,25 +94,27 @@ const Header = () => {
                   href={link.path}
                   onClick={() => setIsMenuOpen(false)}
                   className={`text-sm font-medium transition-colors hover:text-primary ${isActive(link.path)
-                      ? 'text-primary'
-                      : 'text-muted-foreground'
+                    ? 'text-primary'
+                    : 'text-muted-foreground'
                     }`}
                 >
                   {link.label}
                 </Link>
               ))}
-              <button
-                onClick={() => {
-                  handleAdminClick();
-                  setIsMenuOpen(false);
-                }}
-                className={`text-sm font-medium transition-colors hover:text-primary text-left ${pathname.startsWith('/admin') || pathname === '/login'
+              {pathname !== '/login' && !pathname.startsWith('/admin') && (
+                <button
+                  onClick={() => {
+                    handleAdminClick();
+                    setIsMenuOpen(false);
+                  }}
+                  className={`text-sm font-medium transition-colors hover:text-primary text-left ${pathname.startsWith('/admin') || pathname === '/login'
                     ? 'text-primary'
                     : 'text-muted-foreground'
-                  }`}
-              >
-                Admin
-              </button>
+                    }`}
+                >
+                  {isAuthenticated ? 'Admin' : 'Login'}
+                </button>
+              )}
               {isAuthenticated && (
                 <button
                   onClick={() => {

@@ -105,7 +105,6 @@ const ListEventContent = ({ isAdminMode = false, onSuccess }: ListEventContentPr
         e.preventDefault();
 
         if (!validateForm()) {
-            toast.error('Please fix the errors in the form');
             return;
         }
 
