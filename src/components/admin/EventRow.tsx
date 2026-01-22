@@ -1,0 +1,116 @@
+import { Check, X, Clock, Star, Pencil } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Switch } from '@/components/ui/switch';
+import { Event } from '@/data/events';
+import { format } from 'date-fns';
+
+interface EventRowProps {
+  event: Event;
+  onStatusChange?: (eventId: string, newStatus: 'approved' | 'rejected') => void;
+  onFeaturedToggle: (eventId: string, featured: boolean) => void;
+  onEdit?: (event: Event) => void;
+  showActions?: boolean;
+}
+
+const EventRow = ({ event, onStatusChange, onFeaturedToggle, onEdit, showActions = true }: EventRowProps) => (
+  <div className="flex flex-col lg:flex-row lg:items-center gap-4 p-4 bg-card rounded-lg shadow-sm hover:shadow-card transition-shadow">
+    <div className="flex items-center gap-4 flex-1 min-w-0">
+      <img
+        src={event.image}
+        alt={event.title}
+        className="w-16 h-16 rounded-lg object-cover flex-shrink-0"
+      />
+      
+      <div className="flex-1 min-w-0">
+        <div className="flex items-center gap-2 flex-wrap">
+          <h3 className="font-medium text-foreground truncate">{event.title}</h3>
+          {event.isAdminCreated && (
+            <span className="px-2 py-0.5 text-xs bg-accent text-accent-foreground rounded-full whitespace-nowrap">
+              Admin Upload - Free Listing
+            </span>
+          )}
+        </div>
+        <p className="text-sm text-muted-foreground">{event.organiser}</p>
+        <div className="flex flex-wrap gap-2 text-sm text-muted-foreground">
+          <span>Submitted: {format(new Date(event.submissionDate), 'MMM d, yyyy')}</span>
+          {event.lastUpdated && (
+            <span className="text-primary">• Updated: {format(new Date(event.lastUpdated), 'MMM d, yyyy')}</span>
+          )}
+        </div>
+      </div>
+    </div>
+    
+    <div className="flex flex-wrap items-center gap-3">
+      {/* Status Badge */}
+      <div>
+        {event.status === 'pending' && (
+          <span className="flex items-center px-3 py-1 text-xs font-medium bg-warning/10 text-warning rounded-full">
+            <Clock className="h-3 w-3 mr-1" />
+            Pending
+          </span>
+        )}
+        {event.status === 'approved' && (
+          <span className="flex items-center px-3 py-1 text-xs font-medium bg-success/10 text-success rounded-full">
+            <Check className="h-3 w-3 mr-1" />
+            Approved
+          </span>
+        )}
+        {event.status === 'rejected' && (
+          <span className="flex items-center px-3 py-1 text-xs font-medium bg-destructive/10 text-destructive rounded-full">
+            <X className="h-3 w-3 mr-1" />
+            Rejected
+          </span>
+        )}
+      </div>
+
+      {/* Featured Toggle */}
+      <div className="flex items-center gap-2">
+        <Switch
+          checked={event.featured}
+          onCheckedChange={(checked) => onFeaturedToggle(event.id, checked)}
+          className="data-[state=checked]:bg-yellow-500"
+        />
+        <Star className={`h-4 w-4 ${event.featured ? 'text-yellow-500 fill-yellow-500' : 'text-muted-foreground'}`} />
+        {event.featured && (
+          <span className="text-xs text-yellow-600 font-medium">Featured</span>
+        )}
+      </div>
+
+      {/* Edit Button - Only for approved events */}
+      {event.status === 'approved' && onEdit && (
+        <Button
+          size="sm"
+          variant="outline"
+          onClick={() => onEdit(event)}
+        >
+          <Pencil className="h-4 w-4 mr-1" />
+          Edit
+        </Button>
+      )}
+      
+      {/* Action Buttons - For pending events */}
+      {event.status === 'pending' && showActions && onStatusChange && (
+        <div className="flex gap-2">
+          <Button
+            size="sm"
+            onClick={() => onStatusChange(event.id, 'approved')}
+            className="bg-success hover:bg-success/90"
+          >
+            <Check className="h-4 w-4 mr-1" />
+            Approve
+          </Button>
+          <Button
+            size="sm"
+            variant="destructive"
+            onClick={() => onStatusChange(event.id, 'rejected')}
+          >
+            <X className="h-4 w-4 mr-1" />
+            Reject
+          </Button>
+        </div>
+      )}
+    </div>
+  </div>
+);
+
+export default EventRow;
