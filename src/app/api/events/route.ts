@@ -20,7 +20,6 @@ export async function POST(req: NextRequest) {
         // Extract fields
         const title = formData.get('title') as string;
         const description = formData.get('description') as string;
-        const fullDescription = formData.get('fullDescription') as string;
         const category = formData.get('category') as string;
         const format = formData.get('format') as string;
         const subjectAreas = JSON.parse(formData.get('subjectAreas') as string || '[]');
@@ -43,7 +42,7 @@ export async function POST(req: NextRequest) {
         else if (title.length > 50) errors.title = "Title must be 50 characters or less";
 
         if (!description) errors.description = "Required";
-        else if (description.length > 100) errors.description = "Description must be 200 characters or less";
+        else if (description.length > 200) errors.description = "Description must be 200 characters or less";
 
         if (!organiser) errors.organiser = "Required";
         else if (organiser.length > 50) errors.organiser = "Name must be 50 characters or less";
@@ -89,7 +88,6 @@ export async function POST(req: NextRequest) {
         const newEvent = new Event({
             title,
             description,
-            fullDescription: fullDescription || description,
             category,
             format,
             subjectAreas,

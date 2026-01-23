@@ -66,7 +66,7 @@ const ListEventContent = ({ isAdminMode = false, onSuccess, onCancel }: ListEven
         if (formData.title && formData.title.length > 50) {
             newErrors.title = 'Title must be 50 characters or less';
         }
-        if (formData.description && formData.description.length > 100) {
+        if (formData.description && formData.description.length > 200) {
             newErrors.description = 'Description must be 200 characters or less';
         }
         if (formData.organiserName && formData.organiserName.length > 50) {
@@ -323,6 +323,9 @@ const ListEventContent = ({ isAdminMode = false, onSuccess, onCancel }: ListEven
                             placeholder="e.g., STEM Innovation Conference 2026"
                             className={errors.title ? 'border-destructive' : ''}
                         />
+                        <p className="text-sm text-muted-foreground mt-1">
+                            {formData.title.length}/50 characters
+                        </p>
                         {errors.title && <p className="text-sm text-destructive mt-1">{errors.title}</p>}
                     </div>
 
@@ -337,7 +340,7 @@ const ListEventContent = ({ isAdminMode = false, onSuccess, onCancel }: ListEven
                             className={errors.description ? 'border-destructive' : ''}
                         />
                         <p className="text-sm text-muted-foreground mt-1">
-                            {formData.description.length}/50 characters minimum
+                            {formData.description.length}/200 characters
                         </p>
                         {errors.description && <p className="text-sm text-destructive mt-1">{errors.description}</p>}
                     </div>
@@ -512,6 +515,9 @@ const ListEventContent = ({ isAdminMode = false, onSuccess, onCancel }: ListEven
                             placeholder="Your organisation"
                             className={errors.organiserName ? 'border-destructive' : ''}
                         />
+                        <p className="text-sm text-muted-foreground mt-1">
+                            {formData.organiserName.length}/50 characters
+                        </p>
                         {errors.organiserName && <p className="text-sm text-destructive mt-1">{errors.organiserName}</p>}
                     </div>
 

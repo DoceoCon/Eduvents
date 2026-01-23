@@ -35,7 +35,7 @@ export interface Event {
   id: string;
   title: string;
   description: string;
-  fullDescription: string;
+  fullDescription?: string;
   category: EventCategory;
   format: EventFormat;
   subjectAreas: SubjectArea[];

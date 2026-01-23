@@ -3,7 +3,7 @@ import mongoose, { Schema, model, models } from 'mongoose';
 export interface IEvent {
     title: string;
     description: string;
-    fullDescription: string;
+    fullDescription?: string;
     category: string;
     format: string;
     subjectAreas: string[];
@@ -39,7 +39,7 @@ const EventSchema = new Schema<IEvent>({
     },
     fullDescription: {
         type: String,
-        required: [true, 'Required']
+        required: false
     },
     category: { type: String, required: [true, 'Required'] },
     format: { type: String, required: [true, 'Required'] },

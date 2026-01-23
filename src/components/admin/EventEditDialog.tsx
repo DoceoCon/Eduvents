@@ -107,7 +107,7 @@ const EventEditDialog = ({ event, isOpen, onClose, onSave }: EventEditDialogProp
     else if (formData.title.length > 50) newErrors.title = 'Title must be 50 characters or less';
 
     if (!formData.description?.trim()) newErrors.description = 'Required';
-    else if (formData.description.length > 100) newErrors.description = 'Description must be 200 characters or less';
+    else if (formData.description.length > 200) newErrors.description = 'Description must be 200 characters or less';
 
     if (!formData.organiser?.trim()) newErrors.organiser = 'Required';
     else if (formData.organiser.length > 50) newErrors.organiser = 'Name must be 50 characters or less';
@@ -197,6 +197,9 @@ const EventEditDialog = ({ event, isOpen, onClose, onSave }: EventEditDialogProp
                 onChange={(e) => handleChange('title', e.target.value)}
                 className={errors.title ? 'border-destructive' : ''}
               />
+              <p className="text-sm text-muted-foreground mt-1">
+                {formData.title?.length || 0}/50 characters
+              </p>
               {errors.title && <p className="text-sm text-destructive mt-1">{errors.title}</p>}
             </div>
 
@@ -206,20 +209,13 @@ const EventEditDialog = ({ event, isOpen, onClose, onSave }: EventEditDialogProp
                 id="description"
                 value={formData.description || ''}
                 onChange={(e) => handleChange('description', e.target.value)}
-                rows={3}
+                rows={4}
                 className={errors.description ? 'border-destructive' : ''}
               />
+              <p className="text-sm text-muted-foreground mt-1">
+                {formData.description?.length || 0}/200 characters
+              </p>
               {errors.description && <p className="text-sm text-destructive mt-1">{errors.description}</p>}
-            </div>
-
-            <div>
-              <Label htmlFor="fullDescription">Full Description</Label>
-              <Textarea
-                id="fullDescription"
-                value={formData.fullDescription || ''}
-                onChange={(e) => handleChange('fullDescription', e.target.value)}
-                rows={6}
-              />
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -370,6 +366,9 @@ const EventEditDialog = ({ event, isOpen, onClose, onSave }: EventEditDialogProp
                 onChange={(e) => handleChange('organiser', e.target.value)}
                 className={errors.organiser ? 'border-destructive' : ''}
               />
+              <p className="text-sm text-muted-foreground mt-1">
+                {formData.organiser?.length || 0}/50 characters
+              </p>
               {errors.organiser && <p className="text-sm text-destructive mt-1">{errors.organiser}</p>}
             </div>
 

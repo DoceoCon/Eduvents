@@ -50,7 +50,7 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
         // Extract fields
         const updateData: any = {};
         const fields = [
-            'title', 'description', 'fullDescription', 'category', 'format',
+            'title', 'description', 'category', 'format',
             'date', 'startTime', 'endTime', 'location', 'organiser',
             'organiserEmail', 'bookingUrl', 'isFree', 'price'
         ];
