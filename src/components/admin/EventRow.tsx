@@ -20,13 +20,13 @@ const EventRow = ({ event, onStatusChange, onFeaturedToggle, onEdit, showActions
         alt={event.title}
         className="w-16 h-16 rounded-lg object-cover flex-shrink-0"
       />
-      
+
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2 flex-wrap">
           <h3 className="font-medium text-foreground truncate">{event.title}</h3>
           {event.isAdminCreated && (
             <span className="px-2 py-0.5 text-xs bg-accent text-accent-foreground rounded-full whitespace-nowrap">
-              Admin Upload - Free Listing
+              Admin upload - Free Listing
             </span>
           )}
         </div>
@@ -39,7 +39,7 @@ const EventRow = ({ event, onStatusChange, onFeaturedToggle, onEdit, showActions
         </div>
       </div>
     </div>
-    
+
     <div className="flex flex-wrap items-center gap-3">
       {/* Status Badge */}
       <div>
@@ -63,18 +63,26 @@ const EventRow = ({ event, onStatusChange, onFeaturedToggle, onEdit, showActions
         )}
       </div>
 
-      {/* Featured Toggle */}
-      <div className="flex items-center gap-2">
-        <Switch
-          checked={event.featured}
-          onCheckedChange={(checked) => onFeaturedToggle(event.id, checked)}
-          className="data-[state=checked]:bg-yellow-500"
-        />
-        <Star className={`h-4 w-4 ${event.featured ? 'text-yellow-500 fill-yellow-500' : 'text-muted-foreground'}`} />
-        {event.featured && (
-          <span className="text-xs text-yellow-600 font-medium">Featured</span>
-        )}
-      </div>
+      {/* Featured Toggle - Only for approved events */}
+      {event.status === 'approved' && (
+        <div className="flex items-center gap-2">
+          <Switch
+            checked={event.featured}
+            onCheckedChange={(checked) => onFeaturedToggle(event.id, checked)}
+            className="data-[state=checked]:bg-yellow-400"
+          />
+          <button
+            onClick={() => onFeaturedToggle(event.id, !event.featured)}
+            className="focus:outline-none transition-transform active:scale-90"
+            title={event.featured ? "Remove from featured" : "Mark as featured"}
+          >
+            <Star className={`h-5 w-5 ${event.featured ? 'text-yellow-400 fill-yellow-400' : 'text-muted-foreground hover:text-foreground'}`} />
+          </button>
+          {event.featured && (
+            <span className="text-xs text-yellow-600 font-medium hidden sm:inline">Featured</span>
+          )}
+        </div>
+      )}
 
       {/* Edit Button - Only for approved events */}
       {event.status === 'approved' && onEdit && (
@@ -87,7 +95,7 @@ const EventRow = ({ event, onStatusChange, onFeaturedToggle, onEdit, showActions
           Edit
         </Button>
       )}
-      
+
       {/* Action Buttons - For pending events */}
       {event.status === 'pending' && showActions && onStatusChange && (
         <div className="flex gap-2">

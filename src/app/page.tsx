@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, Suspense } from 'react';
+import { useState, Suspense, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { ArrowRight, Search } from 'lucide-react';
@@ -9,14 +9,33 @@ import FeaturedCarousel from '@/components/FeaturedCarousel';
 import EventCard from '@/components/EventCard';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { events } from '@/data/events';
+import { Event } from '@/data/events';
 
 export default function Home() {
   const [searchQuery, setSearchQuery] = useState('');
+  const [allEvents, setAllEvents] = useState<Event[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
 
-  const featuredEvents = events.filter(e => e.featured && e.status === 'approved');
-  const latestEvents = events.filter(e => e.status === 'approved').slice(0, 12);
+  useEffect(() => {
+    const fetchEvents = async () => {
+      try {
+        const response = await fetch('/api/events');
+        const data = await response.json();
+        if (data.success) {
+          setAllEvents(data.events);
+        }
+      } catch (error) {
+        console.error('Error fetching events:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchEvents();
+  }, []);
+
+  const featuredEvents = allEvents.filter(e => e.featured && e.status === 'approved');
+  const latestEvents = allEvents.filter(e => e.status === 'approved').slice(0, 12);
 
   // Fallback to latest events if no featured events
   const carouselEvents = featuredEvents.length > 0 ? featuredEvents : latestEvents.slice(0, 3);

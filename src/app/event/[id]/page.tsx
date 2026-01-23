@@ -1,27 +1,103 @@
 "use client";
 
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { ArrowLeft, Calendar, Clock, MapPin, User, Mail, Share2, Facebook, Twitter, Linkedin, Link2, PoundSterling, GraduationCap } from 'lucide-react';
 import Layout from '@/components/Layout';
 import CategoryBadge from '@/components/CategoryBadge';
 import { Button } from '@/components/ui/button';
-import { events } from '@/data/events';
+import { Switch } from '@/components/ui/switch';
+import { Event } from '@/data/events';
 import { format } from 'date-fns';
 import { toast } from 'sonner';
 import { useEffect, useState } from 'react';
+import { useAuth } from '@/context/AuthContext';
+import EventEditDialog from '@/components/admin/EventEditDialog';
 
 const EventDetail = () => {
     const params = useParams();
+    const { isAuthenticated } = useAuth();
+    const router = useRouter();
     const id = params?.id as string;
-    const event = events.find(e => e.id === id);
+
+    const [event, setEvent] = useState<Event | null>(null);
+    const [isLoading, setIsLoading] = useState(true);
     const [shareUrl, setShareUrl] = useState('');
+    const [isEditing, setIsEditing] = useState(false);
+
+    const fetchEvent = async () => {
+        setIsLoading(true);
+        try {
+            const response = await fetch(`/api/admin/events/${id}`);
+            const data = await response.json();
+            if (data.success) {
+                setEvent(data.event);
+            } else {
+                // If not found in admin, try public
+                const pubRes = await fetch(`/api/events/${id}`);
+                const pubData = await pubRes.json();
+                if (pubData.success) {
+                    setEvent(pubData.event);
+                }
+            }
+        } catch (error) {
+            console.error('Error fetching event:', error);
+        } finally {
+            setIsLoading(false);
+        }
+    };
 
     useEffect(() => {
+        if (id) fetchEvent();
         if (typeof window !== 'undefined') {
             setShareUrl(window.location.href);
         }
-    }, []);
+    }, [id]);
+
+    const handleStatusChange = async (newStatus: string) => {
+        try {
+            const response = await fetch(`/api/admin/events/${id}`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ status: newStatus })
+            });
+            const data = await response.json();
+            if (data.success) {
+                setEvent(data.event);
+                toast.success(`Event ${newStatus} successfully!`);
+            }
+        } catch (error) {
+            toast.error('Failed to update status');
+        }
+    };
+
+    const handleFeaturedToggle = async (featured: boolean) => {
+        try {
+            const response = await fetch(`/api/admin/events/${id}`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ featured })
+            });
+            const data = await response.json();
+            if (data.success) {
+                setEvent(data.event);
+                toast.success(featured ? 'Event marked as featured' : 'Event removed from featured');
+            }
+        } catch (error) {
+            toast.error('Failed to update featured status');
+        }
+    };
+
+    if (isLoading) {
+        return (
+            <Layout>
+                <div className="container-tight py-20 text-center">
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
+                    <p className="mt-4 text-muted-foreground">Loading event details...</p>
+                </div>
+            </Layout>
+        );
+    }
 
     if (!event) {
         return (
@@ -37,7 +113,7 @@ const EventDetail = () => {
         );
     }
 
-    const formattedDate = format(new Date(event.date), 'EEEE, MMMM d, yyyy');
+    const formattedDate = event.date ? format(new Date(event.date), 'EEEE, MMMM d, yyyy') : '';
     const shareText = `Check out this event: ${event.title}`;
 
     const handleShare = (platform: string) => {
@@ -65,9 +141,9 @@ const EventDetail = () => {
         <Layout>
             {/* Back Button */}
             <div className="container-tight py-4">
-                <Link href="/events" className="inline-flex items-center text-muted-foreground hover:text-primary transition-colors">
+                <Link href={isAuthenticated ? "/admin" : "/events"} className="inline-flex items-center text-muted-foreground hover:text-primary transition-colors">
                     <ArrowLeft className="h-4 w-4 mr-2" />
-                    Back to Events
+                    Back to {isAuthenticated ? "Dashboard" : "Events"}
                 </Link>
             </div>
 
@@ -109,9 +185,16 @@ const EventDetail = () => {
                             </div>
                         )}
 
-                        <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-6">
-                            {event.title}
-                        </h1>
+                        <div className="flex justify-between items-start mb-6">
+                            <h1 className="text-3xl md:text-4xl font-bold text-foreground">
+                                {event.title}
+                            </h1>
+                            {isAuthenticated && (
+                                <Button onClick={() => setIsEditing(true)} variant="outline">
+                                    Edit Event
+                                </Button>
+                            )}
+                        </div>
 
                         <div className="bg-card rounded-lg p-6 shadow-card mb-8">
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -160,7 +243,7 @@ const EventDetail = () => {
 
                         <div className="prose prose-slate max-w-none">
                             <h2 className="text-xl font-semibold mb-4">About This Event</h2>
-                            {event.fullDescription.split('\n\n').map((paragraph, index) => (
+                            {event.fullDescription?.split('\n\n').map((paragraph, index) => (
                                 <p key={index} className="text-muted-foreground mb-4 leading-relaxed">
                                     {paragraph}
                                 </p>
@@ -171,12 +254,49 @@ const EventDetail = () => {
                     {/* Sidebar */}
                     <div className="lg:col-span-1">
                         <div className="bg-card rounded-lg p-6 shadow-card sticky top-24 space-y-6">
-                            {/* Book Now Button */}
-                            <a href={event.bookingUrl} target="_blank" rel="noopener noreferrer">
-                                <Button size="lg" className="w-full text-lg h-14">
-                                    Book Now
-                                </Button>
-                            </a>
+                            {/* Admin Controls or Book Now Button */}
+                            {isAuthenticated ? (
+                                <div className="space-y-4">
+                                    <div>
+                                        <label className="text-sm font-medium mb-1.5 block">Update Status</label>
+                                        <div className="grid grid-cols-2 gap-2">
+                                            <Button
+                                                variant={event.status === 'approved' ? 'default' : 'outline'}
+                                                className={event.status === 'approved' ? 'bg-success hover:bg-success/90' : ''}
+                                                onClick={() => handleStatusChange('approved')}
+                                            >
+                                                Approve
+                                            </Button>
+                                            <Button
+                                                variant={event.status === 'rejected' ? 'destructive' : 'outline'}
+                                                onClick={() => handleStatusChange('rejected')}
+                                            >
+                                                Reject
+                                            </Button>
+                                        </div>
+                                    </div>
+
+                                    {event.status === 'approved' && (
+                                        <div className="flex items-center justify-between p-3 bg-muted rounded-lg">
+                                            <span className="text-sm font-medium">Featured Event</span>
+                                            <Switch
+                                                checked={event.featured}
+                                                onCheckedChange={handleFeaturedToggle}
+                                            />
+                                        </div>
+                                    )}
+
+                                    <div className="text-xs text-center text-muted-foreground">
+                                        Current Status: <span className="capitalize font-bold">{event.status}</span>
+                                    </div>
+                                </div>
+                            ) : (
+                                <a href={event.bookingUrl} target="_blank" rel="noopener noreferrer">
+                                    <Button size="lg" className="w-full text-lg h-14">
+                                        Book Now
+                                    </Button>
+                                </a>
+                            )}
 
                             {/* Organiser Info */}
                             <div className="border-t border-border pt-6">
@@ -237,6 +357,17 @@ const EventDetail = () => {
                     </div>
                 </div>
             </div>
+
+            <EventEditDialog
+                event={event}
+                isOpen={isEditing}
+                onClose={() => setIsEditing(false)}
+                onSave={(updated) => {
+                    setEvent(updated);
+                    setIsEditing(false);
+                    fetchEvent();
+                }}
+            />
         </Layout>
     );
 };

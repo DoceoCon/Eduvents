@@ -1,5 +1,6 @@
-import { Check, X, Eye, Calendar, MapPin, PoundSterling } from 'lucide-react';
+import { Check, X, Eye, Calendar, MapPin, PoundSterling, Star } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Switch } from '@/components/ui/switch';
 import { Event, getCategoryColor } from '@/data/events';
 import { format } from 'date-fns';
 
@@ -8,17 +9,18 @@ interface PendingEventCardProps {
   onApprove: (eventId: string) => void;
   onReject: (eventId: string) => void;
   onViewDetails: (event: Event) => void;
+  onFeaturedToggle: (eventId: string, featured: boolean) => void;
 }
 
-const PendingEventCard = ({ event, onApprove, onReject, onViewDetails }: PendingEventCardProps) => {
+const PendingEventCard = ({ event, onApprove, onReject, onViewDetails, onFeaturedToggle }: PendingEventCardProps) => {
   const formattedDate = format(new Date(event.date), 'MMM d, yyyy');
   const submittedDate = format(new Date(event.submissionDate), 'MMM d, yyyy');
 
   return (
-    <div className="bg-card rounded-lg shadow-card overflow-hidden">
+    <div className="bg-card rounded-lg shadow-card overflow-hidden group">
       <div className="flex flex-col lg:flex-row">
         {/* Thumbnail */}
-        <div className="lg:w-48 h-32 lg:h-auto flex-shrink-0">
+        <div className="lg:w-48 h-32 lg:h-auto flex-shrink-0 relative">
           <img
             src={event.image}
             alt={event.title}
@@ -28,22 +30,25 @@ const PendingEventCard = ({ event, onApprove, onReject, onViewDetails }: Pending
 
         {/* Content */}
         <div className="flex-1 p-4 lg:p-6">
-          <div className="flex flex-wrap gap-2 mb-2">
-            <span className={`px-2 py-0.5 text-xs font-semibold text-primary-foreground rounded-full ${getCategoryColor(event.category)}`}>
-              {event.category}
-            </span>
-            <span className="px-2 py-0.5 text-xs font-medium bg-secondary text-secondary-foreground rounded-full">
-              {event.format}
-            </span>
-            {event.phases.map(phase => (
-              <span key={phase} className="px-2 py-0.5 text-xs font-medium bg-muted text-muted-foreground rounded-full">
-                {phase}
+          <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
+            <div className="flex flex-wrap gap-2">
+              <span className={`px-2 py-0.5 text-xs font-semibold text-primary-foreground rounded-full ${getCategoryColor(event.category)}`}>
+                {event.category}
               </span>
-            ))}
+              <span className="px-2 py-0.5 text-xs font-medium bg-secondary text-secondary-foreground rounded-full">
+                {event.format}
+              </span>
+              {event.phases.map(phase => (
+                <span key={phase} className="px-2 py-0.5 text-xs font-medium bg-muted text-muted-foreground rounded-full">
+                  {phase}
+                </span>
+              ))}
+            </div>
+
           </div>
 
           <h3 className="font-semibold text-lg text-foreground mb-1">{event.title}</h3>
-          
+
           <div className="text-sm text-muted-foreground mb-2">
             <span className="font-medium text-foreground">{event.organiser}</span>
             <span className="mx-2">•</span>

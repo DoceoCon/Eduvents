@@ -25,9 +25,12 @@ const EventCard = ({ event }: EventCardProps) => {
       </div>
 
       <div className="p-5">
-        <h3 className="font-semibold text-lg text-card-foreground mb-2 line-clamp-2 group-hover:text-primary transition-colors">
-          {event.title}
-        </h3>
+        <div className="flex items-center gap-2 mb-2">
+          <h3 className="font-semibold text-lg text-card-foreground line-clamp-2 group-hover:text-primary transition-colors">
+            {event.title}
+          </h3>
+        </div>
+
 
         <p className="text-sm text-muted-foreground mb-4 line-clamp-2">
           {event.description}

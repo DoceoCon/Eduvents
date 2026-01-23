@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Upload, CreditCard, Check, Info } from 'lucide-react';
 import Layout from '@/components/Layout';
@@ -18,13 +18,15 @@ import { toast } from 'sonner';
 interface ListEventContentProps {
     isAdminMode?: boolean;
     onSuccess?: () => void;
+    onCancel?: () => void;
 }
 
-const ListEventContent = ({ isAdminMode = false, onSuccess }: ListEventContentProps) => {
+const ListEventContent = ({ isAdminMode = false, onSuccess, onCancel }: ListEventContentProps) => {
     const router = useRouter();
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [showSuccess, setShowSuccess] = useState(false);
     const [imagePreview, setImagePreview] = useState<string | null>(null);
+    const [verifyingPayment, setVerifyingPayment] = useState(false);
 
     const [formData, setFormData] = useState({
         title: '',
@@ -44,31 +46,65 @@ const ListEventContent = ({ isAdminMode = false, onSuccess }: ListEventContentPr
         bookingUrl: ''
     });
 
+    const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [errors, setErrors] = useState<Record<string, string>>({});
 
     const validateForm = () => {
         const newErrors: Record<string, string> = {};
 
-        if (!formData.title.trim()) newErrors.title = 'Event title is required';
-        if (!formData.description.trim()) newErrors.description = 'Description is required';
-        if (formData.description.length < 50) newErrors.description = 'Description must be at least 50 characters';
-        if (!formData.category) newErrors.category = 'Category is required';
-        if (!formData.format) newErrors.format = 'Format is required';
-        if (!formData.date) newErrors.date = 'Date is required';
-        if (!formData.startTime) newErrors.startTime = 'Start time is required';
-        if (!formData.endTime) newErrors.endTime = 'End time is required';
-        if (!formData.location.trim()) newErrors.location = 'Location is required';
-        if (formData.isFree === 'paid' && !formData.price) newErrors.price = 'Price is required for paid events';
-        if (formData.isFree === 'paid' && formData.price && isNaN(parseFloat(formData.price))) {
-            newErrors.price = 'Please enter a valid price';
+        // Required fields
+        const requiredFields = ['title', 'description', 'category', 'format', 'date', 'startTime', 'endTime', 'location', 'organiserName', 'organiserEmail', 'bookingUrl'];
+        requiredFields.forEach(field => {
+            if (!formData[field as keyof typeof formData]?.toString().trim()) {
+                newErrors[field] = 'Required';
+            }
+        });
+
+        if (!selectedFile && !imagePreview) newErrors.image = 'Required';
+
+        // Specific constraints
+        if (formData.title && formData.title.length > 50) {
+            newErrors.title = 'Title must be 50 characters or less';
         }
-        if (!formData.organiserName.trim()) newErrors.organiserName = 'Organisation name is required';
-        if (!formData.organiserEmail.trim()) newErrors.organiserEmail = 'Email is required';
-        if (formData.organiserEmail && !/\S+@\S+\.\S+/.test(formData.organiserEmail)) {
-            newErrors.organiserEmail = 'Please enter a valid email';
+        if (formData.description && formData.description.length > 100) {
+            newErrors.description = 'Description must be 200 characters or less';
         }
-        if (formData.bookingUrl && !formData.bookingUrl.startsWith('http')) {
-            newErrors.bookingUrl = 'Please enter a valid URL starting with http:// or https://';
+        if (formData.organiserName && formData.organiserName.length > 50) {
+            newErrors.organiserName = 'Name must be 50 characters or less';
+        }
+        if (formData.organiserEmail && !formData.organiserEmail.includes('@')) {
+            newErrors.organiserEmail = 'Incorrect email format. Email must contain @';
+        }
+        if (formData.bookingUrl) {
+            try {
+                new URL(formData.bookingUrl);
+            } catch (e) {
+                newErrors.bookingUrl = 'Incorrect URL. Please enter a valid URL.';
+            }
+        }
+
+        // Past date validation
+        if (formData.date) {
+            const selectedDate = new Date(formData.date);
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            if (selectedDate < today) {
+                newErrors.date = 'Date cannot be in the past';
+            }
+        }
+
+        if (formData.isFree === 'paid' && !formData.price) {
+            newErrors.price = 'Required';
+        }
+
+        if (selectedFile) {
+            const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg'];
+            if (!allowedTypes.includes(selectedFile.type)) {
+                newErrors.image = 'Incorrect File Format. File must be PNG or JPG.';
+            }
+            if (selectedFile.size > 25 * 1024 * 1024) {
+                newErrors.image = 'File size too big. File size should be less than 25mb';
+            }
         }
 
         setErrors(newErrors);
@@ -93,11 +129,66 @@ const ListEventContent = ({ isAdminMode = false, onSuccess }: ListEventContentPr
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (file) {
+            setSelectedFile(file);
             const reader = new FileReader();
             reader.onloadend = () => {
                 setImagePreview(reader.result as string);
+                setErrors(prev => ({ ...prev, image: '' }));
             };
             reader.readAsDataURL(file);
+        }
+    };
+
+    useEffect(() => {
+        const query = new URLSearchParams(window.location.search);
+        const success = query.get('success');
+        const canceled = query.get('canceled');
+        const sessionId = query.get('session_id');
+        const eventId = query.get('event_id');
+
+        if (success === 'true' && sessionId && eventId) {
+            verifyPayment(sessionId, eventId);
+        } else if (canceled === 'true' && eventId) {
+            handleCancellation(eventId);
+        }
+    }, []);
+
+    const handleCancellation = async (eventId: string) => {
+        try {
+            await fetch('/api/checkout/cleanup', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ eventId })
+            });
+            toast.error('Payment canceled. Your event was not listed.');
+            // Clean up URL
+            router.replace('/list-event');
+        } catch (error) {
+            console.error('Error cleaning up canceled event:', error);
+        }
+    };
+
+    const verifyPayment = async (sessionId: string, eventId: string) => {
+        setVerifyingPayment(true);
+        try {
+            const response = await fetch('/api/checkout/verify', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ sessionId, eventId })
+            });
+
+            const result = await response.json();
+            if (result.success) {
+                setShowSuccess(true);
+                router.replace('/list-event');
+            } else {
+                toast.error(result.message || 'Payment verification failed');
+            }
+        } catch (error) {
+            console.error('Error verifying payment:', error);
+            toast.error('Error verifying payment');
+        } finally {
+            setVerifyingPayment(false);
         }
     };
 
@@ -110,19 +201,77 @@ const ListEventContent = ({ isAdminMode = false, onSuccess }: ListEventContentPr
 
         setIsSubmitting(true);
 
-        // Simulate API call
-        await new Promise(resolve => setTimeout(resolve, 2000));
+        try {
+            const data = new FormData();
+            data.append('title', formData.title);
+            data.append('description', formData.description);
+            data.append('category', formData.category);
+            data.append('format', formData.format);
+            data.append('subjectAreas', JSON.stringify(formData.subjectAreas));
+            data.append('phases', JSON.stringify(formData.phases));
+            data.append('date', formData.date);
+            data.append('startTime', formData.startTime);
+            data.append('endTime', formData.endTime);
+            data.append('location', formData.location);
+            data.append('isFree', (formData.isFree === 'free').toString());
+            data.append('price', formData.price);
+            data.append('organiser', formData.organiserName);
+            data.append('organiserEmail', formData.organiserEmail);
+            data.append('bookingUrl', formData.bookingUrl);
+            data.append('isAdmin', isAdminMode.toString());
+            if (selectedFile) {
+                data.append('image', selectedFile);
+            }
 
-        setIsSubmitting(false);
+            const response = await fetch('/api/events', {
+                method: 'POST',
+                body: data
+            });
 
-        if (isAdminMode && onSuccess) {
-            onSuccess();
-            toast.success('Event created successfully!');
-        } else {
-            setShowSuccess(true);
-            toast.success('Event submitted successfully!');
+            const result = await response.json();
+
+            if (result.success) {
+                if (isAdminMode) {
+                    toast.success('Event Created Successfully.');
+                    if (onSuccess) {
+                        onSuccess();
+                    } else {
+                        setShowSuccess(true);
+                    }
+                } else if (result.stripeUrl) {
+                    // User mode: Redirect to Stripe immediately
+                    window.location.href = result.stripeUrl;
+                } else {
+                    // Fallback for non-paid user events if any
+                    setShowSuccess(true);
+                }
+            } else {
+                if (result.errors) {
+                    setErrors(result.errors);
+                }
+                toast.error(result.message || 'Failed to create event');
+            }
+        } catch (error) {
+            console.error('Error submitting event:', error);
+            toast.error('An error occurred. Please try again.');
+        } finally {
+            setIsSubmitting(false);
         }
     };
+
+    if (verifyingPayment) {
+        return (
+            <Layout>
+                <div className="container-tight py-20">
+                    <div className="max-w-lg mx-auto text-center bg-card rounded-lg p-12 shadow-card">
+                        <div className="animate-spin h-12 w-12 border-4 border-primary border-t-transparent rounded-full mx-auto mb-6"></div>
+                        <h1 className="text-2xl font-bold mb-4">Verifying Payment...</h1>
+                        <p className="text-muted-foreground">Please wait while we confirm your transaction.</p>
+                    </div>
+                </div>
+            </Layout>
+        );
+    }
 
     if (showSuccess && !isAdminMode) {
         return (
@@ -385,7 +534,7 @@ const ListEventContent = ({ isAdminMode = false, onSuccess }: ListEventContentPr
             <div className="bg-card rounded-lg p-6 shadow-card">
                 <h2 className="text-xl font-semibold mb-6">Event Image</h2>
 
-                <div className="border-2 border-dashed border-border rounded-lg p-8 text-center hover:border-primary transition-colors">
+                <div className={`border-2 border-dashed ${errors.image ? 'border-destructive' : 'border-border'} rounded-lg p-8 text-center hover:border-primary transition-colors`}>
                     {imagePreview ? (
                         <div className="relative">
                             <img src={imagePreview} alt="Preview" className="max-h-48 mx-auto rounded-lg" />
@@ -394,7 +543,10 @@ const ListEventContent = ({ isAdminMode = false, onSuccess }: ListEventContentPr
                                 variant="outline"
                                 size="sm"
                                 className="mt-4"
-                                onClick={() => setImagePreview(null)}
+                                onClick={() => {
+                                    setImagePreview(null);
+                                    setSelectedFile(null);
+                                }}
                             >
                                 Remove Image
                             </Button>
@@ -413,6 +565,7 @@ const ListEventContent = ({ isAdminMode = false, onSuccess }: ListEventContentPr
                         </label>
                     )}
                 </div>
+                {errors.image && <p className="text-sm text-destructive mt-2">{errors.image}</p>}
             </div>
 
             {/* Booking Link */}
@@ -442,6 +595,14 @@ const ListEventContent = ({ isAdminMode = false, onSuccess }: ListEventContentPr
             <div className="space-y-6">
                 {formContent}
                 <div className="flex justify-end gap-4">
+                    <Button
+                        variant="outline"
+                        size="lg"
+                        onClick={onCancel}
+                        disabled={isSubmitting}
+                    >
+                        Cancel
+                    </Button>
                     <Button
                         size="lg"
                         onClick={handleSubmit}

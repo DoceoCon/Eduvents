@@ -1,28 +1,28 @@
-export type EventCategory = 
-  | 'Webinar' 
-  | 'Podcast' 
-  | 'Conference' 
-  | 'CPD Training' 
-  | 'Awards Show' 
-  | 'Festival' 
+export type EventCategory =
+  | 'Webinar'
+  | 'Podcast'
+  | 'Conference'
+  | 'CPD Training'
+  | 'Awards Show'
+  | 'Festival'
   | 'Exhibition';
 
 export type EventFormat = 'In-Person' | 'Virtual' | 'Hybrid';
 
-export type SubjectArea = 
-  | 'English' 
-  | 'Maths' 
-  | 'Science' 
-  | 'STEM' 
-  | 'Leadership' 
-  | 'Technology' 
-  | 'Inclusion' 
-  | 'Assessment' 
-  | 'Wellbeing' 
-  | 'Humanities' 
+export type SubjectArea =
+  | 'English'
+  | 'Maths'
+  | 'Science'
+  | 'STEM'
+  | 'Leadership'
+  | 'Technology'
+  | 'Inclusion'
+  | 'Assessment'
+  | 'Wellbeing'
+  | 'Humanities'
   | 'Geography';
 
-export type EventPhase = 
+export type EventPhase =
   | 'Primary'
   | 'Secondary'
   | 'Further Education'
@@ -54,6 +54,8 @@ export interface Event {
   isFree: boolean;
   price?: number;
   isAdminCreated?: boolean;
+  paymentStatus?: 'unpaid' | 'paid';
+  stripeSessionId?: string;
   lastUpdated?: string;
 }
 

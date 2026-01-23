@@ -35,8 +35,8 @@ const Header = () => {
     <header className="sticky top-0 z-50 w-full border-b border-border bg-card/95 backdrop-blur supports-[backdrop-filter]:bg-card/80">
       <div className="container-tight">
         <div className="flex h-16 items-center justify-between">
-          <Link href="/" className="flex items-center space-x-2">
-            <span className="text-2xl font-bold text-gradient">EDUVENTS</span>
+          <Link href="/" className="flex items-center">
+            <img src="/logo.png" alt="EDUVENTS" className="h-14 w-auto object-contain" />
           </Link>
 
           {/* Desktop Navigation */}

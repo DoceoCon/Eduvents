@@ -5,8 +5,8 @@ const Footer = () => {
     <footer className="border-t border-border bg-card mt-auto">
       <div className="container-tight py-8">
         <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-          <div className="flex items-center space-x-2">
-            <span className="text-xl font-bold text-gradient">EDUVENTS</span>
+          <div className="flex items-center">
+            <img src="/logo.png" alt="EDUVENTS" className="h-8 w-auto object-contain" />
           </div>
 
           <nav className="flex items-center space-x-6 text-sm">

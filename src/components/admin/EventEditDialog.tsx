@@ -23,18 +23,22 @@ interface EventEditDialogProps {
 const EventEditDialog = ({ event, isOpen, onClose, onSave }: EventEditDialogProps) => {
   const [formData, setFormData] = useState<Partial<Event>>({});
   const [isSaving, setIsSaving] = useState(false);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
   useEffect(() => {
     if (event) {
-      // eslint-disable-next-line
       setFormData({
         ...event,
       });
+      setImagePreview(event.image);
     }
-  }, [event]);
+  }, [event?.id]);
 
   const handleChange = (field: string, value: string | boolean | number) => {
     setFormData(prev => ({ ...prev, [field]: value }));
+    if (errors[field]) setErrors(prev => ({ ...prev, [field]: '' }));
   };
 
   const handleSubjectChange = (subjects: SubjectArea[]) => {
@@ -45,22 +49,119 @@ const EventEditDialog = ({ event, isOpen, onClose, onSave }: EventEditDialogProp
     setFormData(prev => ({ ...prev, phases }));
   };
 
-  const handleSave = async () => {
+  const handleFeaturedToggle = async (checked: boolean) => {
     if (!event) return;
 
+    // Update local state first
+    handleChange('featured', checked);
+
+    try {
+      const response = await fetch(`/api/admin/events/${event.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ featured: checked })
+      });
+
+      const result = await response.json();
+      if (result.success) {
+        toast.success(checked ? 'Event marked as featured' : 'Event removed from featured');
+        // Notify parent to update the list, but our useEffect now prevents form wipe
+        onSave(result.event);
+      } else {
+        toast.error('Failed to update featured status');
+        handleChange('featured', !checked);
+      }
+    } catch (error) {
+      console.error('Error toggling featured status:', error);
+      toast.error('Failed to update featured status');
+      handleChange('featured', !checked);
+    }
+  };
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg'];
+      if (!allowedTypes.includes(file.type)) {
+        setErrors(prev => ({ ...prev, image: 'Incorrect File Format. File must be PNG or JPG.' }));
+        return;
+      }
+      if (file.size > 25 * 1024 * 1024) {
+        setErrors(prev => ({ ...prev, image: 'File size too big. File size should be less than 25mb' }));
+        return;
+      }
+
+      setSelectedFile(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result as string);
+        setErrors(prev => ({ ...prev, image: '' }));
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const validateForm = () => {
+    const newErrors: Record<string, string> = {};
+    if (!formData.title?.trim()) newErrors.title = 'Required';
+    else if (formData.title.length > 50) newErrors.title = 'Title must be 50 characters or less';
+
+    if (!formData.description?.trim()) newErrors.description = 'Required';
+    else if (formData.description.length > 100) newErrors.description = 'Description must be 200 characters or less';
+
+    if (!formData.organiser?.trim()) newErrors.organiser = 'Required';
+    else if (formData.organiser.length > 50) newErrors.organiser = 'Name must be 50 characters or less';
+
+    if (formData.organiserEmail && !formData.organiserEmail.includes('@')) {
+      newErrors.organiserEmail = 'Incorrect email format. Email must contain @';
+    }
+
+    if (formData.bookingUrl) {
+      try { new URL(formData.bookingUrl); } catch { newErrors.bookingUrl = 'Incorrect URL. Please enter a valid URL.'; }
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleSave = async () => {
+    if (!event) return;
+    if (!validateForm()) return;
+
     setIsSaving(true);
-    await new Promise(resolve => setTimeout(resolve, 500));
+    try {
+      const data = new FormData();
+      Object.entries(formData).forEach(([key, value]) => {
+        if (key === 'subjectAreas' || key === 'phases') {
+          data.append(key, JSON.stringify(value));
+        } else if (key !== 'image') {
+          data.append(key, String(value));
+        }
+      });
 
-    const updatedEvent: Event = {
-      ...event,
-      ...formData,
-      lastUpdated: new Date().toISOString().split('T')[0]
-    } as Event;
+      if (selectedFile) {
+        data.append('image', selectedFile);
+      }
 
-    onSave(updatedEvent);
-    setIsSaving(false);
-    onClose();
-    toast.success('Event updated successfully!');
+      const response = await fetch(`/api/admin/events/${event.id}`, {
+        method: 'PUT',
+        body: data
+      });
+
+      const result = await response.json();
+      if (result.success) {
+        onSave(result.event);
+        onClose();
+        toast.success('Event updated successfully!');
+      } else {
+        toast.error(result.message || 'Failed to update event');
+      }
+    } catch (error) {
+      console.error('Error updating event:', error);
+      toast.error('Failed to update event');
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   if (!event) return null;
@@ -77,11 +178,11 @@ const EventEditDialog = ({ event, isOpen, onClose, onSave }: EventEditDialogProp
           <div className="flex items-center gap-4 p-4 bg-accent rounded-lg">
             <Switch
               checked={formData.featured || false}
-              onCheckedChange={(checked) => handleChange('featured', checked)}
-              className="data-[state=checked]:bg-yellow-500"
+              onCheckedChange={handleFeaturedToggle}
+              className="data-[state=checked]:bg-yellow-400"
             />
             <div className="flex items-center gap-2">
-              <Star className={`h-5 w-5 ${formData.featured ? 'text-yellow-500 fill-yellow-500' : 'text-muted-foreground'}`} />
+              <Star className={`h-5 w-5 ${formData.featured ? 'text-yellow-400 fill-yellow-400' : 'text-muted-foreground'}`} />
               <span className="font-medium">Featured Event</span>
             </div>
           </div>
@@ -94,7 +195,9 @@ const EventEditDialog = ({ event, isOpen, onClose, onSave }: EventEditDialogProp
                 id="title"
                 value={formData.title || ''}
                 onChange={(e) => handleChange('title', e.target.value)}
+                className={errors.title ? 'border-destructive' : ''}
               />
+              {errors.title && <p className="text-sm text-destructive mt-1">{errors.title}</p>}
             </div>
 
             <div>
@@ -104,7 +207,9 @@ const EventEditDialog = ({ event, isOpen, onClose, onSave }: EventEditDialogProp
                 value={formData.description || ''}
                 onChange={(e) => handleChange('description', e.target.value)}
                 rows={3}
+                className={errors.description ? 'border-destructive' : ''}
               />
+              {errors.description && <p className="text-sm text-destructive mt-1">{errors.description}</p>}
             </div>
 
             <div>
@@ -121,7 +226,7 @@ const EventEditDialog = ({ event, isOpen, onClose, onSave }: EventEditDialogProp
               <div>
                 <Label>Category *</Label>
                 <Select value={formData.category} onValueChange={(v) => handleChange('category', v)}>
-                  <SelectTrigger>
+                  <SelectTrigger className={errors.category ? 'border-destructive' : ''}>
                     <SelectValue placeholder="Select category" />
                   </SelectTrigger>
                   <SelectContent className="bg-card">
@@ -130,12 +235,13 @@ const EventEditDialog = ({ event, isOpen, onClose, onSave }: EventEditDialogProp
                     ))}
                   </SelectContent>
                 </Select>
+                {errors.category && <p className="text-sm text-destructive mt-1">{errors.category}</p>}
               </div>
 
               <div>
                 <Label>Event Format *</Label>
                 <Select value={formData.format} onValueChange={(v) => handleChange('format', v)}>
-                  <SelectTrigger>
+                  <SelectTrigger className={errors.format ? 'border-destructive' : ''}>
                     <SelectValue placeholder="Select format" />
                   </SelectTrigger>
                   <SelectContent className="bg-card">
@@ -144,6 +250,7 @@ const EventEditDialog = ({ event, isOpen, onClose, onSave }: EventEditDialogProp
                     ))}
                   </SelectContent>
                 </Select>
+                {errors.format && <p className="text-sm text-destructive mt-1">{errors.format}</p>}
               </div>
             </div>
 
@@ -173,7 +280,9 @@ const EventEditDialog = ({ event, isOpen, onClose, onSave }: EventEditDialogProp
                 type="date"
                 value={formData.date || ''}
                 onChange={(e) => handleChange('date', e.target.value)}
+                className={errors.date ? 'border-destructive' : ''}
               />
+              {errors.date && <p className="text-sm text-destructive mt-1">{errors.date}</p>}
             </div>
 
             <div>
@@ -183,7 +292,9 @@ const EventEditDialog = ({ event, isOpen, onClose, onSave }: EventEditDialogProp
                 type="time"
                 value={formData.startTime || ''}
                 onChange={(e) => handleChange('startTime', e.target.value)}
+                className={errors.startTime ? 'border-destructive' : ''}
               />
+              {errors.startTime && <p className="text-sm text-destructive mt-1">{errors.startTime}</p>}
             </div>
 
             <div>
@@ -193,7 +304,9 @@ const EventEditDialog = ({ event, isOpen, onClose, onSave }: EventEditDialogProp
                 type="time"
                 value={formData.endTime || ''}
                 onChange={(e) => handleChange('endTime', e.target.value)}
+                className={errors.endTime ? 'border-destructive' : ''}
               />
+              {errors.endTime && <p className="text-sm text-destructive mt-1">{errors.endTime}</p>}
             </div>
           </div>
 
@@ -204,7 +317,9 @@ const EventEditDialog = ({ event, isOpen, onClose, onSave }: EventEditDialogProp
               id="location"
               value={formData.location || ''}
               onChange={(e) => handleChange('location', e.target.value)}
+              className={errors.location ? 'border-destructive' : ''}
             />
+            {errors.location && <p className="text-sm text-destructive mt-1">{errors.location}</p>}
           </div>
 
           {/* Cost */}
@@ -237,9 +352,10 @@ const EventEditDialog = ({ event, isOpen, onClose, onSave }: EventEditDialogProp
                     step="0.01"
                     value={formData.price || ''}
                     onChange={(e) => handleChange('price', parseFloat(e.target.value) || 0)}
-                    className="pl-7"
+                    className={`pl-7 ${errors.price ? 'border-destructive' : ''}`}
                   />
                 </div>
+                {errors.price && <p className="text-sm text-destructive mt-1">{errors.price}</p>}
               </div>
             )}
           </div>
@@ -252,7 +368,9 @@ const EventEditDialog = ({ event, isOpen, onClose, onSave }: EventEditDialogProp
                 id="organiser"
                 value={formData.organiser || ''}
                 onChange={(e) => handleChange('organiser', e.target.value)}
+                className={errors.organiser ? 'border-destructive' : ''}
               />
+              {errors.organiser && <p className="text-sm text-destructive mt-1">{errors.organiser}</p>}
             </div>
 
             <div>
@@ -262,7 +380,9 @@ const EventEditDialog = ({ event, isOpen, onClose, onSave }: EventEditDialogProp
                 type="email"
                 value={formData.organiserEmail || ''}
                 onChange={(e) => handleChange('organiserEmail', e.target.value)}
+                className={errors.organiserEmail ? 'border-destructive' : ''}
               />
+              {errors.organiserEmail && <p className="text-sm text-destructive mt-1">{errors.organiserEmail}</p>}
             </div>
           </div>
 
@@ -274,18 +394,45 @@ const EventEditDialog = ({ event, isOpen, onClose, onSave }: EventEditDialogProp
               type="url"
               value={formData.bookingUrl || ''}
               onChange={(e) => handleChange('bookingUrl', e.target.value)}
+              className={errors.bookingUrl ? 'border-destructive' : ''}
             />
+            {errors.bookingUrl && <p className="text-sm text-destructive mt-1">{errors.bookingUrl}</p>}
           </div>
 
-          {/* Image URL */}
+          {/* Event Image */}
           <div>
-            <Label htmlFor="image">Image URL</Label>
-            <Input
-              id="image"
-              type="url"
-              value={formData.image || ''}
-              onChange={(e) => handleChange('image', e.target.value)}
-            />
+            <Label>Event Image</Label>
+            <div className="mt-2 border-2 border-dashed border-border rounded-lg p-6 text-center">
+              {imagePreview ? (
+                <div className="relative">
+                  <img src={imagePreview} alt="Preview" className="max-h-40 mx-auto rounded-lg" />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    className="mt-4"
+                    onClick={() => {
+                      setImagePreview(null);
+                      setSelectedFile(null);
+                    }}
+                  >
+                    Change Image
+                  </Button>
+                </div>
+              ) : (
+                <label className="cursor-pointer">
+                  <div className="flex flex-col items-center">
+                    <span className="text-muted-foreground mb-2">Click to upload new image</span>
+                    <Input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleImageChange}
+                      className="max-w-xs mx-auto"
+                    />
+                  </div>
+                </label>
+              )}
+            </div>
           </div>
 
           {/* Actions */}

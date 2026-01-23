@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, Suspense } from 'react';
+import { useState, useMemo, Suspense, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { Filter, X } from 'lucide-react';
 import Layout from '@/components/Layout';
@@ -10,7 +10,7 @@ import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { events, categories, formats, subjectAreas, eventPhases, EventCategory, EventFormat, SubjectArea, EventPhase } from '@/data/events';
+import { Event, categories, formats, subjectAreas, eventPhases, EventCategory, EventFormat, SubjectArea, EventPhase } from '@/data/events';
 
 const ITEMS_PER_PAGE = 12;
 
@@ -18,6 +18,8 @@ const EventsContent = () => {
     const searchParams = useSearchParams();
     const initialSearch = searchParams.get('search') || '';
 
+    const [allEvents, setAllEvents] = useState<Event[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState(initialSearch);
     const [selectedCategory, setSelectedCategory] = useState<EventCategory | 'all'>('all');
     const [selectedFormat, setSelectedFormat] = useState<EventFormat | 'all'>('all');
@@ -28,16 +30,34 @@ const EventsContent = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [showMobileFilters, setShowMobileFilters] = useState(false);
 
+    useEffect(() => {
+        const fetchEvents = async () => {
+            setIsLoading(true);
+            try {
+                const response = await fetch('/api/events');
+                const data = await response.json();
+                if (data.success) {
+                    setAllEvents(data.events);
+                }
+            } catch (error) {
+                console.error('Error fetching events:', error);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+        fetchEvents();
+    }, []);
+
     const filteredEvents = useMemo(() => {
-        let filtered = events.filter(e => e.status === 'approved');
+        let filtered = allEvents.filter(e => e.status === 'approved');
 
         if (searchQuery) {
             const query = searchQuery.toLowerCase();
             filtered = filtered.filter(e =>
                 e.title.toLowerCase().includes(query) ||
                 e.description.toLowerCase().includes(query) ||
-                e.location.toLowerCase().includes(query) ||
-                e.organiser.toLowerCase().includes(query)
+                (e.location && e.location.toLowerCase().includes(query)) ||
+                (e.organiser && e.organiser.toLowerCase().includes(query))
             );
         }
 
@@ -50,7 +70,7 @@ const EventsContent = () => {
         }
 
         if (selectedSubject !== 'all') {
-            filtered = filtered.filter(e => e.subjectAreas.includes(selectedSubject));
+            filtered = filtered.filter(e => e.subjectAreas && e.subjectAreas.includes(selectedSubject));
         }
 
         if (selectedPhase !== 'all') {
@@ -58,7 +78,7 @@ const EventsContent = () => {
         }
 
         if (dateFilter) {
-            filtered = filtered.filter(e => e.date >= dateFilter);
+            filtered = filtered.filter(e => e.date && e.date >= dateFilter);
         }
 
         // Sort
@@ -68,12 +88,13 @@ const EventsContent = () => {
                     return new Date(a.date).getTime() - new Date(b.date).getTime();
                 case 'newest':
                 default:
-                    return new Date(b.submissionDate).getTime() - new Date(a.submissionDate).getTime();
+                    // @ts-ignore
+                    return new Date(b.submissionDate || b.createdAt).getTime() - new Date(a.submissionDate || a.createdAt).getTime();
             }
         });
 
         return filtered;
-    }, [searchQuery, selectedCategory, selectedFormat, selectedSubject, selectedPhase, dateFilter, sortBy]);
+    }, [allEvents, searchQuery, selectedCategory, selectedFormat, selectedSubject, selectedPhase, dateFilter, sortBy]);
 
     const totalPages = Math.ceil(filteredEvents.length / ITEMS_PER_PAGE);
     const paginatedEvents = filteredEvents.slice(
