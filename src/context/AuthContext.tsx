@@ -6,7 +6,8 @@ import { toast } from 'sonner';
 
 interface AuthContextType {
     isAuthenticated: boolean;
-    login: (email: string, pass: string) => boolean;
+    isLoading: boolean;
+    login: (email: string, pass: string) => Promise<boolean>;
     logout: () => void;
 }
 
@@ -14,6 +15,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
     const router = useRouter();
 
     useEffect(() => {
@@ -21,15 +23,31 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         if (storedAuth === 'true') {
             setIsAuthenticated(true);
         }
+        setIsLoading(false);
     }, []);
 
-    const login = (email: string, pass: string) => {
-        if (email === 'admin@gmail.com' && pass === 'admin123') {
-            localStorage.setItem('isAdminAuthenticated', 'true');
-            setIsAuthenticated(true);
-            toast.success('Login Successful ');
-            return true;
-        } else {
+    const login = async (email: string, pass: string) => {
+        try {
+            const response = await fetch('/api/auth/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password: pass }),
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                localStorage.setItem('isAdminAuthenticated', 'true');
+                setIsAuthenticated(true);
+                toast.success('Login Successful');
+                return true;
+            } else {
+                toast.error(data.message || 'Login Failed');
+                return false;
+            }
+        } catch (error) {
+            console.error('Login error:', error);
+            toast.error('An error occurred during login');
             return false;
         }
     };
@@ -42,7 +60,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     };
 
     return (
-        <AuthContext.Provider value={{ isAuthenticated, login, logout }}>
+        <AuthContext.Provider value={{ isAuthenticated, isLoading, login, logout }}>
             {children}
         </AuthContext.Provider>
     );

@@ -16,7 +16,7 @@ import EventEditDialog from '@/components/admin/EventEditDialog';
 import { useAuth } from '@/context/AuthContext';
 
 const AdminDashboard = () => {
-    const { isAuthenticated } = useAuth();
+    const { isAuthenticated, isLoading: isAuthLoading } = useAuth();
     const router = useRouter();
     const [eventsList, setEventsList] = useState<Event[]>([]);
     const [isLoading, setIsLoading] = useState(true);
@@ -40,15 +40,21 @@ const AdminDashboard = () => {
     };
 
     useEffect(() => {
-        if (!isAuthenticated) {
-            router.push('/login');
-        } else {
-            fetchEvents();
+        if (!isAuthLoading) {
+            if (!isAuthenticated) {
+                router.push('/login');
+            } else {
+                fetchEvents();
+            }
         }
-    }, [isAuthenticated, router]);
+    }, [isAuthenticated, isAuthLoading, router]);
 
-    if (!isAuthenticated) {
-        return null;
+    if (isAuthLoading || !isAuthenticated) {
+        return (
+            <div className="min-h-screen flex items-center justify-center">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+            </div>
+        );
     }
 
     const pendingEvents = eventsList.filter(e => e.status === 'pending');

@@ -1,14 +1,11 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 import { Eye, EyeOff } from 'lucide-react';
 import Layout from '@/components/Layout';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
-import { Label } from '@/components/ui/label';
+import Link from 'next/link';
 
 export default function LoginPage() {
     const [email, setEmail] = useState('');
@@ -16,10 +13,25 @@ export default function LoginPage() {
     const [showPassword, setShowPassword] = useState(false);
     const [emailError, setEmailError] = useState('');
     const [passwordError, setPasswordError] = useState('');
-    const { login } = useAuth();
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const { login, isAuthenticated, isLoading } = useAuth();
     const router = useRouter();
 
-    const handleSubmit = (e: React.FormEvent) => {
+    useEffect(() => {
+        if (!isLoading && isAuthenticated) {
+            router.push('/admin');
+        }
+    }, [isAuthenticated, isLoading, router]);
+
+    if (isLoading || isAuthenticated) {
+        return (
+            <div className="min-h-screen flex items-center justify-center">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+            </div>
+        );
+    }
+
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setEmailError('');
         setPasswordError('');
@@ -33,81 +45,121 @@ export default function LoginPage() {
             return;
         }
 
-        const success = login(email, password);
-        if (success) {
-            router.push('/admin');
-        } else {
-            setPasswordError('Invalid Email or Password');
+        setIsSubmitting(true);
+        try {
+            const success = await login(email, password);
+            if (success) {
+                router.push('/admin');
+            } else {
+                setPasswordError('Invalid Email or Password');
+            }
+        } finally {
+            setIsSubmitting(false);
         }
     };
 
     return (
-        <Layout>
-            <div className="container-tight py-20 md:py-32 flex items-center justify-center min-h-[60vh]">
-                <Card className="w-full max-w-md">
-                    <CardHeader className="text-center">
-                        <CardTitle className="text-2xl">Admin Login</CardTitle>
-                        <CardDescription>Enter your credentials to access the dashboard</CardDescription>
-                    </CardHeader>
-                    <form onSubmit={handleSubmit} noValidate>
-                        <CardContent className="space-y-4">
-                            <div className="space-y-2">
-                                <Label htmlFor="email">Email</Label>
-                                <Input
-                                    id="email"
-                                    type="email"
-                                    placeholder="Email"
-                                    value={email}
+        <div className="flex items-center justify-center min-h-screen bg-gray-50 py-12 px-4">
+            <div className="w-full max-w-md">
+                {/* Sign In Card */}
+                <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-8">
+                    {/* Logo inside the box */}
+                    <div className="flex justify-center mb-6">
+                        <img src="/logo.png" alt="EDUVENTS" className="h-16 w-auto object-contain" />
+                    </div>
+
+                    <h1 className="text-2xl font-semibold text-center text-gray-800 mb-2">
+                        Sign In
+                    </h1>
+                    <p className="text-center text-gray-500 text-sm mb-6">
+                        Use your email and password to sign in
+                    </p>
+
+                    <form onSubmit={handleSubmit} noValidate className="space-y-5">
+                        {/* Email Address */}
+                        <div>
+                            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+                                Email Address
+                            </label>
+                            <input
+                                id="email"
+                                type="email"
+                                placeholder="admin@gmail.com"
+                                value={email}
+                                onChange={(e) => {
+                                    setEmail(e.target.value);
+                                    if (emailError) setEmailError('');
+                                }}
+                                className="w-full px-4 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                                required
+                            />
+                            {emailError && (
+                                <p className="text-red-500 text-xs mt-1">{emailError}</p>
+                            )}
+                        </div>
+
+                        {/* Password */}
+                        <div>
+                            <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
+                                Password
+                            </label>
+                            <div className="relative">
+                                <input
+                                    id="password"
+                                    type={showPassword ? "text" : "password"}
+                                    placeholder="••••••••"
+                                    value={password}
                                     onChange={(e) => {
-                                        setEmail(e.target.value);
-                                        if (emailError) setEmailError('');
+                                        setPassword(e.target.value);
+                                        if (passwordError) setPasswordError('');
                                     }}
+                                    className="w-full px-4 py-2.5 pr-10 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
                                     required
                                 />
-                                {emailError && (
-                                    <p className="text-destructive text-sm mt-1">{emailError}</p>
-                                )}
+                                <button
+                                    type="button"
+                                    onClick={() => setShowPassword(!showPassword)}
+                                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                                >
+                                    {showPassword ? (
+                                        <EyeOff className="h-5 w-5" />
+                                    ) : (
+                                        <Eye className="h-5 w-5" />
+                                    )}
+                                </button>
                             </div>
-                            <div className="space-y-2">
-                                <Label htmlFor="password">Password</Label>
-                                <div className="relative">
-                                    <Input
-                                        id="password"
-                                        type={showPassword ? "text" : "password"}
-                                        placeholder="••••••••"
-                                        value={password}
-                                        onChange={(e) => {
-                                            setPassword(e.target.value);
-                                            if (passwordError) setPasswordError('');
-                                        }}
-                                        required
-                                        className="pr-10"
-                                    />
-                                    <button
-                                        type="button"
-                                        onClick={() => setShowPassword(!showPassword)}
-                                        className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-                                    >
-                                        {showPassword ? (
-                                            <EyeOff className="h-4 w-4" />
-                                        ) : (
-                                            <Eye className="h-4 w-4" />
-                                        )}
-                                    </button>
-                                </div>
-                                {passwordError && (
-                                    <p className="text-destructive text-sm mt-1">{passwordError}</p>
-                                )}
-                            </div>
-                        </CardContent>
-                        <CardFooter>
-                            <Button type="submit" className="w-full">
-                                Login
-                            </Button>
-                        </CardFooter>
+                            {passwordError && (
+                                <p className="text-red-500 text-xs mt-1">{passwordError}</p>
+                            )}
+                        </div>
+
+                        {/* Forgot Password */}
+                        <div className="text-right">
+                            <Link href="#" className="text-sm text-gray-500 hover:text-primary transition-colors">
+                                Forgot password?
+                            </Link>
+                        </div>
+
+                        {/* Sign In Button */}
+                        <button
+                            type="submit"
+                            disabled={isSubmitting}
+                            className={`w-full bg-primary hover:bg-primary/90 text-white font-medium py-2.5 px-4 rounded-md transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 ${isSubmitting ? 'opacity-70 cursor-not-allowed' : ''}`}
+                        >
+                            {isSubmitting ? 'Signing In...' : 'Sign In'}
+                        </button>
+
+                        {/* Sign Up Link */}
+                        <p className="text-center text-sm text-gray-600 mt-4">
+                            Don't have an account?{' '}
+                            <Link href="#" className="text-primary hover:text-primary/90 font-medium transition-colors">
+                                Sign up
+                            </Link>
+                            {' '}for free.
+                        </p>
                     </form>
-                </Card>
+                </div>
             </div>
-        </Layout>
+        </div>
     );
 }

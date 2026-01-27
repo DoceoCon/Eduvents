@@ -172,13 +172,75 @@ export async function POST(req: NextRequest) {
     }
 }
 
-export async function GET() {
+export async function GET(req: NextRequest) {
     try {
         await dbConnect();
-        const eventsList = await Event.find({ status: 'approved' }).sort({ createdAt: -1 });
+
+        const { searchParams } = new URL(req.url);
+        const search = searchParams.get('search')?.trim();
+        const category = searchParams.get('category');
+        const format = searchParams.get('format');
+        const subject = searchParams.get('subject');
+        const phase = searchParams.get('phase');
+        const date = searchParams.get('date');
+        const sort = searchParams.get('sort') || 'newest';
+
+        // Build query
+        const query: any = { status: 'approved' };
+
+        // Handle Search
+        if (search) {
+            const searchLower = search.toLowerCase();
+
+            if (searchLower === 'free') {
+                query.isFree = true;
+            } else {
+                // Search in multiple fields
+                query.$or = [
+                    { title: { $regex: search, $options: 'i' } },
+                    { description: { $regex: search, $options: 'i' } },
+                    { organiser: { $regex: search, $options: 'i' } },
+                    { location: { $regex: search, $options: 'i' } },
+                    { category: { $regex: search, $options: 'i' } },
+                    { format: { $regex: search, $options: 'i' } },
+                    { subjectAreas: { $in: [new RegExp(search, 'i')] } },
+                    { phases: { $in: [new RegExp(search, 'i')] } }
+                ];
+            }
+        }
+
+        // Exact Filters
+        if (category && category !== 'all') {
+            query.category = category;
+        }
+        if (format && format !== 'all') {
+            query.format = format;
+        }
+        if (subject && subject !== 'all') {
+            query.subjectAreas = { $in: [subject] };
+        }
+        if (phase && phase !== 'all') {
+            query.phases = { $in: [phase] };
+        }
+        if (date) {
+            query.date = { $gte: date };
+        }
+
+        // Sort configuration
+        let sortOption: any = { createdAt: -1 };
+        if (sort === 'date') {
+            sortOption = { date: 1 };
+        } else if (sort === 'popularity') {
+            // Placeholder for popularity, if you have a views field
+            sortOption = { createdAt: -1 };
+        }
+
+        const eventsList = await Event.find(query).sort(sortOption);
         const events = eventsList.map(e => e.toJSON());
+
         return NextResponse.json({ success: true, events });
     } catch (error: any) {
+        console.error("Error fetching events:", error);
         return NextResponse.json({ success: false, message: error.message }, { status: 500 });
     }
 }

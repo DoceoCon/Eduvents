@@ -4,6 +4,18 @@ import { Switch } from '@/components/ui/switch';
 import { Event, getCategoryColor } from '@/data/events';
 import { format } from 'date-fns';
 
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger
+} from "@/components/ui/alert-dialog";
+
 interface PendingEventCardProps {
   event: Event;
   onApprove: (eventId: string) => void;
@@ -93,14 +105,36 @@ const PendingEventCard = ({ event, onApprove, onReject, onViewDetails, onFeature
               <Check className="h-4 w-4 mr-1" />
               Approve
             </Button>
-            <Button
-              size="sm"
-              variant="destructive"
-              onClick={() => onReject(event.id)}
-            >
-              <X className="h-4 w-4 mr-1" />
-              Reject
-            </Button>
+
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button
+                  size="sm"
+                  variant="destructive"
+                >
+                  <X className="h-4 w-4 mr-1" />
+                  Reject
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    This will reject the event submission for "{event.title}". This action cannot be undone and will notify the organiser.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogAction
+                    onClick={() => onReject(event.id)}
+                    className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                  >
+                    Reject Event
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+
             <Button
               size="sm"
               variant="outline"

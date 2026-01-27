@@ -21,6 +21,7 @@ const EventsContent = () => {
     const [allEvents, setAllEvents] = useState<Event[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState(initialSearch);
+    const [debouncedSearch, setDebouncedSearch] = useState(initialSearch);
     const [selectedCategory, setSelectedCategory] = useState<EventCategory | 'all'>('all');
     const [selectedFormat, setSelectedFormat] = useState<EventFormat | 'all'>('all');
     const [selectedSubject, setSelectedSubject] = useState<SubjectArea | 'all'>('all');
@@ -30,11 +31,28 @@ const EventsContent = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [showMobileFilters, setShowMobileFilters] = useState(false);
 
+    // Debounce search
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setDebouncedSearch(searchQuery);
+        }, 500);
+        return () => clearTimeout(timer);
+    }, [searchQuery]);
+
     useEffect(() => {
         const fetchEvents = async () => {
             setIsLoading(true);
             try {
-                const response = await fetch('/api/events');
+                const params = new URLSearchParams();
+                if (debouncedSearch) params.append('search', debouncedSearch);
+                if (selectedCategory !== 'all') params.append('category', selectedCategory);
+                if (selectedFormat !== 'all') params.append('format', selectedFormat);
+                if (selectedSubject !== 'all') params.append('subject', selectedSubject);
+                if (selectedPhase !== 'all') params.append('phase', selectedPhase);
+                if (dateFilter) params.append('date', dateFilter);
+                params.append('sort', sortBy);
+
+                const response = await fetch(`/api/events?${params.toString()}`);
                 const data = await response.json();
                 if (data.success) {
                     setAllEvents(data.events);
@@ -46,58 +64,10 @@ const EventsContent = () => {
             }
         };
         fetchEvents();
-    }, []);
+    }, [debouncedSearch, selectedCategory, selectedFormat, selectedSubject, selectedPhase, dateFilter, sortBy]);
 
-    const filteredEvents = useMemo(() => {
-        let filtered = allEvents.filter(e => e.status === 'approved');
-
-        if (searchQuery) {
-            const query = searchQuery.toLowerCase();
-            filtered = filtered.filter(e =>
-                e.title.toLowerCase().includes(query) ||
-                e.description.toLowerCase().includes(query) ||
-                (e.location && e.location.toLowerCase().includes(query)) ||
-                (e.organiser && e.organiser.toLowerCase().includes(query))
-            );
-        }
-
-        if (selectedCategory !== 'all') {
-            filtered = filtered.filter(e => e.category === selectedCategory);
-        }
-
-        if (selectedFormat !== 'all') {
-            filtered = filtered.filter(e => e.format === selectedFormat);
-        }
-
-        if (selectedSubject !== 'all') {
-            filtered = filtered.filter(e => e.subjectAreas && e.subjectAreas.includes(selectedSubject));
-        }
-
-        if (selectedPhase !== 'all') {
-            filtered = filtered.filter(e => e.phases && e.phases.includes(selectedPhase));
-        }
-
-        if (dateFilter) {
-            filtered = filtered.filter(e => e.date && e.date >= dateFilter);
-        }
-
-        // Sort
-        filtered.sort((a, b) => {
-            switch (sortBy) {
-                case 'date':
-                    return new Date(a.date).getTime() - new Date(b.date).getTime();
-                case 'newest':
-                default:
-                    // @ts-ignore
-                    return new Date(b.submissionDate || b.createdAt).getTime() - new Date(a.submissionDate || a.createdAt).getTime();
-            }
-        });
-
-        return filtered;
-    }, [allEvents, searchQuery, selectedCategory, selectedFormat, selectedSubject, selectedPhase, dateFilter, sortBy]);
-
-    const totalPages = Math.ceil(filteredEvents.length / ITEMS_PER_PAGE);
-    const paginatedEvents = filteredEvents.slice(
+    const totalPages = Math.ceil(allEvents.length / ITEMS_PER_PAGE);
+    const paginatedEvents = allEvents.slice(
         (currentPage - 1) * ITEMS_PER_PAGE,
         currentPage * ITEMS_PER_PAGE
     );
@@ -109,6 +79,7 @@ const EventsContent = () => {
         setSelectedPhase('all');
         setDateFilter('');
         setSearchQuery('');
+        setDebouncedSearch('');
         setCurrentPage(1);
     };
 
@@ -248,7 +219,7 @@ const EventsContent = () => {
 
                         {/* Results Count */}
                         <p className="text-muted-foreground mb-6">
-                            Showing {paginatedEvents.length} of {filteredEvents.length} events
+                            Showing {paginatedEvents.length} of {allEvents.length} events
                         </p>
 
                         {/* Events Grid */}
