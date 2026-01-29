@@ -322,6 +322,7 @@ const ListEventContent = ({ isAdminMode = false, onSuccess, onCancel }: ListEven
                             onChange={(e) => handleChange('title', e.target.value)}
                             placeholder="e.g., STEM Innovation Conference 2026"
                             className={errors.title ? 'border-destructive' : ''}
+                            maxLength={50}
                         />
                         <p className="text-sm text-muted-foreground mt-1">
                             {formData.title.length}/50 characters
@@ -338,6 +339,7 @@ const ListEventContent = ({ isAdminMode = false, onSuccess, onCancel }: ListEven
                             placeholder="Describe your event in detail..."
                             rows={5}
                             className={errors.description ? 'border-destructive' : ''}
+                            maxLength={200}
                         />
                         <p className="text-sm text-muted-foreground mt-1">
                             {formData.description.length}/200 characters
@@ -514,6 +516,7 @@ const ListEventContent = ({ isAdminMode = false, onSuccess, onCancel }: ListEven
                             onChange={(e) => handleChange('organiserName', e.target.value)}
                             placeholder="Your organisation"
                             className={errors.organiserName ? 'border-destructive' : ''}
+                            maxLength={50}
                         />
                         <p className="text-sm text-muted-foreground mt-1">
                             {formData.organiserName.length}/50 characters

@@ -196,6 +196,7 @@ const EventEditDialog = ({ event, isOpen, onClose, onSave }: EventEditDialogProp
                 value={formData.title || ''}
                 onChange={(e) => handleChange('title', e.target.value)}
                 className={errors.title ? 'border-destructive' : ''}
+                maxLength={50}
               />
               <p className="text-sm text-muted-foreground mt-1">
                 {formData.title?.length || 0}/50 characters
@@ -211,6 +212,7 @@ const EventEditDialog = ({ event, isOpen, onClose, onSave }: EventEditDialogProp
                 onChange={(e) => handleChange('description', e.target.value)}
                 rows={4}
                 className={errors.description ? 'border-destructive' : ''}
+                maxLength={200}
               />
               <p className="text-sm text-muted-foreground mt-1">
                 {formData.description?.length || 0}/200 characters
@@ -365,6 +367,7 @@ const EventEditDialog = ({ event, isOpen, onClose, onSave }: EventEditDialogProp
                 value={formData.organiser || ''}
                 onChange={(e) => handleChange('organiser', e.target.value)}
                 className={errors.organiser ? 'border-destructive' : ''}
+                maxLength={50}
               />
               <p className="text-sm text-muted-foreground mt-1">
                 {formData.organiser?.length || 0}/50 characters
