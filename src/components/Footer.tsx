@@ -12,34 +12,18 @@ const Footer = () => {
             </div>
 
             <nav className="flex items-center space-x-6 text-sm">
-              <Link href="/" className="text-muted-foreground hover:text-primary transition-colors">
-                Home
+              <Link href="/privacy-policy" className="text-muted-foreground hover:text-primary transition-colors">
+                Privacy Policy
               </Link>
-              <Link href="/events" className="text-muted-foreground hover:text-primary transition-colors">
-                Find Events
+              <span className="text-muted-foreground">•</span>
+              <Link href="/terms-of-use" className="text-muted-foreground hover:text-primary transition-colors">
+                Terms of Use
               </Link>
-              <Link href="/list-event" className="text-muted-foreground hover:text-primary transition-colors">
-                List Your Event
-              </Link>
-              <Link href="/contact" className="text-muted-foreground hover:text-primary transition-colors">
-                Contact
+              <span className="text-muted-foreground">•</span>
+              <Link href="/terms-and-conditions" className="text-muted-foreground hover:text-primary transition-colors">
+                Terms & Conditions
               </Link>
             </nav>
-          </div>
-
-          {/* Middle Section - Legal Links */}
-          <div className="flex flex-wrap justify-center items-center gap-4 text-sm border-t border-border pt-4">
-            <Link href="/privacy-policy" className="text-muted-foreground hover:text-primary transition-colors">
-              Privacy Policy
-            </Link>
-            <span className="text-muted-foreground">•</span>
-            <Link href="/terms-of-use" className="text-muted-foreground hover:text-primary transition-colors">
-              Terms of Use
-            </Link>
-            <span className="text-muted-foreground">•</span>
-            <Link href="/terms-and-conditions" className="text-muted-foreground hover:text-primary transition-colors">
-              Terms & Conditions
-            </Link>
           </div>
 
           {/* Bottom Section - Company Information */}

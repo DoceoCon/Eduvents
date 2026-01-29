@@ -133,12 +133,6 @@ export default function LoginPage() {
                             )}
                         </div>
 
-                        {/* Forgot Password */}
-                        <div className="text-right">
-                            <Link href="#" className="text-sm text-gray-500 hover:text-primary transition-colors">
-                                Forgot password?
-                            </Link>
-                        </div>
 
                         {/* Sign In Button */}
                         <button
@@ -149,14 +143,6 @@ export default function LoginPage() {
                             {isSubmitting ? 'Signing In...' : 'Sign In'}
                         </button>
 
-                        {/* Sign Up Link */}
-                        <p className="text-center text-sm text-gray-600 mt-4">
-                            Don't have an account?{' '}
-                            <Link href="#" className="text-primary hover:text-primary/90 font-medium transition-colors">
-                                Sign up
-                            </Link>
-                            {' '}for free.
-                        </p>
                     </form>
                 </div>
             </div>
