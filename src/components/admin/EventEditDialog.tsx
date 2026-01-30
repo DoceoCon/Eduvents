@@ -26,6 +26,7 @@ const EventEditDialog = ({ event, isOpen, onClose, onSave }: EventEditDialogProp
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [isDragging, setIsDragging] = useState(false);
 
   useEffect(() => {
     if (event) {
@@ -38,7 +39,17 @@ const EventEditDialog = ({ event, isOpen, onClose, onSave }: EventEditDialogProp
 
   const handleChange = (field: string, value: string | boolean | number) => {
     setFormData(prev => ({ ...prev, [field]: value }));
-    if (errors[field]) setErrors(prev => ({ ...prev, [field]: '' }));
+
+    // Live validation for character limits
+    if (field === 'title' && typeof value === 'string' && value.length >= 50) {
+      setErrors(prev => ({ ...prev, title: 'Title must be 50 characters or less' }));
+    } else if (field === 'description' && typeof value === 'string' && value.length >= 200) {
+      setErrors(prev => ({ ...prev, description: 'Description must be 200 characters or less' }));
+    } else if (field === 'organiser' && typeof value === 'string' && value.length >= 50) {
+      setErrors(prev => ({ ...prev, organiser: 'Name must be 50 characters or less' }));
+    } else if (errors[field]) {
+      setErrors(prev => ({ ...prev, [field]: '' }));
+    }
   };
 
   const handleSubjectChange = (subjects: SubjectArea[]) => {
@@ -80,24 +91,45 @@ const EventEditDialog = ({ event, isOpen, onClose, onSave }: EventEditDialogProp
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
-      const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg'];
-      if (!allowedTypes.includes(file.type)) {
-        setErrors(prev => ({ ...prev, image: 'Incorrect File Format. File must be PNG or JPG.' }));
-        return;
-      }
-      if (file.size > 25 * 1024 * 1024) {
-        setErrors(prev => ({ ...prev, image: 'File size too big. File size should be less than 25mb' }));
-        return;
-      }
+    if (file) handleImageFile(file);
+  };
 
-      setSelectedFile(file);
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImagePreview(reader.result as string);
-        setErrors(prev => ({ ...prev, image: '' }));
-      };
-      reader.readAsDataURL(file);
+  const handleImageFile = (file: File) => {
+    const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg'];
+    if (!allowedTypes.includes(file.type)) {
+      setErrors(prev => ({ ...prev, image: 'Incorrect File Format. File must be PNG or JPG.' }));
+      return;
+    }
+    if (file.size > 25 * 1024 * 1024) {
+      setErrors(prev => ({ ...prev, image: 'File size too big. File size should be less than 25mb' }));
+      return;
+    }
+
+    setSelectedFile(file);
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setImagePreview(reader.result as string);
+      setErrors(prev => ({ ...prev, image: '' }));
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+    const file = e.dataTransfer.files?.[0];
+    if (file) {
+      handleImageFile(file);
     }
   };
 
@@ -198,7 +230,7 @@ const EventEditDialog = ({ event, isOpen, onClose, onSave }: EventEditDialogProp
                 className={errors.title ? 'border-destructive' : ''}
                 maxLength={50}
               />
-              <p className="text-sm text-muted-foreground mt-1">
+              <p className={`text-sm mt-1 ${(formData.title?.length || 0) >= 50 ? 'text-destructive font-medium' : 'text-muted-foreground'}`}>
                 {formData.title?.length || 0}/50 characters
               </p>
               {errors.title && <p className="text-sm text-destructive mt-1">{errors.title}</p>}
@@ -214,7 +246,7 @@ const EventEditDialog = ({ event, isOpen, onClose, onSave }: EventEditDialogProp
                 className={errors.description ? 'border-destructive' : ''}
                 maxLength={200}
               />
-              <p className="text-sm text-muted-foreground mt-1">
+              <p className={`text-sm mt-1 ${(formData.description?.length || 0) >= 200 ? 'text-destructive font-medium' : 'text-muted-foreground'}`}>
                 {formData.description?.length || 0}/200 characters
               </p>
               {errors.description && <p className="text-sm text-destructive mt-1">{errors.description}</p>}
@@ -277,7 +309,9 @@ const EventEditDialog = ({ event, isOpen, onClose, onSave }: EventEditDialogProp
                 id="date"
                 type="date"
                 value={formData.date || ''}
+                min={new Date().toISOString().split('T')[0]}
                 onChange={(e) => handleChange('date', e.target.value)}
+                onKeyDown={(e) => e.preventDefault()}
                 className={errors.date ? 'border-destructive' : ''}
               />
               {errors.date && <p className="text-sm text-destructive mt-1">{errors.date}</p>}
@@ -369,7 +403,7 @@ const EventEditDialog = ({ event, isOpen, onClose, onSave }: EventEditDialogProp
                 className={errors.organiser ? 'border-destructive' : ''}
                 maxLength={50}
               />
-              <p className="text-sm text-muted-foreground mt-1">
+              <p className={`text-sm mt-1 ${(formData.organiser?.length || 0) >= 50 ? 'text-destructive font-medium' : 'text-muted-foreground'}`}>
                 {formData.organiser?.length || 0}/50 characters
               </p>
               {errors.organiser && <p className="text-sm text-destructive mt-1">{errors.organiser}</p>}
@@ -404,7 +438,12 @@ const EventEditDialog = ({ event, isOpen, onClose, onSave }: EventEditDialogProp
           {/* Event Image */}
           <div>
             <Label>Event Image</Label>
-            <div className="mt-2 border-2 border-dashed border-border rounded-lg p-6 text-center">
+            <div
+              className={`mt-2 border-2 border-dashed ${errors.image ? 'border-destructive' : isDragging ? 'border-primary bg-primary/5' : 'border-border'} rounded-lg p-6 text-center hover:border-primary transition-all duration-200`}
+              onDragOver={handleDragOver}
+              onDragLeave={handleDragLeave}
+              onDrop={handleDrop}
+            >
               {imagePreview ? (
                 <div className="relative">
                   <img src={imagePreview} alt="Preview" className="max-h-40 mx-auto rounded-lg" />

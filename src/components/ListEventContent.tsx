@@ -27,6 +27,7 @@ const ListEventContent = ({ isAdminMode = false, onSuccess, onCancel }: ListEven
     const [showSuccess, setShowSuccess] = useState(false);
     const [imagePreview, setImagePreview] = useState<string | null>(null);
     const [verifyingPayment, setVerifyingPayment] = useState(false);
+    const [isDragging, setIsDragging] = useState(false);
 
     const [formData, setFormData] = useState({
         title: '',
@@ -113,7 +114,15 @@ const ListEventContent = ({ isAdminMode = false, onSuccess, onCancel }: ListEven
 
     const handleChange = (field: string, value: string) => {
         setFormData(prev => ({ ...prev, [field]: value }));
-        if (errors[field]) {
+
+        // Live validation for character limits
+        if (field === 'title' && value.length >= 50) {
+            setErrors(prev => ({ ...prev, title: 'Title must be 50 characters or less' }));
+        } else if (field === 'description' && value.length >= 200) {
+            setErrors(prev => ({ ...prev, description: 'Description must be 200 characters or less' }));
+        } else if (field === 'organiserName' && value.length >= 50) {
+            setErrors(prev => ({ ...prev, organiserName: 'Name must be 50 characters or less' }));
+        } else if (errors[field]) {
             setErrors(prev => ({ ...prev, [field]: '' }));
         }
     };
@@ -128,14 +137,45 @@ const ListEventContent = ({ isAdminMode = false, onSuccess, onCancel }: ListEven
 
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
+        if (file) handleImageFile(file);
+    };
+
+    const handleImageFile = (file: File) => {
+        const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg'];
+        if (!allowedTypes.includes(file.type)) {
+            setErrors(prev => ({ ...prev, image: 'Incorrect File Format. File must be PNG or JPG.' }));
+            return;
+        }
+        if (file.size > 25 * 1024 * 1024) {
+            setErrors(prev => ({ ...prev, image: 'File size too big. File size should be less than 25mb' }));
+            return;
+        }
+
+        setSelectedFile(file);
+        const reader = new FileReader();
+        reader.onloadend = () => {
+            setImagePreview(reader.result as string);
+            setErrors(prev => ({ ...prev, image: '' }));
+        };
+        reader.readAsDataURL(file);
+    };
+
+    const handleDragOver = (e: React.DragEvent) => {
+        e.preventDefault();
+        setIsDragging(true);
+    };
+
+    const handleDragLeave = (e: React.DragEvent) => {
+        e.preventDefault();
+        setIsDragging(false);
+    };
+
+    const handleDrop = (e: React.DragEvent) => {
+        e.preventDefault();
+        setIsDragging(false);
+        const file = e.dataTransfer.files?.[0];
         if (file) {
-            setSelectedFile(file);
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                setImagePreview(reader.result as string);
-                setErrors(prev => ({ ...prev, image: '' }));
-            };
-            reader.readAsDataURL(file);
+            handleImageFile(file);
         }
     };
 
@@ -324,7 +364,7 @@ const ListEventContent = ({ isAdminMode = false, onSuccess, onCancel }: ListEven
                             className={errors.title ? 'border-destructive' : ''}
                             maxLength={50}
                         />
-                        <p className="text-sm text-muted-foreground mt-1">
+                        <p className={`text-sm mt-1 ${formData.title.length >= 50 ? 'text-destructive font-medium' : 'text-muted-foreground'}`}>
                             {formData.title.length}/50 characters
                         </p>
                         {errors.title && <p className="text-sm text-destructive mt-1">{errors.title}</p>}
@@ -341,7 +381,7 @@ const ListEventContent = ({ isAdminMode = false, onSuccess, onCancel }: ListEven
                             className={errors.description ? 'border-destructive' : ''}
                             maxLength={200}
                         />
-                        <p className="text-sm text-muted-foreground mt-1">
+                        <p className={`text-sm mt-1 ${formData.description.length >= 200 ? 'text-destructive font-medium' : 'text-muted-foreground'}`}>
                             {formData.description.length}/200 characters
                         </p>
                         {errors.description && <p className="text-sm text-destructive mt-1">{errors.description}</p>}
@@ -411,7 +451,9 @@ const ListEventContent = ({ isAdminMode = false, onSuccess, onCancel }: ListEven
                             id="date"
                             type="date"
                             value={formData.date}
+                            min={new Date().toISOString().split('T')[0]}
                             onChange={(e) => handleChange('date', e.target.value)}
+                            onKeyDown={(e) => e.preventDefault()}
                             className={errors.date ? 'border-destructive' : ''}
                         />
                         {errors.date && <p className="text-sm text-destructive mt-1">{errors.date}</p>}
@@ -518,7 +560,7 @@ const ListEventContent = ({ isAdminMode = false, onSuccess, onCancel }: ListEven
                             className={errors.organiserName ? 'border-destructive' : ''}
                             maxLength={50}
                         />
-                        <p className="text-sm text-muted-foreground mt-1">
+                        <p className={`text-sm mt-1 ${formData.organiserName.length >= 50 ? 'text-destructive font-medium' : 'text-muted-foreground'}`}>
                             {formData.organiserName.length}/50 characters
                         </p>
                         {errors.organiserName && <p className="text-sm text-destructive mt-1">{errors.organiserName}</p>}
@@ -543,7 +585,12 @@ const ListEventContent = ({ isAdminMode = false, onSuccess, onCancel }: ListEven
             <div className="bg-card rounded-lg p-6 shadow-card">
                 <h2 className="text-xl font-semibold mb-6">Event Image</h2>
 
-                <div className={`border-2 border-dashed ${errors.image ? 'border-destructive' : 'border-border'} rounded-lg p-8 text-center hover:border-primary transition-colors`}>
+                <div
+                    className={`border-2 border-dashed ${errors.image ? 'border-destructive' : isDragging ? 'border-primary bg-primary/5' : 'border-border'} rounded-lg p-8 text-center hover:border-primary transition-all duration-200`}
+                    onDragOver={handleDragOver}
+                    onDragLeave={handleDragLeave}
+                    onDrop={handleDrop}
+                >
                     {imagePreview ? (
                         <div className="relative">
                             <img src={imagePreview} alt="Preview" className="max-h-48 mx-auto rounded-lg" />
