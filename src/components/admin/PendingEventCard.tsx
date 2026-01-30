@@ -97,14 +97,34 @@ const PendingEventCard = ({ event, onApprove, onReject, onViewDetails, onFeature
 
           {/* Actions */}
           <div className="flex flex-wrap gap-2">
-            <Button
-              size="sm"
-              onClick={() => onApprove(event.id)}
-              className="bg-success hover:bg-success/90"
-            >
-              <Check className="h-4 w-4 mr-1" />
-              Approve
-            </Button>
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button
+                  size="sm"
+                  className="bg-success hover:bg-success/90"
+                >
+                  <Check className="h-4 w-4 mr-1" />
+                  Approve
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Approve Event</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    Are you sure you want to approve "{event.title}"? This will make the event live and visible to all users.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogAction
+                    onClick={() => onApprove(event.id)}
+                    className="bg-success text-white hover:bg-success/90"
+                  >
+                    Approve Event
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
 
             <AlertDialog>
               <AlertDialogTrigger asChild>

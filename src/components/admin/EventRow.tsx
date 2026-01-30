@@ -4,6 +4,18 @@ import { Switch } from '@/components/ui/switch';
 import { Event } from '@/data/events';
 import { format } from 'date-fns';
 
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger
+} from "@/components/ui/alert-dialog";
+
 interface EventRowProps {
   event: Event;
   onStatusChange?: (eventId: string, newStatus: 'approved' | 'rejected') => void;
@@ -99,22 +111,63 @@ const EventRow = ({ event, onStatusChange, onFeaturedToggle, onEdit, showActions
       {/* Action Buttons - For pending events */}
       {event.status === 'pending' && showActions && onStatusChange && (
         <div className="flex gap-2">
-          <Button
-            size="sm"
-            onClick={() => onStatusChange(event.id, 'approved')}
-            className="bg-success hover:bg-success/90"
-          >
-            <Check className="h-4 w-4 mr-1" />
-            Approve
-          </Button>
-          <Button
-            size="sm"
-            variant="destructive"
-            onClick={() => onStatusChange(event.id, 'rejected')}
-          >
-            <X className="h-4 w-4 mr-1" />
-            Reject
-          </Button>
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button
+                size="sm"
+                className="bg-success hover:bg-success/90"
+              >
+                <Check className="h-4 w-4 mr-1" />
+                Approve
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Approve Event</AlertDialogTitle>
+                <AlertDialogDescription>
+                  Are you sure you want to approve "{event.title}"? This will make the event live and visible to all users.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogAction
+                  onClick={() => onStatusChange(event.id, 'approved')}
+                  className="bg-success text-white hover:bg-success/90"
+                >
+                  Approve Event
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button
+                size="sm"
+                variant="destructive"
+              >
+                <X className="h-4 w-4 mr-1" />
+                Reject
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Reject Event</AlertDialogTitle>
+                <AlertDialogDescription>
+                  Are you sure you want to reject "{event.title}"? This action cannot be undone and will notify the organiser.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogAction
+                  onClick={() => onStatusChange(event.id, 'rejected')}
+                  className="bg-destructive text-white hover:bg-destructive/90"
+                >
+                  Reject Event
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </div>
       )}
     </div>
