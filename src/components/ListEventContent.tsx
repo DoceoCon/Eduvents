@@ -350,7 +350,7 @@ const ListEventContent = ({ isAdminMode = false, onSuccess, onCancel }: ListEven
     const formContent = (
         <form onSubmit={handleSubmit} className="space-y-8">
             {/* Event Details */}
-            <div className="bg-card rounded-lg p-6 shadow-card">
+            <div className="bg-card rounded-lg p-3 shadow-card">
                 <h2 className="text-xl font-semibold mb-6">Event Details</h2>
 
                 <div className="space-y-4">
@@ -441,7 +441,7 @@ const ListEventContent = ({ isAdminMode = false, onSuccess, onCancel }: ListEven
             </div>
 
             {/* Date & Time */}
-            <div className="bg-card rounded-lg p-6 shadow-card">
+            <div className="bg-card rounded-lg p-3 shadow-card">
                 <h2 className="text-xl font-semibold mb-6">Date & Time</h2>
 
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -486,7 +486,7 @@ const ListEventContent = ({ isAdminMode = false, onSuccess, onCancel }: ListEven
             </div>
 
             {/* Location */}
-            <div className="bg-card rounded-lg p-6 shadow-card">
+            <div className="bg-card rounded-lg p-3 shadow-card">
                 <h2 className="text-xl font-semibold mb-6">Location</h2>
 
                 <div>
@@ -503,7 +503,7 @@ const ListEventContent = ({ isAdminMode = false, onSuccess, onCancel }: ListEven
             </div>
 
             {/* Cost to Attend */}
-            <div className="bg-card rounded-lg p-6 shadow-card">
+            <div className="bg-card rounded-lg p-3 shadow-card">
                 <h2 className="text-xl font-semibold mb-6">Cost to Attend</h2>
 
                 <div className="space-y-4">
@@ -546,7 +546,7 @@ const ListEventContent = ({ isAdminMode = false, onSuccess, onCancel }: ListEven
             </div>
 
             {/* Organiser Information */}
-            <div className="bg-card rounded-lg p-6 shadow-card">
+            <div className="bg-card rounded-lg p-3 shadow-card">
                 <h2 className="text-xl font-semibold mb-6">Organiser Information</h2>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -582,7 +582,7 @@ const ListEventContent = ({ isAdminMode = false, onSuccess, onCancel }: ListEven
             </div>
 
             {/* Event Image */}
-            <div className="bg-card rounded-lg p-6 shadow-card">
+            <div className="bg-card rounded-lg p-3 shadow-card">
                 <h2 className="text-xl font-semibold mb-6">Event Image</h2>
 
                 <div
@@ -625,7 +625,7 @@ const ListEventContent = ({ isAdminMode = false, onSuccess, onCancel }: ListEven
             </div>
 
             {/* Booking Link */}
-            <div className="bg-card rounded-lg p-6 shadow-card">
+            <div className="bg-card rounded-lg p-3 shadow-card">
                 <h2 className="text-xl font-semibold mb-6">Booking</h2>
 
                 <div>
@@ -699,7 +699,7 @@ const ListEventContent = ({ isAdminMode = false, onSuccess, onCancel }: ListEven
 
                     {/* Sidebar */}
                     <div className="lg:col-span-1">
-                        <div className="bg-card rounded-lg p-6 shadow-card sticky top-24">
+                        <div className="bg-card rounded-lg p-3 shadow-card sticky top-24">
                             <div className="bg-accent rounded-lg p-4 mb-6">
                                 <div className="flex items-start">
                                     <Info className="h-5 w-5 text-primary mt-0.5 mr-3 flex-shrink-0" />

@@ -51,7 +51,7 @@
     --category-exhibition: 25 95% 53%;
 
     /* Gradients */
-    --gradient-hero: linear-gradient(135deg, hsl(211 60% 21%) 0%, hsl(139 68% 41%) 100%);
+    --gradient-hero: linear-gradient(135deg, hsl(211 80% 25%) 0%, hsl(211 80% 25%) 50%, hsl(142 71% 45%) 100%);
     --gradient-card-hover: linear-gradient(180deg, transparent 0%, hsl(211 60% 21% / 0.03) 100%);
 
     /* Shadows */

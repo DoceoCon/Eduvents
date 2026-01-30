@@ -36,7 +36,7 @@ const Header = () => {
       <div className="container-tight">
         <div className="flex h-16 items-center justify-between">
           <Link href="/" className="flex items-center">
-            <img src="/logo.png" alt="EDUVENTS" className="h-14 w-auto object-contain" />
+            <img src="/logo.png" alt="EDUVENTS" className="h-25 w-auto object-contain" />
           </Link>
 
           {/* Desktop Navigation */}

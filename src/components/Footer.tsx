@@ -8,7 +8,7 @@ const Footer = () => {
           {/* Top Section - Logo and Navigation */}
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <div className="flex items-center">
-              <img src="/logo.png" alt="EDUVENTS" className="h-12 w-auto object-contain" />
+              <img src="/logo.png" alt="EDUVENTS" className="h-21 w-auto object-contain" />
             </div>
 
             <nav className="flex items-center space-x-6 text-sm">

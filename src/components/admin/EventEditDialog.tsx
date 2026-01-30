@@ -439,7 +439,7 @@ const EventEditDialog = ({ event, isOpen, onClose, onSave }: EventEditDialogProp
           <div>
             <Label>Event Image</Label>
             <div
-              className={`mt-2 border-2 border-dashed ${errors.image ? 'border-destructive' : isDragging ? 'border-primary bg-primary/5' : 'border-border'} rounded-lg p-6 text-center hover:border-primary transition-all duration-200`}
+              className={`mt-2 border-2 border-dashed ${errors.image ? 'border-destructive' : isDragging ? 'border-primary bg-primary/5' : 'border-border'} rounded-lg p-3 text-center hover:border-primary transition-all duration-200`}
               onDragOver={handleDragOver}
               onDragLeave={handleDragLeave}
               onDrop={handleDrop}
