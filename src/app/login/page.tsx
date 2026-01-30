@@ -65,7 +65,7 @@ export default function LoginPage() {
                 <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-8">
                     {/* Logo inside the box */}
                     <div className="flex justify-center mb-6">
-                        <img src="/logo.png" alt="EDUVENTS" className="h-16 w-auto object-contain" />
+                        <img src="/logo.png" alt="EDUVENTS" className="h-21 w-auto object-contain" />
                     </div>
 
                     <h1 className="text-2xl font-semibold text-center text-gray-800 mb-2">
