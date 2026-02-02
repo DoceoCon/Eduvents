@@ -5,7 +5,7 @@ import { uploadToS3 } from '@/lib/s3';
 import path from 'path';
 import fs from 'fs';
 import { v4 as uuidv4 } from 'uuid';
-import { sendEventConfirmationEmail } from '@/lib/email';
+import { sendEventConfirmationEmail, sendAdminNewEventNotification } from '@/lib/email';
 import Stripe from 'stripe';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
@@ -109,6 +109,9 @@ export async function POST(req: NextRequest) {
         });
 
         await newEvent.save();
+
+        // Notify Admin
+        await sendAdminNewEventNotification(newEvent);
 
         if (isAdmin) {
             // Admin created: Send email immediately
@@ -244,7 +247,7 @@ export async function GET(req: NextRequest) {
             query.phases = { $in: [phase] };
         }
         if (date) {
-            query.date = { $gte: date };
+            query.date = date;
         }
 
         // Sort configuration

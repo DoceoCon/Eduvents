@@ -148,7 +148,7 @@ const EventsContent = () => {
             </div>
 
             <div>
-                <Label className="text-sm font-medium mb-2 block">From Date</Label>
+                <Label className="text-sm font-medium mb-2 block">Event Date</Label>
                 <Input
                     type="date"
                     value={dateFilter}

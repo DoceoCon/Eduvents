@@ -6,6 +6,8 @@ import path from 'path';
 import fs from 'fs';
 import { v4 as uuidv4 } from 'uuid';
 
+import { sendStatusUpdateEmail } from '@/lib/email';
+
 export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
     try {
         await dbConnect();
@@ -31,6 +33,11 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
 
         const eventDoc = await Event.findByIdAndUpdate(id, updateData, { new: true });
         if (!eventDoc) return NextResponse.json({ success: false, message: 'Event not found' }, { status: 404 });
+
+        // Trigger status update email
+        if (status === 'approved' || status === 'rejected') {
+            await sendStatusUpdateEmail(eventDoc.organiserEmail, eventDoc.organiser, eventDoc.title, status);
+        }
 
         return NextResponse.json({ success: true, event: eventDoc.toJSON() });
     } catch (error: any) {
