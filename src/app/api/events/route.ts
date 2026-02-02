@@ -195,7 +195,13 @@ export async function GET(req: NextRequest) {
             if (searchLower === 'free') {
                 query.isFree = true;
             } else {
-                // Search in multiple fields
+                // Day of week detection (support partial matches like "wed")
+                const days = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+                const matchedDayIndex = days.findIndex(d => d.startsWith(searchLower));
+
+                const searchAsPrice = !isNaN(Number(search)) ? Number(search) : null;
+                const searchAsDay = matchedDayIndex !== -1 ? matchedDayIndex + 1 : null;
+
                 query.$or = [
                     { title: { $regex: search, $options: 'i' } },
                     { description: { $regex: search, $options: 'i' } },
@@ -206,6 +212,21 @@ export async function GET(req: NextRequest) {
                     { subjectAreas: { $in: [new RegExp(search, 'i')] } },
                     { phases: { $in: [new RegExp(search, 'i')] } }
                 ];
+
+                if (searchAsPrice !== null) {
+                    query.$or.push({ price: searchAsPrice });
+                }
+
+                if (searchAsDay) {
+                    query.$or.push({
+                        $expr: {
+                            $eq: [
+                                { $dayOfWeek: { $dateFromString: { dateString: "$date" } } },
+                                searchAsDay
+                            ]
+                        }
+                    });
+                }
             }
         }
 
