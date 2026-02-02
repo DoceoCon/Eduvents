@@ -26,13 +26,13 @@ const EventCard = ({ event }: EventCardProps) => {
 
       <div className="p-5">
         <div className="flex items-center gap-2 mb-2">
-          <h3 className="font-semibold text-lg text-card-foreground line-clamp-2 group-hover:text-primary transition-colors">
+          <h3 className="font-semibold text-lg text-card-foreground line-clamp-2 group-hover:text-primary transition-colors break-words">
             {event.title}
           </h3>
         </div>
 
 
-        <p className="text-sm text-muted-foreground mb-4 line-clamp-2">
+        <p className="text-sm text-muted-foreground mb-4 line-clamp-2 break-words">
           {event.description}
         </p>
 

@@ -41,7 +41,7 @@ const PendingEventCard = ({ event, onApprove, onReject, onViewDetails, onFeature
         </div>
 
         {/* Content */}
-        <div className="flex-1 p-4 lg:p-6">
+        <div className="flex-1 p-4 lg:p-6 min-w-0">
           <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
             <div className="flex flex-wrap gap-2">
               <span className={`px-2 py-0.5 text-xs font-semibold text-primary-foreground rounded-full ${getCategoryColor(event.category)}`}>
@@ -59,17 +59,17 @@ const PendingEventCard = ({ event, onApprove, onReject, onViewDetails, onFeature
 
           </div>
 
-          <h3 className="font-semibold text-lg text-foreground mb-1">{event.title}</h3>
+          <h3 className="font-semibold text-lg text-foreground mb-1 break-words">{event.title}</h3>
 
-          <div className="text-sm text-muted-foreground mb-2">
+          <div className="text-sm text-muted-foreground mb-2 break-words">
             <span className="font-medium text-foreground">{event.organiser}</span>
             <span className="mx-2">•</span>
-            <a href={`mailto:${event.organiserEmail}`} className="text-primary hover:underline">
+            <a href={`mailto:${event.organiserEmail}`} className="text-primary hover:underline break-all">
               {event.organiserEmail}
             </a>
           </div>
 
-          <p className="text-sm text-muted-foreground line-clamp-2 mb-3">
+          <p className="text-sm text-muted-foreground line-clamp-2 mb-3 break-words">
             {event.description}
           </p>
 
@@ -78,9 +78,9 @@ const PendingEventCard = ({ event, onApprove, onReject, onViewDetails, onFeature
               <Calendar className="h-4 w-4 mr-1 text-primary" />
               {formattedDate}
             </div>
-            <div className="flex items-center">
-              <MapPin className="h-4 w-4 mr-1 text-primary" />
-              {event.location}
+            <div className="flex items-center min-w-0">
+              <MapPin className="h-4 w-4 mr-1 text-primary flex-shrink-0" />
+              <span className="truncate">{event.location}</span>
             </div>
             <div className="flex items-center">
               <PoundSterling className="h-4 w-4 mr-1 text-primary" />
