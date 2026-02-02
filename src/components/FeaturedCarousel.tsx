@@ -93,7 +93,7 @@ const FeaturedCarousel = ({ events }: FeaturedCarouselProps) => {
               e.preventDefault();
               prevSlide();
             }}
-            className="absolute left-4 top-1/2 -translate-y-1/2 p-2 rounded-full bg-white/20 text-white hover:bg-white/40 backdrop-blur-sm transition-all z-20 opactiy-0 group-hover:opacity-100"
+            className="absolute left-4 top-1/2 -translate-y-1/2 p-2 rounded-full bg-white/20 text-white hover:bg-white/40 backdrop-blur-sm transition-all z-20 opacity-0 group-hover:opacity-100"
             aria-label="Previous slide"
           >
             <ChevronLeft className="h-6 w-6" />
