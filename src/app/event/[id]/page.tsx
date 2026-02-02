@@ -130,8 +130,37 @@ const EventDetail = () => {
                 url = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(currentShareUrl)}`;
                 break;
             case 'copy':
-                navigator.clipboard.writeText(currentShareUrl);
-                toast.success('Link copied to clipboard!');
+                if (navigator.clipboard && window.isSecureContext) {
+                    navigator.clipboard.writeText(currentShareUrl);
+                    toast.success('Link copied to clipboard!');
+                } else {
+                    // Fallback for non-secure contexts (HTTP)
+                    try {
+                        const textArea = document.createElement("textarea");
+                        textArea.value = currentShareUrl;
+
+                        // Ensure textarea is not visible
+                        textArea.style.position = "fixed";
+                        textArea.style.left = "-9999px";
+                        textArea.style.top = "0";
+                        document.body.appendChild(textArea);
+
+                        textArea.focus();
+                        textArea.select();
+
+                        const success = document.execCommand('copy');
+                        document.body.removeChild(textArea);
+
+                        if (success) {
+                            toast.success('Link copied to clipboard!');
+                        } else {
+                            toast.error('Failed to copy link');
+                        }
+                    } catch (err) {
+                        console.error('Fallback copy failed:', err);
+                        toast.error('Failed to copy link');
+                    }
+                }
                 return;
         }
         window.open(url, '_blank', 'width=600,height=400');

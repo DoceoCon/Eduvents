@@ -1,13 +1,20 @@
 import nodemailer from 'nodemailer';
 
 const transporter = nodemailer.createTransport({
-    host: process.env.SMTP_HOST || 'smtp.gmail.com',
-    port: parseInt(process.env.SMTP_PORT || '465', 10),
-    secure: parseInt(process.env.SMTP_PORT || '465', 10) === 465,
+    service: 'gmail',
     auth: {
         user: process.env.SMTP_USER,
         pass: process.env.SMTP_PASS,
     },
+});
+
+// Verify connection configuration
+transporter.verify(function (error, success) {
+    if (error) {
+        console.error('SMTP Connection Error:', error);
+    } else {
+        console.log('SMTP Server is ready to take our messages');
+    }
 });
 
 export async function sendEventConfirmationEmail(organiserEmail: string, organiserName: string, eventTitle: string) {
@@ -45,8 +52,9 @@ EDUVENTS Team
             `
         };
 
-        await transporter.sendMail(mailOptions);
-        console.log(`Payment confirmation email sent to ${organiserEmail}`);
+        console.log(`Attempting to send payment confirmation email to ${organiserEmail}...`);
+        const info = await transporter.sendMail(mailOptions);
+        console.log(`Payment confirmation email sent successfully: ${info.messageId}`);
         return true;
     } catch (error) {
         console.error('Error sending confirmation email:', error);
@@ -75,8 +83,9 @@ export async function sendAdminNewEventNotification(eventData: any) {
             `
         };
 
-        await transporter.sendMail(mailOptions);
-        console.log(`Admin notification sent for event: ${eventData.title}`);
+        console.log(`Attempting to send admin notification for event: ${eventData.title}...`);
+        const info = await transporter.sendMail(mailOptions);
+        console.log(`Admin notification sent successfully: ${info.messageId}`);
         return true;
     } catch (error) {
         console.error('Error sending admin notification:', error);
@@ -108,8 +117,9 @@ export async function sendStatusUpdateEmail(organiserEmail: string, organiserNam
             `
         };
 
-        await transporter.sendMail(mailOptions);
-        console.log(`Status update email (${status}) sent to ${organiserEmail}`);
+        console.log(`Attempting to send status update email (${status}) to ${organiserEmail}...`);
+        const info = await transporter.sendMail(mailOptions);
+        console.log(`Status update email sent successfully: ${info.messageId}`);
         return true;
     } catch (error) {
         console.error('Error sending status update email:', error);
