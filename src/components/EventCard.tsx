@@ -8,8 +8,19 @@ interface EventCardProps {
   event: Event;
 }
 
+// Convert 24-hour time to 12-hour format
+const convertTo12Hour = (time24: string): string => {
+  const [hours, minutes] = time24.split(':');
+  const hour = parseInt(hours, 10);
+  const period = hour >= 12 ? 'PM' : 'AM';
+  const hour12 = hour % 12 || 12;
+  return `${hour12}:${minutes} ${period}`;
+};
+
 const EventCard = ({ event }: EventCardProps) => {
   const formattedDate = format(new Date(event.date), 'EEEE, MMMM d, yyyy');
+  const formattedStartTime = convertTo12Hour(event.startTime);
+  const formattedEndTime = convertTo12Hour(event.endTime);
 
   return (
     <div className="group bg-card rounded-lg overflow-hidden shadow-card hover:shadow-card-hover transition-all duration-300 hover:-translate-y-1">
@@ -43,7 +54,7 @@ const EventCard = ({ event }: EventCardProps) => {
           </div>
           <div className="flex items-center text-sm text-muted-foreground">
             <Clock className="h-4 w-4 mr-2 text-primary" />
-            <span>{event.startTime} - {event.endTime}</span>
+            <span>{formattedStartTime} - {formattedEndTime}</span>
           </div>
           <div className="flex items-center text-sm text-muted-foreground">
             <MapPin className="h-4 w-4 mr-2 text-primary" />

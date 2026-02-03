@@ -24,6 +24,15 @@ import { useEffect, useState } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import EventEditDialog from '@/components/admin/EventEditDialog';
 
+// Convert 24-hour time to 12-hour format
+const convertTo12Hour = (time24: string): string => {
+    const [hours, minutes] = time24.split(':');
+    const hour = parseInt(hours, 10);
+    const period = hour >= 12 ? 'PM' : 'AM';
+    const hour12 = hour % 12 || 12;
+    return `${hour12}:${minutes} ${period}`;
+};
+
 const EventDetail = () => {
     const params = useParams();
     const { isAuthenticated } = useAuth();
@@ -136,6 +145,8 @@ const EventDetail = () => {
     }
 
     const formattedDate = event.date ? format(new Date(event.date), 'EEEE, MMMM d, yyyy') : '';
+    const formattedStartTime = event.startTime ? convertTo12Hour(event.startTime) : '';
+    const formattedEndTime = event.endTime ? convertTo12Hour(event.endTime) : '';
     const shareText = `Check out this event: ${event.title}`;
 
     const handleShare = (platform: string) => {
@@ -259,7 +270,7 @@ const EventDetail = () => {
                                 <div className="flex items-center text-foreground">
                                     <Clock className="h-5 w-5 mr-3 text-primary" />
                                     <div>
-                                        <p className="font-medium">{event.startTime} - {event.endTime}</p>
+                                        <p className="font-medium">{formattedStartTime} - {formattedEndTime}</p>
                                         <p className="text-sm text-muted-foreground">Time</p>
                                     </div>
                                 </div>
