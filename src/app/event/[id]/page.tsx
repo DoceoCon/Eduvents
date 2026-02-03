@@ -343,10 +343,6 @@ const EventDetail = () => {
                                             />
                                         </div>
                                     )}
-
-                                    <div className="text-xs text-center text-muted-foreground">
-                                        Current Status: <span className="capitalize font-bold">{event.status}</span>
-                                    </div>
                                 </div>
                             ) : (
                                 <a href={event.bookingUrl} target="_blank" rel="noopener noreferrer">
