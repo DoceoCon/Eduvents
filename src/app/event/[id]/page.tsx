@@ -7,6 +7,16 @@ import Layout from '@/components/Layout';
 import CategoryBadge from '@/components/CategoryBadge';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Event } from '@/data/events';
 import { format } from 'date-fns';
 import { toast } from 'sonner';
@@ -24,6 +34,8 @@ const EventDetail = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [shareUrl, setShareUrl] = useState('');
     const [isEditing, setIsEditing] = useState(false);
+    const [approveDialogOpen, setApproveDialogOpen] = useState(false);
+    const [rejectDialogOpen, setRejectDialogOpen] = useState(false);
 
     const fetchEvent = async () => {
         setIsLoading(true);
@@ -69,6 +81,16 @@ const EventDetail = () => {
         } catch (error) {
             toast.error('Failed to update status');
         }
+    };
+
+    const handleApprove = () => {
+        handleStatusChange('approved');
+        setApproveDialogOpen(false);
+    };
+
+    const handleReject = () => {
+        handleStatusChange('rejected');
+        setRejectDialogOpen(false);
     };
 
     const handleFeaturedToggle = async (featured: boolean) => {
@@ -288,21 +310,28 @@ const EventDetail = () => {
                                 <div className="space-y-4">
                                     <div>
                                         <label className="text-sm font-medium mb-1.5 block">Update Status</label>
-                                        <div className="grid grid-cols-2 gap-2">
-                                            <Button
-                                                variant={event.status === 'approved' ? 'default' : 'outline'}
-                                                className={event.status === 'approved' ? 'bg-success hover:bg-success/90' : ''}
-                                                onClick={() => handleStatusChange('approved')}
-                                            >
-                                                Approve
-                                            </Button>
-                                            <Button
-                                                variant={event.status === 'rejected' ? 'destructive' : 'outline'}
-                                                onClick={() => handleStatusChange('rejected')}
-                                            >
-                                                Reject
-                                            </Button>
-                                        </div>
+                                        {event.status === 'approved' ? (
+                                            <div className="w-full p-4 bg-success/10 border-2 border-success rounded-lg flex items-center justify-center">
+                                                <span className="text-success font-semibold text-lg">
+                                                    ✓ Approved
+                                                </span>
+                                            </div>
+                                        ) : (
+                                            <div className="grid grid-cols-2 gap-2">
+                                                <Button
+                                                    variant="outline"
+                                                    onClick={() => setApproveDialogOpen(true)}
+                                                >
+                                                    Approve
+                                                </Button>
+                                                <Button
+                                                    variant={event.status === 'rejected' ? 'destructive' : 'outline'}
+                                                    onClick={() => setRejectDialogOpen(true)}
+                                                >
+                                                    Reject
+                                                </Button>
+                                            </div>
+                                        )}
                                     </div>
 
                                     {event.status === 'approved' && (
@@ -397,6 +426,48 @@ const EventDetail = () => {
                     fetchEvent();
                 }}
             />
+
+            {/* Approve Confirmation Dialog */}
+            <AlertDialog open={approveDialogOpen} onOpenChange={setApproveDialogOpen}>
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>Approve Event</AlertDialogTitle>
+                        <AlertDialogDescription>
+                            Are you sure you want to approve this event? The event will be published and visible to all users.
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction
+                            onClick={handleApprove}
+                            className="bg-success hover:bg-success/90"
+                        >
+                            Approve
+                        </AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
+
+            {/* Reject Confirmation Dialog */}
+            <AlertDialog open={rejectDialogOpen} onOpenChange={setRejectDialogOpen}>
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>Reject Event</AlertDialogTitle>
+                        <AlertDialogDescription>
+                            Are you sure you want to reject this event? This action will notify the organizer and the event will not be published.
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction
+                            onClick={handleReject}
+                            className="bg-destructive hover:bg-destructive/90"
+                        >
+                            Reject
+                        </AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
         </Layout>
     );
 };
