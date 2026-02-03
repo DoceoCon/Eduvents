@@ -308,15 +308,15 @@ const EventDetail = () => {
                             {/* Admin Controls or Book Now Button */}
                             {isAuthenticated ? (
                                 <div className="space-y-4">
-                                    <div>
-                                        <label className="text-sm font-medium mb-1.5 block">Update Status</label>
-                                        {event.status === 'approved' ? (
-                                            <div className="w-full p-4 bg-success/10 border-2 border-success rounded-lg flex items-center justify-center">
-                                                <span className="text-success font-semibold text-lg">
-                                                    ✓ Approved
-                                                </span>
-                                            </div>
-                                        ) : (
+                                    {event.status === 'approved' ? (
+                                        <div className="w-full p-4 bg-success/10 border-2 border-success rounded-lg flex items-center justify-center">
+                                            <span className="text-success font-semibold text-lg">
+                                                ✓ Approved
+                                            </span>
+                                        </div>
+                                    ) : (
+                                        <div>
+                                            <label className="text-sm font-medium mb-1.5 block">Update Status</label>
                                             <div className="grid grid-cols-2 gap-2">
                                                 <Button
                                                     variant="outline"
@@ -331,8 +331,8 @@ const EventDetail = () => {
                                                     Reject
                                                 </Button>
                                             </div>
-                                        )}
-                                    </div>
+                                        </div>
+                                    )}
 
                                     {event.status === 'approved' && (
                                         <div className="flex items-center justify-between p-3 bg-muted rounded-lg">

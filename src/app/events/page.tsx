@@ -218,61 +218,103 @@ const EventsContent = () => {
                         </div>
 
                         {/* Results Count */}
-                        <p className="text-muted-foreground mb-6">
-                            Showing {paginatedEvents.length} of {allEvents.length} events
-                        </p>
+                        {!isLoading && (
+                            <p className="text-muted-foreground mb-6">
+                                Showing {paginatedEvents.length} of {allEvents.length} events
+                            </p>
+                        )}
 
-                        {/* Events Grid */}
-                        {paginatedEvents.length > 0 ? (
-                            <>
+                        {/* Loading State */}
+                        {isLoading ? (
+                            <div className="space-y-8">
+                                {/* Loading Spinner */}
+                                <div className="flex flex-col items-center justify-center py-16">
+                                    <div className="relative w-16 h-16 mb-6">
+                                        <div className="absolute top-0 left-0 w-full h-full border-4 border-primary/20 rounded-full"></div>
+                                        <div className="absolute top-0 left-0 w-full h-full border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+                                    </div>
+                                    <p className="text-lg font-medium text-foreground mb-2">Loading events...</p>
+                                    <p className="text-sm text-muted-foreground">Please wait while we fetch the latest educational events</p>
+                                </div>
+
+                                {/* Skeleton Cards */}
                                 <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-                                    {paginatedEvents.map((event, index) => (
-                                        <div key={event.id} className="animate-slide-up" style={{ animationDelay: `${index * 30}ms` }}>
-                                            <EventCard event={event} />
+                                    {Array.from({ length: 6 }).map((_, index) => (
+                                        <div key={index} className="bg-card rounded-lg shadow-card overflow-hidden animate-pulse">
+                                            <div className="h-48 bg-muted"></div>
+                                            <div className="p-6 space-y-4">
+                                                <div className="flex gap-2">
+                                                    <div className="h-6 w-20 bg-muted rounded-full"></div>
+                                                    <div className="h-6 w-16 bg-muted rounded-full"></div>
+                                                </div>
+                                                <div className="h-6 bg-muted rounded w-3/4"></div>
+                                                <div className="space-y-2">
+                                                    <div className="h-4 bg-muted rounded"></div>
+                                                    <div className="h-4 bg-muted rounded w-5/6"></div>
+                                                </div>
+                                                <div className="space-y-2">
+                                                    <div className="h-4 bg-muted rounded w-2/3"></div>
+                                                    <div className="h-4 bg-muted rounded w-1/2"></div>
+                                                </div>
+                                                <div className="h-10 bg-muted rounded"></div>
+                                            </div>
                                         </div>
                                     ))}
                                 </div>
-
-                                {/* Pagination */}
-                                {totalPages > 1 && (
-                                    <div className="flex justify-center items-center gap-2 mt-12">
-                                        <Button
-                                            variant="outline"
-                                            disabled={currentPage === 1}
-                                            onClick={() => setCurrentPage(p => p - 1)}
-                                        >
-                                            Previous
-                                        </Button>
-
-                                        <div className="flex items-center gap-1">
-                                            {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-                                                <Button
-                                                    key={page}
-                                                    variant={currentPage === page ? 'default' : 'outline'}
-                                                    size="sm"
-                                                    onClick={() => setCurrentPage(page)}
-                                                    className="w-10"
-                                                >
-                                                    {page}
-                                                </Button>
-                                            ))}
-                                        </div>
-
-                                        <Button
-                                            variant="outline"
-                                            disabled={currentPage === totalPages}
-                                            onClick={() => setCurrentPage(p => p + 1)}
-                                        >
-                                            Next
-                                        </Button>
-                                    </div>
-                                )}
-                            </>
-                        ) : (
-                            <div className="text-center py-16 bg-card rounded-lg">
-                                <p className="text-muted-foreground text-lg mb-4">No events found matching your criteria</p>
-                                <Button variant="outline" onClick={clearFilters}>Clear Filters</Button>
                             </div>
+                        ) : (
+                            /* Events Grid */
+                            paginatedEvents.length > 0 ? (
+                                <>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                                        {paginatedEvents.map((event, index) => (
+                                            <div key={event.id} className="animate-slide-up" style={{ animationDelay: `${index * 30}ms` }}>
+                                                <EventCard event={event} />
+                                            </div>
+                                        ))}
+                                    </div>
+
+                                    {/* Pagination */}
+                                    {totalPages > 1 && (
+                                        <div className="flex justify-center items-center gap-2 mt-12">
+                                            <Button
+                                                variant="outline"
+                                                disabled={currentPage === 1}
+                                                onClick={() => setCurrentPage(p => p - 1)}
+                                            >
+                                                Previous
+                                            </Button>
+
+                                            <div className="flex items-center gap-1">
+                                                {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                                                    <Button
+                                                        key={page}
+                                                        variant={currentPage === page ? 'default' : 'outline'}
+                                                        size="sm"
+                                                        onClick={() => setCurrentPage(page)}
+                                                        className="w-10"
+                                                    >
+                                                        {page}
+                                                    </Button>
+                                                ))}
+                                            </div>
+
+                                            <Button
+                                                variant="outline"
+                                                disabled={currentPage === totalPages}
+                                                onClick={() => setCurrentPage(p => p + 1)}
+                                            >
+                                                Next
+                                            </Button>
+                                        </div>
+                                    )}
+                                </>
+                            ) : (
+                                <div className="text-center py-16 bg-card rounded-lg">
+                                    <p className="text-muted-foreground text-lg mb-4">No events found matching your criteria</p>
+                                    <Button variant="outline" onClick={clearFilters}>Clear Filters</Button>
+                                </div>
+                            )
                         )}
                     </div>
                 </div>
