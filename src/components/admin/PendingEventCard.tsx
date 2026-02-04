@@ -59,17 +59,17 @@ const PendingEventCard = ({ event, onApprove, onReject, onViewDetails, onFeature
 
           </div>
 
-          <h3 className="font-semibold text-lg text-foreground mb-1 break-words">{event.title}</h3>
+          <h3 className="font-semibold text-lg text-foreground mb-1 break-all">{event.title}</h3>
 
-          <div className="text-sm text-muted-foreground mb-2 break-words">
-            <span className="font-medium text-foreground">{event.organiser}</span>
+          <div className="text-sm text-muted-foreground mb-2">
+            <span className="font-medium text-foreground break-all">{event.organiser}</span>
             <span className="mx-2">•</span>
             <a href={`mailto:${event.organiserEmail}`} className="text-primary hover:underline break-all">
               {event.organiserEmail}
             </a>
           </div>
 
-          <p className="text-sm text-muted-foreground line-clamp-2 mb-3 break-words">
+          <p className="text-sm text-muted-foreground line-clamp-2 mb-3 break-all">
             {event.description}
           </p>
 

@@ -35,14 +35,14 @@ const EventRow = ({ event, onStatusChange, onFeaturedToggle, onEdit, showActions
 
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2 flex-wrap min-w-0">
-          <h3 className="font-medium text-foreground break-words">{event.title}</h3>
+          <h3 className="font-medium text-foreground break-all">{event.title}</h3>
           {event.isAdminCreated && (
             <span className="px-2 py-0.5 text-xs bg-accent text-accent-foreground rounded-full whitespace-nowrap">
               Admin upload - Free Listing
             </span>
           )}
         </div>
-        <p className="text-sm text-muted-foreground break-words">{event.organiser}</p>
+        <p className="text-sm text-muted-foreground break-all">{event.organiser}</p>
         <div className="flex flex-wrap gap-2 text-sm text-muted-foreground">
           <span>Submitted: {format(new Date(event.submissionDate), 'MMM d, yyyy')}</span>
           {event.lastUpdated && (
