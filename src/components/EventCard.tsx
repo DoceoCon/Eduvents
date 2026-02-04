@@ -57,8 +57,8 @@ const EventCard = ({ event }: EventCardProps) => {
             <span>{formattedStartTime} - {formattedEndTime}</span>
           </div>
           <div className="flex items-center text-sm text-muted-foreground">
-            <MapPin className="h-4 w-4 mr-2 text-primary" />
-            <span className="line-clamp-1">{event.location}</span>
+            <MapPin className="h-4 w-4 mr-2 text-primary flex-shrink-0" />
+            <span className="line-clamp-1 break-all min-w-0">{event.location}</span>
           </div>
           <div className="flex items-center text-sm">
             <PoundSterling className="h-4 w-4 mr-2 text-primary" />
