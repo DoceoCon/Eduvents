@@ -306,7 +306,7 @@ const EventDetail = () => {
                         <div className="prose prose-slate max-w-none">
                             <h2 className="text-xl font-semibold mb-4">About This Event</h2>
                             {event.description?.split('\n\n').map((paragraph, index) => (
-                                <p key={index} className="text-muted-foreground mb-4 leading-relaxed">
+                                <p key={index} className="text-muted-foreground mb-4 leading-relaxed break-words">
                                     {paragraph}
                                 </p>
                             ))}
