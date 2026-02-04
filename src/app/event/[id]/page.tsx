@@ -247,12 +247,12 @@ const EventDetail = () => {
                             </div>
                         )}
 
-                        <div className="flex justify-between items-start mb-6">
-                            <h1 className="text-3xl md:text-4xl font-bold text-foreground">
+                        <div className="flex justify-between items-start gap-4 mb-6">
+                            <h1 className="text-3xl md:text-4xl font-bold text-foreground break-words flex-1 min-w-0">
                                 {event.title}
                             </h1>
                             {isAuthenticated && (
-                                <Button onClick={() => setIsEditing(true)} variant="outline">
+                                <Button onClick={() => setIsEditing(true)} variant="outline" className="flex-shrink-0">
                                     Edit Event
                                 </Button>
                             )}
