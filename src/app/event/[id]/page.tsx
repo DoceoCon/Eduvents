@@ -281,8 +281,8 @@ const EventDetail = () => {
                                         <p className="text-sm text-muted-foreground">Location</p>
                                     </div>
                                 </div>
-                                <div className="flex items-center text-foreground">
-                                    <PoundSterling className="h-5 w-5 mr-3 text-primary" />
+                                <div className="flex items-start text-foreground">
+                                    <PoundSterling className="h-5 w-5 mr-3 text-primary flex-shrink-0 mt-1" />
                                     <div>
                                         {event.isFree ? (
                                             <p className="font-medium">
