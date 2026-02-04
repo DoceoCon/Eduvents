@@ -5,13 +5,17 @@ export async function POST(request: Request) {
         const body = await request.json();
         const { email, password } = body;
 
-        // Basic validation for demonstration. 
+        // Get admin credentials from environment variables
+        const adminEmail = process.env.ADMIN_LOGIN_EMAIL;
+        const adminPassword = process.env.ADMIN_LOGIN_PASSWORD;
+
+        // Basic validation for demonstration.
         // In a real app, you would check against a database here.
-        if (email === 'admin@gmail.com' && password === 'admin123') {
+        if (email === adminEmail && password === adminPassword) {
             return NextResponse.json({
                 success: true,
                 message: 'Login successful',
-                user: { email: 'admin@gmail.com', role: 'admin' }
+                user: { email: adminEmail, role: 'admin' }
             }, { status: 200 });
         } else {
             return NextResponse.json({
