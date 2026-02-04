@@ -5,7 +5,7 @@ import { uploadToS3 } from '@/lib/s3';
 import path from 'path';
 import fs from 'fs';
 import { v4 as uuidv4 } from 'uuid';
-import { sendEventConfirmationEmail, sendAdminNewEventNotification } from '@/lib/email';
+import { sendEventConfirmationEmail, sendAdminNewEventNotification, sendStatusUpdateEmail } from '@/lib/email';
 import Stripe from 'stripe';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
@@ -114,8 +114,8 @@ export async function POST(req: NextRequest) {
         await sendAdminNewEventNotification(newEvent);
 
         if (isAdmin) {
-            // Admin created: Send email immediately
-            await sendEventConfirmationEmail(organiserEmail, organiser, title);
+            // Admin created: Send approval email since event is already approved
+            await sendStatusUpdateEmail(organiserEmail, organiser, title, 'approved');
             return NextResponse.json({
                 success: true,
                 message: "Event Created Successfully.",
