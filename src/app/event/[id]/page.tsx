@@ -366,15 +366,18 @@ const EventDetail = () => {
                             {/* Organiser Info */}
                             <div className="border-t border-border pt-6">
                                 <h3 className="font-semibold mb-4">Organiser</h3>
-                                <div className="flex items-center mb-3">
-                                    <User className="h-5 w-5 mr-3 text-muted-foreground" />
-                                    <span className="text-foreground">{event.organiser}</span>
-                                </div>
-                                <div className="flex items-center">
-                                    <Mail className="h-5 w-5 mr-3 text-muted-foreground" />
-                                    <a href={`mailto:${event.organiserEmail}`} className="text-primary hover:underline">
-                                        {event.organiserEmail}
-                                    </a>
+                                <div className="flex items-start gap-3 mb-4">
+                                    <div className="flex-shrink-0 w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
+                                        <span className="text-primary font-semibold text-lg">
+                                            {event.organiser.split(' ').map(word => word[0]).join('').toUpperCase().slice(0, 2)}
+                                        </span>
+                                    </div>
+                                    <div className="flex-1 min-w-0">
+                                        <p className="font-medium text-foreground break-words">{event.organiser}</p>
+                                        <a href={`mailto:${event.organiserEmail}`} className="text-sm text-primary hover:underline break-all">
+                                            {event.organiserEmail}
+                                        </a>
+                                    </div>
                                 </div>
                             </div>
 
