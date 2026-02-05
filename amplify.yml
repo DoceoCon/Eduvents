@@ -1,0 +1,49 @@
+version: 1
+frontend:
+  phases:
+    preBuild:
+      commands:
+        - npm ci
+        - echo "MONGODB_URI=$MONGODB_URI" >> .env.production
+        - echo "ACCESS_KEY_ID=$ACCESS_KEY_ID" >> .env.production
+        - echo "SECRET_ACCESS_KEY=$SECRET_ACCESS_KEY" >> .env.production
+        - echo "REGION=$REGION" >> .env.production
+        - echo "BUCKET=$BUCKET" >> .env.production
+        - echo "STRIPE_SECRET_KEY=$STRIPE_SECRET_KEY" >> .env.production
+        - echo "NEXT_PUBLIC_BASE_URL=$NEXT_PUBLIC_BASE_URL" >> .env.production
+        - echo "SMTP_HOST=$SMTP_HOST" >> .env.production
+        - echo "SMTP_PORT=$SMTP_PORT" >> .env.production
+        - echo "SMTP_USER=$SMTP_USER" >> .env.production
+        - echo "SMTP_PASS=$SMTP_PASS" >> .env.production
+        - echo "SMTP_FROM=$SMTP_FROM" >> .env.production
+        - echo "ADMIN_EMAIL=$ADMIN_EMAIL" >> .env.production
+        - echo "ADMIN_CREDENTIALS=$ADMIN_CREDENTIALS" >> .env.production
+    build:
+      commands:
+        - npm run build
+  artifacts:
+    baseDirectory: .next
+    files:
+      - '**/*'
+  cache:
+    paths:
+      - node_modules/**/*
+      - .next/cache/**/*
+env:
+  variables:
+    AMPLIFY_NEXTJS_EXPERIMENTAL_TRACE: "true"
+  secrets:
+    - MONGODB_URI
+    - ACCESS_KEY_ID
+    - SECRET_ACCESS_KEY
+    - REGION
+    - BUCKET
+    - STRIPE_SECRET_KEY
+    - NEXT_PUBLIC_BASE_URL
+    - SMTP_HOST
+    - SMTP_PORT
+    - SMTP_USER
+    - SMTP_PASS
+    - SMTP_FROM
+    - ADMIN_EMAIL
+    - ADMIN_CREDENTIALS
