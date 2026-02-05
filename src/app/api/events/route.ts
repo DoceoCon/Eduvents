@@ -42,7 +42,7 @@ export async function POST(req: NextRequest) {
         else if (title.length > 50) errors.title = "Title must be 50 characters or less";
 
         if (!description) errors.description = "Required";
-        else if (description.length > 200) errors.description = "Description must be 200 characters or less";
+        else if (description.length > 1000) errors.description = "Description must be 1000 characters or less";
 
         if (!organiser) errors.organiser = "Required";
         else if (organiser.length > 50) errors.organiser = "Name must be 50 characters or less";

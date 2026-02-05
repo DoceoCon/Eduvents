@@ -68,8 +68,8 @@ const ListEventContent = ({ isAdminMode = false, onSuccess, onCancel }: ListEven
         if (formData.title && formData.title.length > 50) {
             newErrors.title = 'Title must be 50 characters or less';
         }
-        if (formData.description && formData.description.length > 200) {
-            newErrors.description = 'Description must be 200 characters or less';
+        if (formData.description && formData.description.length > 1000) {
+            newErrors.description = 'Description must be 1000 characters or less';
         }
         if (formData.organiserName && formData.organiserName.length > 50) {
             newErrors.organiserName = 'Name must be 50 characters or less';
@@ -119,8 +119,8 @@ const ListEventContent = ({ isAdminMode = false, onSuccess, onCancel }: ListEven
         // Live validation for character limits
         if (field === 'title' && value.length >= 50) {
             setErrors(prev => ({ ...prev, title: 'Title must be 50 characters or less' }));
-        } else if (field === 'description' && value.length >= 200) {
-            setErrors(prev => ({ ...prev, description: 'Description must be 200 characters or less' }));
+        } else if (field === 'description' && value.length >= 1000) {
+            setErrors(prev => ({ ...prev, description: 'Description must be 1000 characters or less' }));
         } else if (field === 'organiserName' && value.length >= 50) {
             setErrors(prev => ({ ...prev, organiserName: 'Name must be 50 characters or less' }));
         } else if (errors[field]) {
@@ -380,10 +380,10 @@ const ListEventContent = ({ isAdminMode = false, onSuccess, onCancel }: ListEven
                             placeholder="Describe your event in detail..."
                             rows={5}
                             className={errors.description ? 'border-destructive' : ''}
-                            maxLength={200}
+                            maxLength={1000}
                         />
-                        <p className={`text-sm mt-1 ${formData.description.length >= 200 ? 'text-destructive font-medium' : 'text-muted-foreground'}`}>
-                            {formData.description.length}/200 characters
+                        <p className={`text-sm mt-1 ${formData.description.length >= 1000 ? 'text-destructive font-medium' : 'text-muted-foreground'}`}>
+                            {formData.description.length}/1000 characters
                         </p>
                         {errors.description && <p className="text-sm text-destructive mt-1">{errors.description}</p>}
                     </div>

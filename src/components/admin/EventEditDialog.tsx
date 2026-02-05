@@ -44,8 +44,8 @@ const EventEditDialog = ({ event, isOpen, onClose, onSave }: EventEditDialogProp
     // Live validation for character limits
     if (field === 'title' && typeof value === 'string' && value.length >= 50) {
       setErrors(prev => ({ ...prev, title: 'Title must be 50 characters or less' }));
-    } else if (field === 'description' && typeof value === 'string' && value.length >= 200) {
-      setErrors(prev => ({ ...prev, description: 'Description must be 200 characters or less' }));
+    } else if (field === 'description' && typeof value === 'string' && value.length >= 1000) {
+      setErrors(prev => ({ ...prev, description: 'Description must be 1000 characters or less' }));
     } else if (field === 'organiser' && typeof value === 'string' && value.length >= 50) {
       setErrors(prev => ({ ...prev, organiser: 'Name must be 50 characters or less' }));
     } else if (errors[field]) {
@@ -140,7 +140,7 @@ const EventEditDialog = ({ event, isOpen, onClose, onSave }: EventEditDialogProp
     else if (formData.title.length > 50) newErrors.title = 'Title must be 50 characters or less';
 
     if (!formData.description?.trim()) newErrors.description = 'Required';
-    else if (formData.description.length > 200) newErrors.description = 'Description must be 200 characters or less';
+    else if (formData.description.length > 1000) newErrors.description = 'Description must be 1000 characters or less';
 
     if (!formData.organiser?.trim()) newErrors.organiser = 'Required';
     else if (formData.organiser.length > 50) newErrors.organiser = 'Name must be 50 characters or less';
@@ -245,10 +245,10 @@ const EventEditDialog = ({ event, isOpen, onClose, onSave }: EventEditDialogProp
                 onChange={(e) => handleChange('description', e.target.value)}
                 rows={4}
                 className={errors.description ? 'border-destructive' : ''}
-                maxLength={200}
+                maxLength={1000}
               />
-              <p className={`text-sm mt-1 ${(formData.description?.length || 0) >= 200 ? 'text-destructive font-medium' : 'text-muted-foreground'}`}>
-                {formData.description?.length || 0}/200 characters
+              <p className={`text-sm mt-1 ${(formData.description?.length || 0) >= 1000 ? 'text-destructive font-medium' : 'text-muted-foreground'}`}>
+                {formData.description?.length || 0}/1000 characters
               </p>
               {errors.description && <p className="text-sm text-destructive mt-1">{errors.description}</p>}
             </div>
