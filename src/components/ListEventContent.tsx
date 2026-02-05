@@ -87,11 +87,11 @@ const ListEventContent = ({
     if (!selectedFile && !imagePreview) newErrors.image = "Required";
 
     // Specific constraints
-    if (formData.title && formData.title.length > 99) {
-      newErrors.title = "Title must be 99 characters or less";
+    if (formData.title && formData.title.length > 100) {
+      newErrors.title = "Title must be 100 characters or less";
     }
-    if (formData.description && formData.description.length > 999) {
-      newErrors.description = "Description must be 999 characters or less";
+    if (formData.description && formData.description.length > 1000) {
+      newErrors.description = "Description must be less then 1000 characters ";
     }
     if (formData.organiserName && formData.organiserName.length > 50) {
       newErrors.organiserName = "Name must be 50 characters or less";
@@ -140,15 +140,15 @@ const ListEventContent = ({
     setFormData((prev) => ({ ...prev, [field]: value }));
 
     // Live validation for character limits
-    if (field === "title" && value.length >= 99) {
+    if (field === "title" && value.length >= 100) {
       setErrors((prev) => ({
         ...prev,
-        title: "Title must be 99 characters or less",
+        title: "Title must be 100 characters or less",
       }));
-    } else if (field === "description" && value.length >= 999) {
+    } else if (field === "description" && value.length >= 1000) {
       setErrors((prev) => ({
         ...prev,
-        description: "Description must be 999 characters or less",
+        description: "Description must be less then 1000 characters ",
       }));
     } else if (field === "organiserName" && value.length >= 50) {
       setErrors((prev) => ({
@@ -419,12 +419,12 @@ const ListEventContent = ({
               onChange={(e) => handleChange("title", e.target.value)}
               placeholder="e.g., STEM Innovation Conference 2026"
               className={errors.title ? "border-destructive" : ""}
-              maxLength={99}
+              maxLength={100}
             />
             <p
-              className={`text-sm mt-1 ${formData.title.length >= 99 ? "text-destructive font-medium" : "text-muted-foreground"}`}
+              className={`text-sm mt-1 ${formData.title.length >= 100 ? "text-destructive font-medium" : "text-muted-foreground"}`}
             >
-              {formData.title.length}/99 characters
+              {formData.title.length}/100 characters
             </p>
             {errors.title && (
               <p className="text-sm text-destructive mt-1">{errors.title}</p>
@@ -440,12 +440,12 @@ const ListEventContent = ({
               placeholder="Describe your event in detail..."
               rows={5}
               className={errors.description ? "border-destructive" : ""}
-              maxLength={999}
+              maxLength={1000}
             />
             <p
-              className={`text-sm mt-1 ${formData.description.length >= 999 ? "text-destructive font-medium" : "text-muted-foreground"}`}
+              className={`text-sm mt-1 ${formData.description.length >= 1000 ? "text-destructive font-medium" : "text-muted-foreground"}`}
             >
-              {formData.description.length}/999 characters
+              {formData.description.length}/1000 characters
             </p>
             {errors.description && (
               <p className="text-sm text-destructive mt-1">

@@ -47,12 +47,12 @@ export async function POST(req: NextRequest) {
     // Validation
     const errors: any = {};
     if (!title) errors.title = "Required";
-    else if (title.length > 99)
-      errors.title = "Title must be 99 characters or less";
+    else if (title.length > 100)
+      errors.title = "Title must be 100 characters or less";
 
     if (!description) errors.description = "Required";
-    else if (description.length > 999)
-      errors.description = "Description must be 999 characters or less";
+    else if (description.length > 1000)
+      errors.description = "Description must be less then 1000 characters ";
 
     if (!organiser) errors.organiser = "Required";
     else if (organiser.length > 50)
