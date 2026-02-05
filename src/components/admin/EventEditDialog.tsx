@@ -64,19 +64,19 @@ const EventEditDialog = ({
     setFormData((prev) => ({ ...prev, [field]: value }));
 
     // Live validation for character limits
-    if (field === "title" && typeof value === "string" && value.length >= 100) {
+    if (field === "title" && typeof value === "string" && value.length >= 99) {
       setErrors((prev) => ({
         ...prev,
-        title: "Title must be 100 characters or less",
+        title: "Title must be 99 characters or less",
       }));
     } else if (
       field === "description" &&
       typeof value === "string" &&
-      value.length >= 1000
+      value.length >= 999
     ) {
       setErrors((prev) => ({
         ...prev,
-        description: "Description must be less then 1000 characters  ",
+        description: "Description must be 999 characters or less",
       }));
     } else if (
       field === "organiser" &&
@@ -184,12 +184,12 @@ const EventEditDialog = ({
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
     if (!formData.title?.trim()) newErrors.title = "Required";
-    else if (formData.title.length > 100)
-      newErrors.title = "Title must be 100 characters or less";
+    else if (formData.title.length > 99)
+      newErrors.title = "Title must be 99 characters or less";
 
     if (!formData.description?.trim()) newErrors.description = "Required";
-    else if (formData.description.length > 1000)
-      newErrors.description = "Description must be less then 1000 characters ";
+    else if (formData.description.length > 999)
+      newErrors.description = "Description must be 999 characters or less";
 
     if (!formData.organiser?.trim()) newErrors.organiser = "Required";
     else if (formData.organiser.length > 50)
@@ -285,12 +285,12 @@ const EventEditDialog = ({
                 value={formData.title || ""}
                 onChange={(e) => handleChange("title", e.target.value)}
                 className={errors.title ? "border-destructive" : ""}
-                maxLength={100}
+                maxLength={99}
               />
               <p
-                className={`text-sm mt-1 ${(formData.title?.length || 0) >= 100 ? "text-destructive font-medium" : "text-muted-foreground"}`}
+                className={`text-sm mt-1 ${(formData.title?.length || 0) >= 99 ? "text-destructive font-medium" : "text-muted-foreground"}`}
               >
-                {formData.title?.length || 0}/100 characters
+                {formData.title?.length || 0}/99 characters
               </p>
               {errors.title && (
                 <p className="text-sm text-destructive mt-1">{errors.title}</p>
@@ -305,12 +305,12 @@ const EventEditDialog = ({
                 onChange={(e) => handleChange("description", e.target.value)}
                 rows={4}
                 className={errors.description ? "border-destructive" : ""}
-                maxLength={1000}
+                maxLength={999}
               />
               <p
-                className={`text-sm mt-1 ${(formData.description?.length || 0) >= 1000 ? "text-destructive font-medium" : "text-muted-foreground"}`}
+                className={`text-sm mt-1 ${(formData.description?.length || 0) >= 999 ? "text-destructive font-medium" : "text-muted-foreground"}`}
               >
-                {formData.description?.length || 0}/1000 characters
+                {formData.description?.length || 0}/999 characters
               </p>
               {errors.description && (
                 <p className="text-sm text-destructive mt-1">
