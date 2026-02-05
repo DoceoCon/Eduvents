@@ -37,9 +37,6 @@ export default function Home() {
   const featuredEvents = allEvents.filter(e => e.featured && e.status === 'approved');
   const latestEvents = allEvents.filter(e => e.status === 'approved').slice(0, 12);
 
-  // Fallback to latest events if no featured events
-  const carouselEvents = featuredEvents.length > 0 ? featuredEvents : latestEvents.slice(0, 3);
-
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     router.push(`/events?search=${encodeURIComponent(searchQuery)}`);
@@ -94,7 +91,7 @@ export default function Home() {
               <ArrowRight className="ml-1 h-4 w-4" />
             </Link>
           </div>
-          <FeaturedCarousel events={carouselEvents} />
+          <FeaturedCarousel events={featuredEvents} />
         </div>
       </section>
 
