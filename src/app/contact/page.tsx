@@ -3,7 +3,7 @@ import { Mail, Phone, MapPin } from "lucide-react";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Contact Us | Eduvent",
+  title: "Contact Us | Eduvents",
   description: "Get in touch with the EDUVENTS team.",
 };
 
