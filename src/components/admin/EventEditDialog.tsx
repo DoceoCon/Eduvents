@@ -64,7 +64,7 @@ const EventEditDialog = ({
     setFormData((prev) => ({ ...prev, [field]: value }));
 
     // Live validation for character limits
-    if (field === "title" && typeof value === "string" && value.length >= 100) {
+    if (field === "title" && typeof value === "string" && value.length > 100) {
       setErrors((prev) => ({
         ...prev,
         title: "Title must be 100 characters or less",
@@ -72,16 +72,16 @@ const EventEditDialog = ({
     } else if (
       field === "description" &&
       typeof value === "string" &&
-      value.length >= 1000
+      value.length > 1000
     ) {
       setErrors((prev) => ({
         ...prev,
-        description: "Description must be less then 1000 characters  ",
+        description: "Description must be 1000 characters or less",
       }));
     } else if (
       field === "organiser" &&
       typeof value === "string" &&
-      value.length >= 50
+      value.length > 50
     ) {
       setErrors((prev) => ({
         ...prev,
@@ -189,7 +189,7 @@ const EventEditDialog = ({
 
     if (!formData.description?.trim()) newErrors.description = "Required";
     else if (formData.description.length > 1000)
-      newErrors.description = "Description must be less then 1000 characters ";
+      newErrors.description = "Description must be 1000 characters or less";
 
     if (!formData.organiser?.trim()) newErrors.organiser = "Required";
     else if (formData.organiser.length > 50)
@@ -610,7 +610,7 @@ const EventEditDialog = ({
             <Button variant="outline" onClick={onClose}>
               Cancel
             </Button>
-            <Button onClick={handleSave} disabled={isSaving}>
+            <Button onClick={handleSave} disabled={isSaving || Object.keys(errors).some(key => errors[key])}>
               {isSaving ? "Saving..." : "Save Changes"}
             </Button>
           </div>

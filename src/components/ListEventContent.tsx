@@ -91,7 +91,7 @@ const ListEventContent = ({
       newErrors.title = "Title must be 100 characters or less";
     }
     if (formData.description && formData.description.length > 1000) {
-      newErrors.description = "Description must be less then 1000 characters ";
+      newErrors.description = "Description must be 1000 characters or less";
     }
     if (formData.organiserName && formData.organiserName.length > 50) {
       newErrors.organiserName = "Name must be 50 characters or less";
@@ -140,17 +140,17 @@ const ListEventContent = ({
     setFormData((prev) => ({ ...prev, [field]: value }));
 
     // Live validation for character limits
-    if (field === "title" && value.length >= 100) {
+    if (field === "title" && value.length > 100) {
       setErrors((prev) => ({
         ...prev,
         title: "Title must be 100 characters or less",
       }));
-    } else if (field === "description" && value.length >= 1000) {
+    } else if (field === "description" && value.length > 1000) {
       setErrors((prev) => ({
         ...prev,
-        description: "Description must be less then 1000 characters ",
+        description: "Description must be 1000 characters or less",
       }));
-    } else if (field === "organiserName" && value.length >= 50) {
+    } else if (field === "organiserName" && value.length > 50) {
       setErrors((prev) => ({
         ...prev,
         organiserName: "Name must be 50 characters or less",
@@ -786,7 +786,7 @@ const ListEventContent = ({
           >
             Cancel
           </Button>
-          <Button size="lg" onClick={handleSubmit} disabled={isSubmitting}>
+          <Button size="lg" onClick={handleSubmit} disabled={isSubmitting || Object.keys(errors).some(key => errors[key])}>
             {isSubmitting ? (
               <span className="flex items-center">
                 <svg
@@ -860,7 +860,7 @@ const ListEventContent = ({
                 size="lg"
                 className="w-full h-14 text-lg"
                 onClick={handleSubmit}
-                disabled={isSubmitting}
+                disabled={isSubmitting || Object.keys(errors).some(key => errors[key])}
               >
                 {isSubmitting ? (
                   <span className="flex items-center">
