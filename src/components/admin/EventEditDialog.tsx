@@ -11,6 +11,7 @@ import { Star } from 'lucide-react';
 import { Event, categories, formats, SubjectArea, EventPhase } from '@/data/events';
 import SubjectTagInput from '@/components/SubjectTagInput';
 import PhaseTagInput from '@/components/PhaseTagInput';
+import TimeInput from '@/components/TimeInput';
 import { toast } from 'sonner';
 
 interface EventEditDialogProps {
@@ -319,11 +320,9 @@ const EventEditDialog = ({ event, isOpen, onClose, onSave }: EventEditDialogProp
 
             <div>
               <Label htmlFor="startTime">Start Time *</Label>
-              <Input
-                id="startTime"
-                type="time"
+              <TimeInput
                 value={formData.startTime || ''}
-                onChange={(e) => handleChange('startTime', e.target.value)}
+                onChange={(value) => handleChange('startTime', value)}
                 className={errors.startTime ? 'border-destructive' : ''}
               />
               {errors.startTime && <p className="text-sm text-destructive mt-1">{errors.startTime}</p>}
@@ -331,11 +330,9 @@ const EventEditDialog = ({ event, isOpen, onClose, onSave }: EventEditDialogProp
 
             <div>
               <Label htmlFor="endTime">End Time *</Label>
-              <Input
-                id="endTime"
-                type="time"
+              <TimeInput
                 value={formData.endTime || ''}
-                onChange={(e) => handleChange('endTime', e.target.value)}
+                onChange={(value) => handleChange('endTime', value)}
                 className={errors.endTime ? 'border-destructive' : ''}
               />
               {errors.endTime && <p className="text-sm text-destructive mt-1">{errors.endTime}</p>}
