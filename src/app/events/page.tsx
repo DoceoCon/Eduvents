@@ -85,6 +85,15 @@ const EventsContent = () => {
 
     const hasActiveFilters = selectedCategory !== 'all' || selectedFormat !== 'all' || selectedSubject !== 'all' || selectedPhase !== 'all' || dateFilter || searchQuery;
 
+    const activeFilterCount = [
+        selectedCategory !== 'all',
+        selectedFormat !== 'all',
+        selectedSubject !== 'all',
+        selectedPhase !== 'all',
+        dateFilter,
+        searchQuery
+    ].filter(Boolean).length;
+
     const renderFilterSection = () => (
         <div className="space-y-6">
             <div>
@@ -201,7 +210,14 @@ const EventsContent = () => {
                                     className="lg:hidden"
                                     onClick={() => setShowMobileFilters(true)}
                                 >
-                                    <Filter className="h-4 w-4 mr-2" />
+                                    <div className="relative mr-2">
+                                        <Filter className="h-4 w-4" />
+                                        {activeFilterCount > 0 && (
+                                            <span className="absolute -top-1.5 -right-1.5 bg-primary text-primary-foreground text-[10px] font-bold rounded-full h-4 w-4 flex items-center justify-center ring-2 ring-background">
+                                                {activeFilterCount}
+                                            </span>
+                                        )}
+                                    </div>
                                     Filters
                                 </Button>
 

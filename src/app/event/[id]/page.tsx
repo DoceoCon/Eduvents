@@ -203,10 +203,13 @@ const EventDetail = () => {
         <Layout>
             {/* Back Button */}
             <div className="container-tight py-4">
-                <Link href={isAuthenticated ? "/admin" : "/events"} className="inline-flex items-center text-muted-foreground hover:text-primary transition-colors">
+                <button
+                    onClick={() => router.back()}
+                    className="inline-flex items-center text-muted-foreground hover:text-primary transition-colors"
+                >
                     <ArrowLeft className="h-4 w-4 mr-2" />
-                    Back to {isAuthenticated ? "Dashboard" : "Events"}
-                </Link>
+                    Back
+                </button>
             </div>
 
             {/* Hero Image */}
