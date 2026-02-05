@@ -25,7 +25,10 @@ const TimeInput = ({ value, onChange, className }: TimeInputProps) => {
 
   // Convert 12-hour time to 24-hour format
   const to24Hour = (hour: string, minute: string, period: string) => {
-    if (!hour || !minute) return '';
+    if (!hour) return '';
+
+    // Use '00' as default minute if not provided
+    const finalMinute = minute || '00';
 
     let hour24 = parseInt(hour, 10);
     if (period === 'PM' && hour24 !== 12) {
@@ -34,18 +37,20 @@ const TimeInput = ({ value, onChange, className }: TimeInputProps) => {
       hour24 = 0;
     }
 
-    return `${hour24.toString().padStart(2, '0')}:${minute}`;
+    return `${hour24.toString().padStart(2, '0')}:${finalMinute}`;
   };
 
   const { hour, minute, period } = parseTime(value);
 
   const handleChange = (field: 'hour' | 'minute' | 'period', newValue: string) => {
-    const updatedHour = field === 'hour' ? newValue : hour;
-    const updatedMinute = field === 'minute' ? newValue : minute;
+    const updatedHour = field === 'hour' ? newValue : (hour || '12');
+    const updatedMinute = field === 'minute' ? newValue : (minute || '00');
     const updatedPeriod = field === 'period' ? newValue : period;
 
     const time24 = to24Hour(updatedHour, updatedMinute, updatedPeriod);
-    onChange(time24);
+    if (time24) {
+      onChange(time24);
+    }
   };
 
   // Generate hours (1-12)
