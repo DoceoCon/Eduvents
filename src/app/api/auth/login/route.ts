@@ -6,16 +6,28 @@ export async function POST(request: Request) {
         const { email, password } = body;
 
         // Get admin credentials from environment variables
-        const adminEmail = process.env.ADMIN_LOGIN_EMAIL;
-        const adminPassword = process.env.ADMIN_LOGIN_PASSWORD;
+        const adminCredentialsJson = process.env.ADMIN_CREDENTIALS;
 
-        // Basic validation for demonstration.
-        // In a real app, you would check against a database here.
-        if (email === adminEmail && password === adminPassword) {
+        if (!adminCredentialsJson) {
+            return NextResponse.json({
+                success: false,
+                message: 'Server configuration error'
+            }, { status: 500 });
+        }
+
+        // Parse the admin credentials JSON
+        const adminCredentials: Array<{ email: string; password: string }> = JSON.parse(adminCredentialsJson);
+
+        // Check if the provided credentials match any admin account
+        const matchingAdmin = adminCredentials.find(
+            admin => admin.email === email && admin.password === password
+        );
+
+        if (matchingAdmin) {
             return NextResponse.json({
                 success: true,
                 message: 'Login successful',
-                user: { email: adminEmail, role: 'admin' }
+                user: { email: matchingAdmin.email, role: 'admin' }
             }, { status: 200 });
         } else {
             return NextResponse.json({
