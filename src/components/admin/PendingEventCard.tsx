@@ -1,8 +1,16 @@
-import { Check, X, Eye, Calendar, MapPin, PoundSterling, Star } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Switch } from '@/components/ui/switch';
-import { Event, getCategoryColor } from '@/data/events';
-import { format } from 'date-fns';
+import {
+  Check,
+  X,
+  Eye,
+  Calendar,
+  MapPin,
+  PoundSterling,
+  Star,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Switch } from "@/components/ui/switch";
+import { Event, getCategoryColor } from "@/data/events";
+import { format } from "date-fns";
 
 import {
   AlertDialog,
@@ -13,7 +21,7 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-  AlertDialogTrigger
+  AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 
 interface PendingEventCardProps {
@@ -24,9 +32,15 @@ interface PendingEventCardProps {
   onFeaturedToggle: (eventId: string, featured: boolean) => void;
 }
 
-const PendingEventCard = ({ event, onApprove, onReject, onViewDetails, onFeaturedToggle }: PendingEventCardProps) => {
-  const formattedDate = format(new Date(event.date), 'MMM d, yyyy');
-  const submittedDate = format(new Date(event.submissionDate), 'MMM d, yyyy');
+const PendingEventCard = ({
+  event,
+  onApprove,
+  onReject,
+  onViewDetails,
+  onFeaturedToggle,
+}: PendingEventCardProps) => {
+  const formattedDate = format(new Date(event.date), "MMM d, yyyy");
+  const submittedDate = format(new Date(event.submissionDate), "MMM d, yyyy");
 
   return (
     <div className="bg-card rounded-lg shadow-card overflow-hidden group">
@@ -44,27 +58,38 @@ const PendingEventCard = ({ event, onApprove, onReject, onViewDetails, onFeature
         <div className="flex-1 p-4 lg:p-6 min-w-0">
           <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
             <div className="flex flex-wrap gap-2">
-              <span className={`px-2 py-0.5 text-xs font-semibold text-primary-foreground rounded-full ${getCategoryColor(event.category)}`}>
+              <span
+                className={`px-2 py-0.5 text-xs font-semibold text-primary-foreground rounded-full ${getCategoryColor(event.category)}`}
+              >
                 {event.category}
               </span>
               <span className="px-2 py-0.5 text-xs font-medium bg-secondary text-secondary-foreground rounded-full">
                 {event.format}
               </span>
-              {event.phases.map(phase => (
-                <span key={phase} className="px-2 py-0.5 text-xs font-medium bg-muted text-muted-foreground rounded-full">
+              {event.phases.map((phase) => (
+                <span
+                  key={phase}
+                  className="px-2 py-0.5 text-xs font-medium bg-muted text-muted-foreground rounded-full"
+                >
                   {phase}
                 </span>
               ))}
             </div>
-
           </div>
 
-          <h3 className="font-semibold text-lg text-foreground mb-1 break-all">{event.title}</h3>
+          <h3 className="font-semibold text-lg text-foreground mb-1 break-all">
+            {event.title}
+          </h3>
 
           <div className="text-sm text-muted-foreground mb-2">
-            <span className="font-medium text-foreground break-all">{event.organiser}</span>
+            <span className="font-medium text-foreground break-all">
+              {event.organiser}
+            </span>
             <span className="mx-2">•</span>
-            <a href={`mailto:${event.organiserEmail}`} className="text-primary hover:underline break-all">
+            <a
+              href={`mailto:${event.organiserEmail}`}
+              className="text-primary hover:underline break-all"
+            >
               {event.organiserEmail}
             </a>
           </div>
@@ -99,10 +124,7 @@ const PendingEventCard = ({ event, onApprove, onReject, onViewDetails, onFeature
           <div className="flex flex-wrap gap-2">
             <AlertDialog>
               <AlertDialogTrigger asChild>
-                <Button
-                  size="sm"
-                  className="bg-success hover:bg-success/90"
-                >
+                <Button size="sm" className="bg-success hover:bg-success/90">
                   <Check className="h-4 w-4 mr-1" />
                   Approve
                 </Button>
@@ -111,7 +133,11 @@ const PendingEventCard = ({ event, onApprove, onReject, onViewDetails, onFeature
                 <AlertDialogHeader>
                   <AlertDialogTitle>Approve Event</AlertDialogTitle>
                   <AlertDialogDescription>
-                    Are you sure you want to approve "{event.title.length > 60 ? event.title.substring(0, 60) + '...' : event.title}"? This will make the event live and visible to all users.
+                    Are you sure you want to approve "
+                    {event.title.length > 60
+                      ? event.title.substring(0, 60) + "..."
+                      : event.title}
+                    "? This will make the event live and visible to all users.
                   </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
@@ -128,10 +154,7 @@ const PendingEventCard = ({ event, onApprove, onReject, onViewDetails, onFeature
 
             <AlertDialog>
               <AlertDialogTrigger asChild>
-                <Button
-                  size="sm"
-                  variant="destructive"
-                >
+                <Button size="sm" variant="destructive">
                   <X className="h-4 w-4 mr-1" />
                   Reject
                 </Button>
@@ -140,7 +163,12 @@ const PendingEventCard = ({ event, onApprove, onReject, onViewDetails, onFeature
                 <AlertDialogHeader>
                   <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
                   <AlertDialogDescription>
-                    This will reject the event submission for "{event.title.length > 60 ? event.title.substring(0, 60) + '...' : event.title}". This action cannot be undone and will notify the organiser.
+                    Are you sure you want to reject "
+                    {event.title.length > 60
+                      ? event.title.substring(0, 60) + "..."
+                      : event.title}
+                    ". The event will not be published, and the organiser will
+                    be notified. This action cannot be undone.
                   </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
