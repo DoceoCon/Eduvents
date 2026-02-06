@@ -167,7 +167,7 @@ const PendingEventCard = ({
                     {event.title.length > 60
                       ? event.title.substring(0, 60) + "..."
                       : event.title}
-                    ". The event will not be published, and the organiser will
+                    "? The event will not be published, and the organiser will
                     be notified. This action cannot be undone.
                   </AlertDialogDescription>
                 </AlertDialogHeader>
