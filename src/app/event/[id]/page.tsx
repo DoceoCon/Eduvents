@@ -505,8 +505,8 @@ const EventDetail = () => {
           <AlertDialogHeader>
             <AlertDialogTitle>Approve Event</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to approve this event? Once approved, the
-              event will be published and visible to all users.
+              Are you sure you want to approve this event? The event will be
+              published, and the organiser will be notified about the approval.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
@@ -527,8 +527,8 @@ const EventDetail = () => {
           <AlertDialogHeader>
             <AlertDialogTitle>Reject Event</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to reject this event? This action will
-              notify the organiser and the event will not be published.
+              Are you sure you want to reject this event? The event will not be
+              published, and the organiser will be notified about the rejection.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
