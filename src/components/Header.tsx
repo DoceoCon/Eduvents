@@ -53,7 +53,7 @@ const Header = () => {
                 {link.label}
               </Link>
             ))}
-            {pathname !== '/login' && !pathname.startsWith('/admin') && (
+            {pathname !== '/login' && (
               <button
                 onClick={handleAdminClick}
                 className={`text-sm font-medium transition-colors hover:text-primary ${pathname.startsWith('/admin') || pathname === '/login'
@@ -61,7 +61,7 @@ const Header = () => {
                   : 'text-muted-foreground'
                   }`}
               >
-                {isAuthenticated ? 'Admin' : 'Login'}
+                Admin
               </button>
             )}
             {isAuthenticated && (
@@ -101,7 +101,7 @@ const Header = () => {
                   {link.label}
                 </Link>
               ))}
-              {pathname !== '/login' && !pathname.startsWith('/admin') && (
+              {pathname !== '/login' && (
                 <button
                   onClick={() => {
                     handleAdminClick();
@@ -112,7 +112,7 @@ const Header = () => {
                     : 'text-muted-foreground'
                     }`}
                 >
-                  {isAuthenticated ? 'Admin' : 'Login'}
+                  Admin
                 </button>
               )}
               {isAuthenticated && (

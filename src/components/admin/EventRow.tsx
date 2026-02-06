@@ -125,7 +125,7 @@ const EventRow = ({ event, onStatusChange, onFeaturedToggle, onEdit, showActions
               <AlertDialogHeader>
                 <AlertDialogTitle>Approve Event</AlertDialogTitle>
                 <AlertDialogDescription>
-                  Are you sure you want to approve "{event.title}"? This will make the event live and visible to all users.
+                  Are you sure you want to approve "{event.title.length > 60 ? event.title.substring(0, 60) + '...' : event.title}"? This will make the event live and visible to all users.
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
@@ -154,7 +154,7 @@ const EventRow = ({ event, onStatusChange, onFeaturedToggle, onEdit, showActions
               <AlertDialogHeader>
                 <AlertDialogTitle>Reject Event</AlertDialogTitle>
                 <AlertDialogDescription>
-                  Are you sure you want to reject "{event.title}"? This action cannot be undone and will notify the organiser.
+                  Are you sure you want to reject "{event.title.length > 60 ? event.title.substring(0, 60) + '...' : event.title}"? This action cannot be undone and will notify the organiser.
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>

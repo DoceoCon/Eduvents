@@ -111,7 +111,7 @@ const PendingEventCard = ({ event, onApprove, onReject, onViewDetails, onFeature
                 <AlertDialogHeader>
                   <AlertDialogTitle>Approve Event</AlertDialogTitle>
                   <AlertDialogDescription>
-                    Are you sure you want to approve "{event.title}"? This will make the event live and visible to all users.
+                    Are you sure you want to approve "{event.title.length > 60 ? event.title.substring(0, 60) + '...' : event.title}"? This will make the event live and visible to all users.
                   </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
@@ -140,7 +140,7 @@ const PendingEventCard = ({ event, onApprove, onReject, onViewDetails, onFeature
                 <AlertDialogHeader>
                   <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
                   <AlertDialogDescription>
-                    This will reject the event submission for "{event.title}". This action cannot be undone and will notify the organiser.
+                    This will reject the event submission for "{event.title.length > 60 ? event.title.substring(0, 60) + '...' : event.title}". This action cannot be undone and will notify the organiser.
                   </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
