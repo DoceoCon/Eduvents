@@ -222,7 +222,7 @@ const EventsContent = () => {
                                 </Button>
 
                                 <Select value={sortBy} onValueChange={(v) => setSortBy(v as typeof sortBy)}>
-                                    <SelectTrigger className="w-[160px] bg-card">
+                                    <SelectTrigger className="w-[160px] h-12 bg-card">
                                         <SelectValue placeholder="Sort by" />
                                     </SelectTrigger>
                                     <SelectContent className="bg-card">
