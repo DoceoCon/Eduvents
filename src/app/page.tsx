@@ -106,13 +106,38 @@ export default function Home() {
             </Link>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {latestEvents.map((event, index) => (
-              <div key={event.id} className="animate-slide-up" style={{ animationDelay: `${index * 50}ms` }}>
-                <EventCard event={event} />
+          {latestEvents.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {latestEvents.map((event, index) => (
+                <div key={event.id} className="animate-slide-up" style={{ animationDelay: `${index * 50}ms` }}>
+                  <EventCard event={event} />
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-16 bg-card rounded-lg">
+              <div className="w-24 h-24 mb-6 rounded-full bg-muted flex items-center justify-center mx-auto">
+                <svg
+                  className="w-12 h-12 text-muted-foreground/40"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                  />
+                </svg>
               </div>
-            ))}
-          </div>
+              <h3 className="text-2xl font-bold text-foreground mb-2">No Events Found</h3>
+              <p className="text-muted-foreground max-w-md mx-auto">
+                There are no events available at the moment. Check back soon for new educational opportunities!
+              </p>
+            </div>
+          )}
         </div>
       </section>
 
