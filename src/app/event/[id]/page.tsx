@@ -32,20 +32,12 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { Event } from "@/data/events";
-import { format } from "date-fns";
+import { safeFormatDate, safeConvertTo12Hour } from "@/lib/utils";
 import { toast } from "sonner";
 import { useEffect, useState } from "react";
 import { useAuth } from "@/context/AuthContext";
 import EventEditDialog from "@/components/admin/EventEditDialog";
 
-// Convert 24-hour time to 12-hour format
-const convertTo12Hour = (time24: string): string => {
-  const [hours, minutes] = time24.split(":");
-  const hour = parseInt(hours, 10);
-  const period = hour >= 12 ? "PM" : "AM";
-  const hour12 = hour % 12 || 12;
-  return `${hour12}:${minutes} ${period}`;
-};
 
 const EventDetail = () => {
   const params = useParams();
@@ -164,15 +156,15 @@ const EventDetail = () => {
 
   const formattedDate = event.startDate && event.endDate
     ? event.startDate === event.endDate
-      ? format(new Date(event.startDate), "EEEE, MMMM d, yyyy")
-      : `${format(new Date(event.startDate), "MMM d")} - ${format(new Date(event.endDate), "MMM d, yyyy")}`
+      ? safeFormatDate(event.startDate, "EEEE, MMMM d, yyyy")
+      : `${safeFormatDate(event.startDate, "MMM d")} - ${safeFormatDate(event.endDate, "MMM d, yyyy")}`
     : event.date
-    ? format(new Date(event.date), "EEEE, MMMM d, yyyy")
-    : "";
+      ? safeFormatDate(event.date, "EEEE, MMMM d, yyyy")
+      : "";
   const formattedStartTime = event.startTime
-    ? convertTo12Hour(event.startTime)
+    ? safeConvertTo12Hour(event.startTime)
     : "";
-  const formattedEndTime = event.endTime ? convertTo12Hour(event.endTime) : "";
+  const formattedEndTime = event.endTime ? safeConvertTo12Hour(event.endTime) : "";
   const shareText = `Check out this event: ${event.title}`;
 
   const handleShare = (platform: string) => {

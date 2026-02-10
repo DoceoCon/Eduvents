@@ -3,7 +3,7 @@ import { ChevronLeft, ChevronRight, Calendar, MapPin } from 'lucide-react';
 import Link from 'next/link';
 import { Event, getCategoryColor } from '@/data/events';
 import { Button } from '@/components/ui/button';
-import { format } from 'date-fns';
+import { safeFormatDate } from '@/lib/utils';
 
 interface FeaturedCarouselProps {
   events: Event[];
@@ -112,7 +112,7 @@ const FeaturedCarousel = ({ events }: FeaturedCarouselProps) => {
                 <div className="flex flex-wrap items-center gap-4 mb-6 text-white/80 text-sm">
                   <div className="flex items-center">
                     <Calendar className="h-4 w-4 mr-2" />
-                    <span>{format(new Date(event.date), 'MMMM d, yyyy')}</span>
+                    <span>{safeFormatDate(event.date || event.startDate, 'MMMM d, yyyy')}</span>
                   </div>
                   {event.location && (
                     <div className="flex items-center">
