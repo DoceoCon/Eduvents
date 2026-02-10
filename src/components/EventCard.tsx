@@ -18,7 +18,13 @@ const convertTo12Hour = (time24: string): string => {
 };
 
 const EventCard = ({ event }: EventCardProps) => {
-  const formattedDate = format(new Date(event.date), 'EEEE, MMMM d, yyyy');
+  const formattedDate = event.startDate && event.endDate
+    ? event.startDate === event.endDate
+      ? format(new Date(event.startDate), 'EEEE, MMMM d, yyyy')
+      : `${format(new Date(event.startDate), 'MMM d')} - ${format(new Date(event.endDate), 'MMM d, yyyy')}`
+    : event.date
+    ? format(new Date(event.date), 'EEEE, MMMM d, yyyy')
+    : '';
   const formattedStartTime = convertTo12Hour(event.startTime);
   const formattedEndTime = convertTo12Hour(event.endTime);
 
@@ -66,9 +72,13 @@ const EventCard = ({ event }: EventCardProps) => {
               <span className="px-2 py-0.5 text-xs font-medium bg-success/10 text-success rounded-full">
                 Free
               </span>
+            ) : event.priceFrom && event.priceTo ? (
+              <span className="px-2 py-0.5 text-xs font-medium bg-primary/10 text-primary rounded-full">
+                £{event.priceFrom} - £{event.priceTo}
+              </span>
             ) : (
               <span className="px-2 py-0.5 text-xs font-medium bg-primary/10 text-primary rounded-full">
-                £{event.price}
+                £{event.price || event.priceFrom || event.priceTo}
               </span>
             )}
           </div>

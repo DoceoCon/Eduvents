@@ -18,6 +18,7 @@ const Header = () => {
     { path: '/', label: 'Home' },
     { path: '/events', label: 'Find Events' },
     { path: '/list-event', label: 'List Your Event' },
+    { path: '/about', label: 'About Us' },
     { path: '/contact', label: 'Contact' },
   ];
 

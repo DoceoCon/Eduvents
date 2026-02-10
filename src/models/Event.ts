@@ -8,7 +8,9 @@ export interface IEvent {
   format: string;
   subjectAreas: string[];
   phases: string[];
-  date: string;
+  date?: string; // Legacy field for backward compatibility
+  startDate: string;
+  endDate: string;
   startTime: string;
   endTime: string;
   location: string;
@@ -20,7 +22,9 @@ export interface IEvent {
   status: "pending" | "approved" | "rejected";
   submissionDate: string;
   isFree: boolean;
-  price?: number;
+  price?: number; // Legacy field for backward compatibility
+  priceFrom?: number;
+  priceTo?: number;
   isAdminCreated?: boolean;
   paymentStatus?: "unpaid" | "paid";
   stripeSessionId?: string;
@@ -36,7 +40,7 @@ const EventSchema = new Schema<IEvent>(
     description: {
       type: String,
       required: [true, "Required"],
-      maxlength: [1000, "Description must be less then 1000 characters "],
+      maxlength: [2000, "Description must be less then 2000 characters "],
     },
     fullDescription: {
       type: String,
@@ -46,7 +50,9 @@ const EventSchema = new Schema<IEvent>(
     format: { type: String, required: [true, "Required"] },
     subjectAreas: [{ type: String }],
     phases: [{ type: String }],
-    date: { type: String, required: [true, "Required"] },
+    date: { type: String, required: false }, // Legacy field for backward compatibility
+    startDate: { type: String, required: [true, "Required"] },
+    endDate: { type: String, required: [true, "Required"] },
     startTime: { type: String, required: [true, "Required"] },
     endTime: { type: String, required: [true, "Required"] },
     location: { type: String, required: [true, "Required"] },
@@ -76,7 +82,9 @@ const EventSchema = new Schema<IEvent>(
       default: () => new Date().toISOString().split("T")[0],
     },
     isFree: { type: Boolean, default: true },
-    price: { type: Number },
+    price: { type: Number }, // Legacy field for backward compatibility
+    priceFrom: { type: Number },
+    priceTo: { type: Number },
     isAdminCreated: { type: Boolean, default: false },
     paymentStatus: {
       type: String,

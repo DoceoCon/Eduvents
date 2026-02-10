@@ -72,11 +72,11 @@ const EventEditDialog = ({
     } else if (
       field === "description" &&
       typeof value === "string" &&
-      value.length > 1000
+      value.length > 2000
     ) {
       setErrors((prev) => ({
         ...prev,
-        description: "Description must be 1000 characters or less",
+        description: "Description must be 2000 characters or less",
       }));
     } else if (
       field === "organiser" &&
@@ -188,8 +188,8 @@ const EventEditDialog = ({
       newErrors.title = "Title must be 100 characters or less";
 
     if (!formData.description?.trim()) newErrors.description = "Required";
-    else if (formData.description.length > 1000)
-      newErrors.description = "Description must be 1000 characters or less";
+    else if (formData.description.length > 2000)
+      newErrors.description = "Description must be 2000 characters or less";
 
     if (!formData.organiser?.trim()) newErrors.organiser = "Required";
     else if (formData.organiser.length > 50)
@@ -305,12 +305,12 @@ const EventEditDialog = ({
                 onChange={(e) => handleChange("description", e.target.value)}
                 rows={4}
                 className={errors.description ? "border-destructive" : ""}
-                maxLength={1000}
+                maxLength={2000}
               />
               <p
-                className={`text-sm mt-1 ${(formData.description?.length || 0) >= 1000 ? "text-destructive font-medium" : "text-muted-foreground"}`}
+                className={`text-sm mt-1 ${(formData.description?.length || 0) >= 2000 ? "text-destructive font-medium" : "text-muted-foreground"}`}
               >
-                {formData.description?.length || 0}/1000 characters
+                {formData.description?.length || 0}/2000 characters
               </p>
               {errors.description && (
                 <p className="text-sm text-destructive mt-1">

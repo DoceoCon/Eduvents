@@ -20,7 +20,9 @@ export type SubjectArea =
   | 'Assessment'
   | 'Wellbeing'
   | 'Humanities'
-  | 'Geography';
+  | 'Geography'
+  | 'SEND'
+  | 'Governance';
 
 export type EventPhase =
   | 'Primary'
@@ -40,7 +42,9 @@ export interface Event {
   format: EventFormat;
   subjectAreas: SubjectArea[];
   phases: EventPhase[];
-  date: string;
+  date?: string; // Legacy field for backward compatibility
+  startDate: string;
+  endDate: string;
   startTime: string;
   endTime: string;
   location: string;
@@ -52,7 +56,9 @@ export interface Event {
   status: 'pending' | 'approved' | 'rejected';
   submissionDate: string;
   isFree: boolean;
-  price?: number;
+  price?: number; // Legacy field for backward compatibility
+  priceFrom?: number;
+  priceTo?: number;
   isAdminCreated?: boolean;
   paymentStatus?: 'unpaid' | 'paid';
   stripeSessionId?: string;
@@ -152,7 +158,7 @@ This month's topic: Universal Design for Learning - creating lessons that work f
 Expert speakers share practical strategies, resources, and case studies from schools excelling in inclusion.`,
     category: 'Webinar',
     format: 'Virtual',
-    subjectAreas: ['Inclusion', 'Wellbeing'],
+    subjectAreas: ['Inclusion', 'Wellbeing', 'SEND'],
     phases: ['Primary', 'Secondary', 'Special Schools'],
     date: '2026-01-22',
     startTime: '16:00',
@@ -365,7 +371,7 @@ Keynote speakers include the Education Minister and leading education researcher
 An essential event for anyone in Welsh school leadership.`,
     category: 'Conference',
     format: 'In-Person',
-    subjectAreas: ['Leadership'],
+    subjectAreas: ['Leadership', 'Governance'],
     phases: ['Primary', 'Secondary', 'Independent'],
     date: '2026-03-05',
     startTime: '09:00',
@@ -579,7 +585,7 @@ Sessions cover everything from parental expectations around technology to balanc
 Network with fellow independent school leaders and hear from technology vendors experienced in the sector.`,
     category: 'Conference',
     format: 'In-Person',
-    subjectAreas: ['Technology', 'Leadership'],
+    subjectAreas: ['Technology', 'Leadership', 'Governance'],
     phases: ['Independent', 'Primary', 'Secondary'],
     date: '2026-05-22',
     startTime: '09:30',
@@ -606,7 +612,7 @@ Learn to spot the signs, understand reasonable adjustments, and implement dyslex
 Free access provided by the British Dyslexia Association.`,
     category: 'Webinar',
     format: 'Virtual',
-    subjectAreas: ['Inclusion', 'English'],
+    subjectAreas: ['Inclusion', 'English', 'SEND'],
     phases: ['Primary', 'Secondary', 'Further Education'],
     date: '2026-04-08',
     startTime: '16:30',
@@ -646,7 +652,9 @@ export const subjectAreas: SubjectArea[] = [
   'Assessment',
   'Wellbeing',
   'Humanities',
-  'Geography'
+  'Geography',
+  'SEND',
+  'Governance'
 ];
 
 export const eventPhases: EventPhase[] = [

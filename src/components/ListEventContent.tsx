@@ -47,12 +47,14 @@ const ListEventContent = ({
     format: "",
     subjectAreas: [] as SubjectArea[],
     phases: [] as EventPhase[],
-    date: "",
+    startDate: "",
+    endDate: "",
     startTime: "",
     endTime: "",
     location: "",
     isFree: "free",
-    price: "",
+    priceFrom: "",
+    priceTo: "",
     organiserName: "",
     organiserEmail: "",
     bookingUrl: "",
@@ -70,7 +72,8 @@ const ListEventContent = ({
       "description",
       "category",
       "format",
-      "date",
+      "startDate",
+      "endDate",
       "startTime",
       "endTime",
       "location",
@@ -90,8 +93,8 @@ const ListEventContent = ({
     if (formData.title && formData.title.length > 100) {
       newErrors.title = "Title must be 100 characters or less";
     }
-    if (formData.description && formData.description.length > 1000) {
-      newErrors.description = "Description must be 1000 characters or less";
+    if (formData.description && formData.description.length > 2000) {
+      newErrors.description = "Description must be 2000 characters or less";
     }
     if (formData.organiserName && formData.organiserName.length > 50) {
       newErrors.organiserName = "Name must be 50 characters or less";
@@ -108,17 +111,38 @@ const ListEventContent = ({
     }
 
     // Past date validation
-    if (formData.date) {
-      const selectedDate = new Date(formData.date);
+    if (formData.startDate) {
+      const selectedDate = new Date(formData.startDate);
       const today = new Date();
       today.setHours(0, 0, 0, 0);
       if (selectedDate < today) {
-        newErrors.date = "Date cannot be in the past";
+        newErrors.startDate = "Date cannot be in the past";
       }
     }
 
-    if (formData.isFree === "paid" && !formData.price) {
-      newErrors.price = "Required";
+    // End date validation
+    if (formData.endDate && formData.startDate) {
+      const startDate = new Date(formData.startDate);
+      const endDate = new Date(formData.endDate);
+      if (endDate < startDate) {
+        newErrors.endDate = "End date cannot be before start date";
+      }
+    }
+
+    if (formData.isFree === "paid") {
+      if (!formData.priceFrom) {
+        newErrors.priceFrom = "Required";
+      }
+      if (!formData.priceTo) {
+        newErrors.priceTo = "Required";
+      }
+      if (formData.priceFrom && formData.priceTo) {
+        const from = parseFloat(formData.priceFrom);
+        const to = parseFloat(formData.priceTo);
+        if (to < from) {
+          newErrors.priceTo = "Maximum price must be greater than or equal to minimum price";
+        }
+      }
     }
 
     if (selectedFile) {
@@ -145,10 +169,10 @@ const ListEventContent = ({
         ...prev,
         title: "Title must be 100 characters or less",
       }));
-    } else if (field === "description" && value.length > 1000) {
+    } else if (field === "description" && value.length > 2000) {
       setErrors((prev) => ({
         ...prev,
-        description: "Description must be 1000 characters or less",
+        description: "Description must be 2000 characters or less",
       }));
     } else if (field === "organiserName" && value.length > 50) {
       setErrors((prev) => ({
@@ -288,12 +312,14 @@ const ListEventContent = ({
       data.append("format", formData.format);
       data.append("subjectAreas", JSON.stringify(formData.subjectAreas));
       data.append("phases", JSON.stringify(formData.phases));
-      data.append("date", formData.date);
+      data.append("startDate", formData.startDate);
+      data.append("endDate", formData.endDate);
       data.append("startTime", formData.startTime);
       data.append("endTime", formData.endTime);
       data.append("location", formData.location);
       data.append("isFree", (formData.isFree === "free").toString());
-      data.append("price", formData.price);
+      data.append("priceFrom", formData.priceFrom);
+      data.append("priceTo", formData.priceTo);
       data.append("organiser", formData.organiserName);
       data.append("organiserEmail", formData.organiserEmail);
       data.append("bookingUrl", formData.bookingUrl);
@@ -382,12 +408,14 @@ const ListEventContent = ({
                     format: "",
                     subjectAreas: [],
                     phases: [],
-                    date: "",
+                    startDate: "",
+                    endDate: "",
                     startTime: "",
                     endTime: "",
                     location: "",
                     isFree: "free",
-                    price: "",
+                    priceFrom: "",
+                    priceTo: "",
                     organiserName: "",
                     organiserEmail: "",
                     bookingUrl: "",
@@ -440,12 +468,12 @@ const ListEventContent = ({
               placeholder="Describe your event in detail..."
               rows={5}
               className={errors.description ? "border-destructive" : ""}
-              maxLength={1000}
+              maxLength={2000}
             />
             <p
-              className={`text-sm mt-1 ${formData.description.length >= 1000 ? "text-destructive font-medium" : "text-muted-foreground"}`}
+              className={`text-sm mt-1 ${formData.description.length >= 2000 ? "text-destructive font-medium" : "text-muted-foreground"}`}
             >
-              {formData.description.length}/1000 characters
+              {formData.description.length}/2000 characters
             </p>
             {errors.description && (
               <p className="text-sm text-destructive mt-1">
@@ -531,47 +559,70 @@ const ListEventContent = ({
       <div className="bg-card rounded-lg p-3 shadow-card">
         <h2 className="text-xl font-semibold mb-6">Date & Time</h2>
 
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <div>
-            <Label htmlFor="date">Event Date *</Label>
-            <Input
-              id="date"
-              type="date"
-              value={formData.date}
-              min={new Date().toISOString().split("T")[0]}
-              onChange={(e) => handleChange("date", e.target.value)}
-              onKeyDown={(e) => e.preventDefault()}
-              className={errors.date ? "border-destructive" : ""}
-            />
-            {errors.date && (
-              <p className="text-sm text-destructive mt-1">{errors.date}</p>
-            )}
-          </div>
+        <div className="space-y-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <Label htmlFor="startDate">Start Date *</Label>
+              <Input
+                id="startDate"
+                type="date"
+                value={formData.startDate}
+                min={new Date().toISOString().split("T")[0]}
+                onChange={(e) => handleChange("startDate", e.target.value)}
+                onKeyDown={(e) => e.preventDefault()}
+                className={errors.startDate ? "border-destructive" : ""}
+              />
+              {errors.startDate && (
+                <p className="text-sm text-destructive mt-1">{errors.startDate}</p>
+              )}
+            </div>
 
-          <div>
-            <Label htmlFor="startTime">Start Time *</Label>
-            <TimeInput
-              value={formData.startTime}
-              onChange={(value) => handleChange("startTime", value)}
-              className={errors.startTime ? "border-destructive" : ""}
-            />
-            {errors.startTime && (
-              <p className="text-sm text-destructive mt-1">
-                {errors.startTime}
+            <div>
+              <Label htmlFor="endDate">End Date *</Label>
+              <Input
+                id="endDate"
+                type="date"
+                value={formData.endDate}
+                min={formData.startDate || new Date().toISOString().split("T")[0]}
+                onChange={(e) => handleChange("endDate", e.target.value)}
+                onKeyDown={(e) => e.preventDefault()}
+                className={errors.endDate ? "border-destructive" : ""}
+              />
+              {errors.endDate && (
+                <p className="text-sm text-destructive mt-1">{errors.endDate}</p>
+              )}
+              <p className="text-sm text-muted-foreground mt-1">
+                For single-day events, select the same date
               </p>
-            )}
+            </div>
           </div>
 
-          <div>
-            <Label htmlFor="endTime">End Time *</Label>
-            <TimeInput
-              value={formData.endTime}
-              onChange={(value) => handleChange("endTime", value)}
-              className={errors.endTime ? "border-destructive" : ""}
-            />
-            {errors.endTime && (
-              <p className="text-sm text-destructive mt-1">{errors.endTime}</p>
-            )}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <Label htmlFor="startTime">Start Time *</Label>
+              <TimeInput
+                value={formData.startTime}
+                onChange={(value) => handleChange("startTime", value)}
+                className={errors.startTime ? "border-destructive" : ""}
+              />
+              {errors.startTime && (
+                <p className="text-sm text-destructive mt-1">
+                  {errors.startTime}
+                </p>
+              )}
+            </div>
+
+            <div>
+              <Label htmlFor="endTime">End Time *</Label>
+              <TimeInput
+                value={formData.endTime}
+                onChange={(value) => handleChange("endTime", value)}
+                className={errors.endTime ? "border-destructive" : ""}
+              />
+              {errors.endTime && (
+                <p className="text-sm text-destructive mt-1">{errors.endTime}</p>
+              )}
+            </div>
           </div>
         </div>
       </div>
@@ -621,28 +672,55 @@ const ListEventContent = ({
 
           {formData.isFree === "paid" && (
             <div className="animate-fade-in">
-              <Label htmlFor="price">Ticket Price *</Label>
-              <div className="relative">
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
-                  £
-                </span>
-                <Input
-                  id="price"
-                  type="number"
-                  min="0"
-                  step="0.01"
-                  value={formData.price}
-                  onChange={(e) => handleChange("price", e.target.value)}
-                  placeholder="Enter price (e.g., 100)"
-                  className={`pl-7 ${errors.price ? "border-destructive" : ""}`}
-                />
+              <Label>Ticket Price Range *</Label>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="priceFrom" className="text-sm text-muted-foreground">From</Label>
+                  <div className="relative">
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
+                      £
+                    </span>
+                    <Input
+                      id="priceFrom"
+                      type="number"
+                      min="0"
+                      step="0.01"
+                      value={formData.priceFrom}
+                      onChange={(e) => handleChange("priceFrom", e.target.value)}
+                      placeholder="50"
+                      className={`pl-7 ${errors.priceFrom ? "border-destructive" : ""}`}
+                    />
+                  </div>
+                  {errors.priceFrom && (
+                    <p className="text-sm text-destructive mt-1">{errors.priceFrom}</p>
+                  )}
+                </div>
+
+                <div>
+                  <Label htmlFor="priceTo" className="text-sm text-muted-foreground">To</Label>
+                  <div className="relative">
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
+                      £
+                    </span>
+                    <Input
+                      id="priceTo"
+                      type="number"
+                      min="0"
+                      step="0.01"
+                      value={formData.priceTo}
+                      onChange={(e) => handleChange("priceTo", e.target.value)}
+                      placeholder="150"
+                      className={`pl-7 ${errors.priceTo ? "border-destructive" : ""}`}
+                    />
+                  </div>
+                  {errors.priceTo && (
+                    <p className="text-sm text-destructive mt-1">{errors.priceTo}</p>
+                  )}
+                </div>
               </div>
               <p className="text-sm text-muted-foreground mt-1">
-                Price per person
+                Enter the price range for tickets (e.g., £50 - £150)
               </p>
-              {errors.price && (
-                <p className="text-sm text-destructive mt-1">{errors.price}</p>
-              )}
             </div>
           )}
         </div>
@@ -731,7 +809,7 @@ const ListEventContent = ({
                 Drag and drop your image here, or click to browse
               </p>
               <p className="text-sm text-muted-foreground">
-                Recommended: 1200x630px, JPG or PNG
+                Recommended: 1200x675px (16:9 ratio), JPG or PNG, max 25MB
               </p>
               <input
                 type="file"

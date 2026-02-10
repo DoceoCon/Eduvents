@@ -30,7 +30,8 @@ export async function POST(req: NextRequest) {
       (formData.get("subjectAreas") as string) || "[]",
     );
     const phases = JSON.parse((formData.get("phases") as string) || "[]");
-    const date = formData.get("date") as string;
+    const startDate = formData.get("startDate") as string;
+    const endDate = formData.get("endDate") as string;
     const startTime = formData.get("startTime") as string;
     const endTime = formData.get("endTime") as string;
     const location = formData.get("location") as string;
@@ -38,8 +39,11 @@ export async function POST(req: NextRequest) {
     const organiserEmail = formData.get("organiserEmail") as string;
     const bookingUrl = formData.get("bookingUrl") as string;
     const isFree = formData.get("isFree") === "true";
-    const price = formData.get("price")
-      ? parseFloat(formData.get("price") as string)
+    const priceFrom = formData.get("priceFrom")
+      ? parseFloat(formData.get("priceFrom") as string)
+      : undefined;
+    const priceTo = formData.get("priceTo")
+      ? parseFloat(formData.get("priceTo") as string)
       : undefined;
     const isAdmin = formData.get("isAdmin") === "true";
     const file = formData.get("image") as File;
@@ -51,8 +55,8 @@ export async function POST(req: NextRequest) {
       errors.title = "Title must be 100 characters or less";
 
     if (!description) errors.description = "Required";
-    else if (description.length > 1000)
-      errors.description = "Description must be less then 1000 characters ";
+    else if (description.length > 2000)
+      errors.description = "Description must be less then 2000 characters ";
 
     if (!organiser) errors.organiser = "Required";
     else if (organiser.length > 50)
@@ -109,7 +113,8 @@ export async function POST(req: NextRequest) {
       format,
       subjectAreas,
       phases,
-      date,
+      startDate,
+      endDate,
       startTime,
       endTime,
       location,
@@ -118,7 +123,8 @@ export async function POST(req: NextRequest) {
       image: imageUrl,
       bookingUrl,
       isFree,
-      price,
+      priceFrom,
+      priceTo,
       status: isAdmin ? "approved" : "pending",
       featured: false,
       isAdminCreated: isAdmin,
@@ -212,7 +218,8 @@ export async function GET(req: NextRequest) {
     const format = searchParams.get("format");
     const subject = searchParams.get("subject");
     const phase = searchParams.get("phase");
-    const date = searchParams.get("date");
+    const dateFrom = searchParams.get("dateFrom");
+    const dateTo = searchParams.get("dateTo");
     const sort = searchParams.get("sort") || "newest";
 
     // Build query
@@ -283,8 +290,22 @@ export async function GET(req: NextRequest) {
     if (phase && phase !== "all") {
       query.phases = { $in: [phase] };
     }
-    if (date) {
-      query.date = date;
+    if (dateFrom || dateTo) {
+      // Filter events where date ranges overlap with the search range
+      const dateQuery: any = {};
+      if (dateFrom && dateTo) {
+        // Events that end on or after dateFrom AND start on or before dateTo
+        query.$and = [
+          { $or: [{ endDate: { $gte: dateFrom } }, { date: { $gte: dateFrom } }] },
+          { $or: [{ startDate: { $lte: dateTo } }, { date: { $lte: dateTo } }] }
+        ];
+      } else if (dateFrom) {
+        // Events that end on or after dateFrom
+        query.$or = [{ endDate: { $gte: dateFrom } }, { date: { $gte: dateFrom } }];
+      } else if (dateTo) {
+        // Events that start on or before dateTo
+        query.$or = [{ startDate: { $lte: dateTo } }, { date: { $lte: dateTo } }];
+      }
     }
 
     // Sort configuration

@@ -2,15 +2,19 @@
 
 import { useState, useMemo, Suspense, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { Filter, X } from 'lucide-react';
+import { Filter, X, Calendar as CalendarIcon } from 'lucide-react';
 import Layout from '@/components/Layout';
 import EventCard from '@/components/EventCard';
 import SearchBar from '@/components/SearchBar';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Event, categories, formats, subjectAreas, eventPhases, EventCategory, EventFormat, SubjectArea, EventPhase } from '@/data/events';
+import { DateRange, Range } from 'react-date-range';
+import { format as formatDate } from 'date-fns';
+import 'react-date-range/dist/styles.css';
+import 'react-date-range/dist/theme/default.css';
 
 const ITEMS_PER_PAGE = 12;
 
@@ -26,7 +30,11 @@ const EventsContent = () => {
     const [selectedFormat, setSelectedFormat] = useState<EventFormat | 'all'>('all');
     const [selectedSubject, setSelectedSubject] = useState<SubjectArea | 'all'>('all');
     const [selectedPhase, setSelectedPhase] = useState<EventPhase | 'all'>('all');
-    const [dateFilter, setDateFilter] = useState('');
+    const [dateRange, setDateRange] = useState<Range>({
+        startDate: undefined,
+        endDate: undefined,
+        key: 'selection'
+    });
     const [sortBy, setSortBy] = useState<'newest' | 'date' | 'popularity'>('newest');
     const [currentPage, setCurrentPage] = useState(1);
     const [showMobileFilters, setShowMobileFilters] = useState(false);
@@ -49,7 +57,12 @@ const EventsContent = () => {
                 if (selectedFormat !== 'all') params.append('format', selectedFormat);
                 if (selectedSubject !== 'all') params.append('subject', selectedSubject);
                 if (selectedPhase !== 'all') params.append('phase', selectedPhase);
-                if (dateFilter) params.append('date', dateFilter);
+                if (dateRange.startDate) {
+                    params.append('dateFrom', formatDate(dateRange.startDate, 'yyyy-MM-dd'));
+                }
+                if (dateRange.endDate) {
+                    params.append('dateTo', formatDate(dateRange.endDate, 'yyyy-MM-dd'));
+                }
                 params.append('sort', sortBy);
 
                 const response = await fetch(`/api/events?${params.toString()}`);
@@ -64,7 +77,7 @@ const EventsContent = () => {
             }
         };
         fetchEvents();
-    }, [debouncedSearch, selectedCategory, selectedFormat, selectedSubject, selectedPhase, dateFilter, sortBy]);
+    }, [debouncedSearch, selectedCategory, selectedFormat, selectedSubject, selectedPhase, dateRange, sortBy]);
 
     const totalPages = Math.ceil(allEvents.length / ITEMS_PER_PAGE);
     const paginatedEvents = allEvents.slice(
@@ -77,20 +90,24 @@ const EventsContent = () => {
         setSelectedFormat('all');
         setSelectedSubject('all');
         setSelectedPhase('all');
-        setDateFilter('');
+        setDateRange({
+            startDate: undefined,
+            endDate: undefined,
+            key: 'selection'
+        });
         setSearchQuery('');
         setDebouncedSearch('');
         setCurrentPage(1);
     };
 
-    const hasActiveFilters = selectedCategory !== 'all' || selectedFormat !== 'all' || selectedSubject !== 'all' || selectedPhase !== 'all' || dateFilter || searchQuery;
+    const hasActiveFilters = selectedCategory !== 'all' || selectedFormat !== 'all' || selectedSubject !== 'all' || selectedPhase !== 'all' || (dateRange.startDate || dateRange.endDate) || searchQuery;
 
     const activeFilterCount = [
         selectedCategory !== 'all',
         selectedFormat !== 'all',
         selectedSubject !== 'all',
         selectedPhase !== 'all',
-        dateFilter,
+        dateRange.startDate || dateRange.endDate,
         searchQuery
     ].filter(Boolean).length;
 
@@ -158,12 +175,42 @@ const EventsContent = () => {
 
             <div>
                 <Label className="text-sm font-medium mb-2 block">Event Date</Label>
-                <Input
-                    type="date"
-                    value={dateFilter}
-                    onChange={(e) => { setDateFilter(e.target.value); setCurrentPage(1); }}
-                    className="bg-card"
-                />
+                <Popover>
+                    <PopoverTrigger asChild>
+                        <Button
+                            variant="outline"
+                            className="w-full justify-start text-left font-normal bg-card text-sm"
+                        >
+                            <CalendarIcon className="mr-2 h-4 w-4 flex-shrink-0" />
+                            <span className="truncate">
+                                {dateRange.startDate ? (
+                                    dateRange.endDate ? (
+                                        <>
+                                            {formatDate(dateRange.startDate, "MMM d, yyyy")} -{" "}
+                                            {formatDate(dateRange.endDate, "MMM d, yyyy")}
+                                        </>
+                                    ) : (
+                                        formatDate(dateRange.startDate, "MMM d, yyyy")
+                                    )
+                                ) : (
+                                    "Select date range"
+                                )}
+                            </span>
+                        </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0" align="start">
+                        <DateRange
+                            ranges={[dateRange]}
+                            onChange={(ranges) => {
+                                setDateRange(ranges.selection);
+                                setCurrentPage(1);
+                            }}
+                            months={1}
+                            direction="vertical"
+                            showDateDisplay={false}
+                        />
+                    </PopoverContent>
+                </Popover>
             </div>
 
             {hasActiveFilters && (
@@ -179,7 +226,7 @@ const EventsContent = () => {
         <Layout>
             <div className="bg-gradient-hero py-12">
                 <div className="container-tight">
-                    <h1 className="text-3xl md:text-4xl font-bold text-primary-foreground mb-2">Find Educational Events</h1>
+                    <h1 className="text-3xl md:text-4xl font-bold text-primary-foreground mb-2">Discover Your Ideal Educational Event</h1>
                     <p className="text-primary-foreground/80">Discover professional development opportunities near you</p>
                 </div>
             </div>
@@ -340,7 +387,7 @@ const EventsContent = () => {
             {showMobileFilters && (
                 <div className="fixed inset-0 z-50 lg:hidden">
                     <div className="absolute inset-0 bg-foreground/50" onClick={() => setShowMobileFilters(false)} />
-                    <div className="absolute right-0 top-0 h-full w-80 max-w-full bg-background p-6 shadow-xl animate-slide-in-right overflow-y-auto">
+                    <div className="absolute right-0 top-0 h-full w-[350px] max-w-full bg-background p-6 shadow-xl animate-slide-in-right overflow-y-auto">
                         <div className="flex items-center justify-between mb-6">
                             <h2 className="font-semibold text-lg">Filters</h2>
                             <Button variant="ghost" size="sm" onClick={() => setShowMobileFilters(false)}>

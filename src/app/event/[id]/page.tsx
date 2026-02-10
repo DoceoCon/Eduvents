@@ -162,7 +162,11 @@ const EventDetail = () => {
     );
   }
 
-  const formattedDate = event.date
+  const formattedDate = event.startDate && event.endDate
+    ? event.startDate === event.endDate
+      ? format(new Date(event.startDate), "EEEE, MMMM d, yyyy")
+      : `${format(new Date(event.startDate), "MMM d")} - ${format(new Date(event.endDate), "MMM d, yyyy")}`
+    : event.date
     ? format(new Date(event.date), "EEEE, MMMM d, yyyy")
     : "";
   const formattedStartTime = event.startTime
@@ -235,7 +239,7 @@ const EventDetail = () => {
       </div>
 
       {/* Hero Image */}
-      <div className="relative h-[300px] md:h-[400px] lg:h-[500px]">
+      <div className="relative w-full aspect-video max-h-[500px]">
         <img
           src={event.image}
           alt={event.title}
@@ -327,10 +331,16 @@ const EventDetail = () => {
                           Free
                         </span>
                       </p>
+                    ) : event.priceFrom && event.priceTo ? (
+                      <p className="font-medium">
+                        <span className="px-3 py-1 text-sm bg-primary/10 text-primary rounded-full">
+                          £{event.priceFrom} - £{event.priceTo}
+                        </span>
+                      </p>
                     ) : (
                       <p className="font-medium">
                         <span className="px-3 py-1 text-sm bg-primary/10 text-primary rounded-full">
-                          £{event.price} per person
+                          £{event.price || event.priceFrom || event.priceTo}
                         </span>
                       </p>
                     )}

@@ -45,14 +45,14 @@ export default function Home() {
   return (
     <Layout>
       {/* Hero Section */}
-      <section className="bg-gradient-hero py-20 md:py-32">
+      <section className="bg-gradient-hero py-10 md:py-16">
         <div className="container-tight">
           <div className="max-w-3xl mx-auto text-center animate-slide-up">
             <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold text-primary-foreground mb-6">
-              Discover Educational Events That Inspire
+              Educational Events That Inspire
             </h1>
-            <p className="text-lg md:text-xl text-primary-foreground/90 mb-10">
-              Connect with professional development opportunities for educators across the UK
+            <p className="text-lg md:text-xl text-primary-foreground/90 mb-10 font-league-gothic tracking-wide uppercase">
+              Discover CPD training, Webinars, Conferences, Award Shows and more globally.
             </p>
 
             <form onSubmit={handleSearch} className="flex flex-col sm:flex-row gap-3 max-w-xl mx-auto mb-8">
@@ -146,10 +146,10 @@ export default function Home() {
         <div className="container-tight">
           <div className="max-w-2xl mx-auto text-center">
             <h2 className="text-3xl md:text-4xl font-bold text-primary-foreground mb-4">
-              Ready to list your event?
+              Ready to List your Event?
             </h2>
             <p className="text-lg text-primary-foreground/90 mb-8">
-              Reach thousands of educators across the UK. Share your educational event with our community of passionate teachers and school leaders.
+              Reach thousands of users searching for events every month. Share your educational event with our community of passionate teachers and school leaders.
             </p>
             <Link href="/list-event">
               <Button size="lg" className="bg-primary-foreground text-primary hover:bg-primary-foreground/90 px-8">

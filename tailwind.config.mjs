@@ -19,6 +19,7 @@ const config = {
         extend: {
             fontFamily: {
                 sans: ['Inter', 'system-ui', 'sans-serif'],
+                'league-gothic': ['"League Gothic"', 'sans-serif'],
             },
             colors: {
                 border: "hsl(var(--border))",

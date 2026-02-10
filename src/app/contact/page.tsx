@@ -1,5 +1,5 @@
 import Layout from "@/components/Layout";
-import { Mail, Phone, MapPin } from "lucide-react";
+import { Mail, MapPin } from "lucide-react";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -29,32 +29,19 @@ export default function Contact() {
             </h2>
 
             <p className="text-muted-foreground mb-8">
-              Contact information will be provided here. Whether you have
-              questions about listing your event, need support, or want to
-              partner with us, our team is here to help.
+              Whether you have questions about listing your event, need support, or want to partner with us, our team is here to help.
             </p>
 
             <div className="space-y-6">
               <div className="flex items-center justify-center gap-3 text-muted-foreground">
                 <Mail className="h-5 w-5 text-primary" />
-                <span>info@eduvents.co.uk</span>
-              </div>
-
-              <div className="flex items-center justify-center gap-3 text-muted-foreground">
-                <Phone className="h-5 w-5 text-primary" />
-                <span>+44 (0) 20 1234 5678</span>
+                <span>info@doceoconsulting.co.uk</span>
               </div>
 
               <div className="flex items-center justify-center gap-3 text-muted-foreground">
                 <MapPin className="h-5 w-5 text-primary" />
                 <span>London, United Kingdom</span>
               </div>
-            </div>
-
-            <div className="border-t border-border mt-8 pt-8">
-              <p className="text-sm text-muted-foreground">
-                Office hours: Monday - Friday, 9:00 AM - 5:00 PM GMT
-              </p>
             </div>
           </div>
         </div>
