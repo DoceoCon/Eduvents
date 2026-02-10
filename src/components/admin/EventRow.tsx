@@ -2,7 +2,7 @@ import { Check, X, Clock, Star, Pencil } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Event } from "@/data/events";
-import { format } from "date-fns";
+import { safeFormatDate } from "@/lib/utils";
 
 import {
   AlertDialog,
@@ -58,11 +58,11 @@ const EventRow = ({
         </p>
         <div className="flex flex-wrap gap-2 text-sm text-muted-foreground">
           <span>
-            Submitted: {format(new Date(event.submissionDate), "MMM d, yyyy")}
+            Submitted: {safeFormatDate(event.submissionDate, "MMM d, yyyy")}
           </span>
           {event.lastUpdated && (
             <span className="text-primary">
-              • Updated: {format(new Date(event.lastUpdated), "MMM d, yyyy")}
+              • Updated: {safeFormatDate(event.lastUpdated, "MMM d, yyyy")}
             </span>
           )}
         </div>

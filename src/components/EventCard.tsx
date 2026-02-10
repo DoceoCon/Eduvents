@@ -2,31 +2,23 @@ import Link from 'next/link';
 import { Calendar, MapPin, Clock, PoundSterling } from 'lucide-react';
 import { Event, getCategoryColor } from '@/data/events';
 import { Button } from '@/components/ui/button';
-import { format } from 'date-fns';
+import { safeFormatDate, safeConvertTo12Hour } from '@/lib/utils';
 
 interface EventCardProps {
   event: Event;
 }
 
-// Convert 24-hour time to 12-hour format
-const convertTo12Hour = (time24: string): string => {
-  const [hours, minutes] = time24.split(':');
-  const hour = parseInt(hours, 10);
-  const period = hour >= 12 ? 'PM' : 'AM';
-  const hour12 = hour % 12 || 12;
-  return `${hour12}:${minutes} ${period}`;
-};
 
 const EventCard = ({ event }: EventCardProps) => {
   const formattedDate = event.startDate && event.endDate
     ? event.startDate === event.endDate
-      ? format(new Date(event.startDate), 'EEEE, MMMM d, yyyy')
-      : `${format(new Date(event.startDate), 'MMM d')} - ${format(new Date(event.endDate), 'MMM d, yyyy')}`
+      ? safeFormatDate(event.startDate, 'EEEE, MMMM d, yyyy')
+      : `${safeFormatDate(event.startDate, 'MMM d')} - ${safeFormatDate(event.endDate, 'MMM d, yyyy')}`
     : event.date
-    ? format(new Date(event.date), 'EEEE, MMMM d, yyyy')
-    : '';
-  const formattedStartTime = convertTo12Hour(event.startTime);
-  const formattedEndTime = convertTo12Hour(event.endTime);
+      ? safeFormatDate(event.date, 'EEEE, MMMM d, yyyy')
+      : '';
+  const formattedStartTime = safeConvertTo12Hour(event.startTime);
+  const formattedEndTime = safeConvertTo12Hour(event.endTime);
 
   return (
     <div className="group bg-card rounded-lg overflow-hidden shadow-card hover:shadow-card-hover transition-all duration-300 hover:-translate-y-1">

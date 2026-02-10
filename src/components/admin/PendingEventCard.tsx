@@ -10,7 +10,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Event, getCategoryColor } from "@/data/events";
-import { format } from "date-fns";
+import { safeFormatDate } from "@/lib/utils";
 
 import {
   AlertDialog,
@@ -39,23 +39,10 @@ const PendingEventCard = ({
   onViewDetails,
   onFeaturedToggle,
 }: PendingEventCardProps) => {
-  // Helper function to safely format dates
-  const formatDate = (dateString: string) => {
-    try {
-      const date = new Date(dateString);
-      if (isNaN(date.getTime())) {
-        return "Invalid date";
-      }
-      return format(date, "MMM d, yyyy");
-    } catch (error) {
-      return "Invalid date";
-    }
-  };
-
-  const startDate = formatDate(event.startDate || event.date || "");
-  const endDate = formatDate(event.endDate || event.date || "");
+  const startDate = safeFormatDate(event.startDate || event.date || "", "MMM d, yyyy");
+  const endDate = safeFormatDate(event.endDate || event.date || "", "MMM d, yyyy");
   const formattedDate = startDate === endDate ? startDate : `${startDate} - ${endDate}`;
-  const submittedDate = formatDate(event.submissionDate || "");
+  const submittedDate = safeFormatDate(event.submissionDate || "", "MMM d, yyyy");
 
   return (
     <div className="bg-card rounded-lg shadow-card overflow-hidden group">
