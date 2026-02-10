@@ -61,7 +61,13 @@ const EventEditDialog = ({
   }, [event?.id]);
 
   const handleChange = (field: string, value: string | boolean | number) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
+    setFormData((prev) => {
+      const newData = { ...prev, [field]: value };
+      if (field === "startDate" && typeof value === "string") {
+        newData.endDate = value;
+      }
+      return newData;
+    });
 
     // Live validation for character limits
     if (field === "title" && typeof value === "string" && value.length > 100) {
@@ -393,18 +399,34 @@ const EventEditDialog = ({
           {/* Date & Time */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div>
-              <Label htmlFor="date">Event Date *</Label>
+              <Label htmlFor="startDate">Start Date *</Label>
               <Input
-                id="date"
+                id="startDate"
                 type="date"
-                value={formData.date || ""}
+                value={formData.startDate || ""}
                 min={new Date().toISOString().split("T")[0]}
-                onChange={(e) => handleChange("date", e.target.value)}
+                onChange={(e) => handleChange("startDate", e.target.value)}
                 onKeyDown={(e) => e.preventDefault()}
-                className={errors.date ? "border-destructive" : ""}
+                className={errors.startDate ? "border-destructive" : ""}
               />
-              {errors.date && (
-                <p className="text-sm text-destructive mt-1">{errors.date}</p>
+              {errors.startDate && (
+                <p className="text-sm text-destructive mt-1">{errors.startDate}</p>
+              )}
+            </div>
+
+            <div>
+              <Label htmlFor="endDate">End Date *</Label>
+              <Input
+                id="endDate"
+                type="date"
+                value={formData.endDate || ""}
+                min={formData.startDate || new Date().toISOString().split("T")[0]}
+                onChange={(e) => handleChange("endDate", e.target.value)}
+                onKeyDown={(e) => e.preventDefault()}
+                className={errors.endDate ? "border-destructive" : ""}
+              />
+              {errors.endDate && (
+                <p className="text-sm text-destructive mt-1">{errors.endDate}</p>
               )}
             </div>
 

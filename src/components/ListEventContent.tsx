@@ -162,7 +162,18 @@ const ListEventContent = ({
   };
 
   const handleChange = (field: string, value: string) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
+    setFormData((prev) => {
+      const newData = { ...prev, [field]: value };
+      if (field === "startDate" && !prev.endDate) {
+        newData.endDate = value;
+      } else if (field === "startDate" && prev.endDate) {
+        // Optional: If you want to always replicate even if endDate exists, 
+        // but user said "replicated to end date i can change end date later"
+        // which implies initial replication.
+        newData.endDate = value;
+      }
+      return newData;
+    });
 
     // Live validation for character limits
     if (field === "title" && value.length > 100) {
@@ -592,9 +603,6 @@ const ListEventContent = ({
               {errors.endDate && (
                 <p className="text-sm text-destructive mt-1">{errors.endDate}</p>
               )}
-              <p className="text-sm text-muted-foreground mt-1">
-                For single-day events, select the same date
-              </p>
             </div>
           </div>
 
