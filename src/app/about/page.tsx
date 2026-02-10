@@ -1,5 +1,5 @@
 import Layout from "@/components/Layout";
-import { Mail, Target, Users, Heart, CheckCircle } from "lucide-react";
+import { Mail, Target, Users, Heart, CheckCircle, Info } from "lucide-react";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -25,6 +25,10 @@ export default function About() {
         <div className="max-w-4xl mx-auto space-y-12">
           {/* Introduction */}
           <div className="bg-card rounded-lg p-8 md:p-12 shadow-card">
+            <div className="flex items-start gap-4 mb-4">
+              <Info className="h-6 w-6 text-primary flex-shrink-0 mt-1" />
+              <h2 className="text-2xl font-semibold text-foreground">About company</h2>
+            </div>
             <p className="text-lg text-muted-foreground leading-relaxed">
               Eduvents is a dedicated education events marketplace designed to make it simple for teachers and education professionals to find the most relevant conferences, festivals, CPD, training and webinars in one place.
             </p>

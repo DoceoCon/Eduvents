@@ -39,8 +39,23 @@ const PendingEventCard = ({
   onViewDetails,
   onFeaturedToggle,
 }: PendingEventCardProps) => {
-  const formattedDate = format(new Date(event.date), "MMM d, yyyy");
-  const submittedDate = format(new Date(event.submissionDate), "MMM d, yyyy");
+  // Helper function to safely format dates
+  const formatDate = (dateString: string) => {
+    try {
+      const date = new Date(dateString);
+      if (isNaN(date.getTime())) {
+        return "Invalid date";
+      }
+      return format(date, "MMM d, yyyy");
+    } catch (error) {
+      return "Invalid date";
+    }
+  };
+
+  const startDate = formatDate(event.startDate || event.date || "");
+  const endDate = formatDate(event.endDate || event.date || "");
+  const formattedDate = startDate === endDate ? startDate : `${startDate} - ${endDate}`;
+  const submittedDate = formatDate(event.submissionDate || "");
 
   return (
     <div className="bg-card rounded-lg shadow-card overflow-hidden group">
@@ -111,8 +126,12 @@ const PendingEventCard = ({
               <PoundSterling className="h-4 w-4 mr-1 text-primary" />
               {event.isFree ? (
                 <span className="text-success font-medium">Free</span>
-              ) : (
+              ) : event.priceFrom && event.priceTo ? (
+                <span>£{event.priceFrom} - £{event.priceTo}</span>
+              ) : event.price ? (
                 <span>£{event.price}</span>
+              ) : (
+                <span>Paid</span>
               )}
             </div>
             <div className="text-muted-foreground/70">

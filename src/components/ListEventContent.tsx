@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { Upload, CreditCard, Check, Info } from "lucide-react";
+import Link from "next/link";
+import { Upload, CreditCard, Check, Info, ArrowRight } from "lucide-react";
 import Layout from "@/components/Layout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -926,7 +927,9 @@ const ListEventContent = ({
                     <p className="font-semibold text-accent-foreground">
                       Listing Fee
                     </p>
-                    <p className="text-3xl font-bold text-primary my-2">£99</p>
+                    <p className="text-3xl font-bold text-primary my-2">
+                      £99 <span className="text-xs font-normal text-muted-foreground">(Exclusive of VAT)</span>
+                    </p>
                     <p className="text-sm text-muted-foreground">
                       One-time payment per listing
                     </p>
@@ -981,23 +984,32 @@ const ListEventContent = ({
                 <ul className="space-y-2 text-sm text-muted-foreground">
                   <li className="flex items-start">
                     <Check className="h-4 w-4 text-success mr-2 mt-0.5" />
-                    Listing on EDUVENTS for 3 months
+                    Reach thousands of educators
                   </li>
-                  <li className="flex items-start">
-                    <Check className="h-4 w-4 text-success mr-2 mt-0.5" />
-                    Exposure to thousands of educators
-                  </li>
-                  <li className="flex items-start">
-                    <Check className="h-4 w-4 text-success mr-2 mt-0.5" />
-                    Featured on category pages
-                  </li>
-                  <li className="flex items-start">
-                    <Check className="h-4 w-4 text-success mr-2 mt-0.5" />
-                    Social sharing tools
-                  </li>
+
                 </ul>
               </div>
             </div>
+          </div>
+        </div>
+      </div>
+
+      {/* CTA Section */}
+      <div className="bg-gradient-hero py-20 mt-12">
+        <div className="container-tight">
+          <div className="max-w-2xl mx-auto text-center">
+            <h2 className="text-3xl md:text-4xl font-bold text-primary-foreground mb-4">
+              Are you running multiple events?
+            </h2>
+            <p className="text-lg text-primary-foreground/90 mb-8">
+              Contact our team for a custom quote and volume discounts.
+            </p>
+            <Link href="mailto:info@doceoconsulting.co.uk">
+              <Button size="lg" className="bg-primary-foreground text-primary hover:bg-primary-foreground/90 px-8">
+                Contact Us
+                <ArrowRight className="ml-2 h-5 w-5" />
+              </Button>
+            </Link>
           </div>
         </div>
       </div>

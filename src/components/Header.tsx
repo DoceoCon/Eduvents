@@ -19,7 +19,7 @@ const Header = () => {
     { path: '/events', label: 'Find Events' },
     { path: '/list-event', label: 'List Your Event' },
     { path: '/about', label: 'About Us' },
-    { path: '/contact', label: 'Contact' },
+    { path: '/contact', label: 'Contact Us' },
   ];
 
   const handleAdminClick = () => {
@@ -46,7 +46,7 @@ const Header = () => {
               <Link
                 key={link.path}
                 href={link.path}
-                className={`text-sm font-medium transition-colors hover:text-primary ${isActive(link.path)
+                className={`text-lg font-medium transition-colors hover:text-primary font-league-gothic uppercase tracking-wide ${isActive(link.path)
                   ? 'text-primary'
                   : 'text-muted-foreground'
                   }`}
@@ -57,7 +57,7 @@ const Header = () => {
             {pathname !== '/login' && (
               <button
                 onClick={handleAdminClick}
-                className={`text-sm font-medium transition-colors hover:text-primary ${pathname.startsWith('/admin') || pathname === '/login'
+                className={`text-lg font-medium transition-colors hover:text-primary font-league-gothic uppercase tracking-wide ${pathname.startsWith('/admin') || pathname === '/login'
                   ? 'text-primary'
                   : 'text-muted-foreground'
                   }`}
@@ -68,7 +68,7 @@ const Header = () => {
             {isAuthenticated && (
               <button
                 onClick={logout}
-                className="text-sm font-medium text-red-500 hover:text-red-600 transition-colors"
+                className="text-lg font-medium text-red-500 hover:text-red-600 transition-colors font-league-gothic uppercase tracking-wide"
               >
                 Logout
               </button>
@@ -94,7 +94,7 @@ const Header = () => {
                   key={link.path}
                   href={link.path}
                   onClick={() => setIsMenuOpen(false)}
-                  className={`text-sm font-medium transition-colors hover:text-primary ${isActive(link.path)
+                  className={`text-lg font-medium transition-colors hover:text-primary font-league-gothic uppercase tracking-wide ${isActive(link.path)
                     ? 'text-primary'
                     : 'text-muted-foreground'
                     }`}
@@ -108,7 +108,7 @@ const Header = () => {
                     handleAdminClick();
                     setIsMenuOpen(false);
                   }}
-                  className={`text-sm font-medium transition-colors hover:text-primary text-left ${pathname.startsWith('/admin') || pathname === '/login'
+                  className={`text-lg font-medium transition-colors hover:text-primary text-left font-league-gothic uppercase tracking-wide ${pathname.startsWith('/admin') || pathname === '/login'
                     ? 'text-primary'
                     : 'text-muted-foreground'
                     }`}
@@ -122,7 +122,7 @@ const Header = () => {
                     logout();
                     setIsMenuOpen(false);
                   }}
-                  className="text-sm font-medium text-red-500 hover:text-red-600 transition-colors text-left"
+                  className="text-lg font-medium text-red-500 hover:text-red-600 transition-colors text-left font-league-gothic uppercase tracking-wide"
                 >
                   Logout
                 </button>
