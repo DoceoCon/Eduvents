@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
 import dbConnect from '@/lib/mongodb';
 import Event from '@/models/Event';
-import { sendEventConfirmationEmail } from '@/lib/email';
+import { sendEventConfirmationEmail, sendAdminNewEventNotification } from '@/lib/email';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
     apiVersion: '2024-12-18.acacia' as any,
@@ -32,6 +32,9 @@ export async function POST(req: NextRequest) {
 
                 // Now send the confirmation email
                 await sendEventConfirmationEmail(event.organiserEmail, event.organiser, event.title);
+
+                // Also notify admin about the new paid submission
+                await sendAdminNewEventNotification(event);
             }
 
             return NextResponse.json({ success: true, event });

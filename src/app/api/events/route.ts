@@ -133,8 +133,11 @@ export async function POST(req: NextRequest) {
 
     await newEvent.save();
 
-    // Notify Admin
-    await sendAdminNewEventNotification(newEvent);
+    // Notify Admin only if it's admin created (already approved)
+    // Non-admin submissions will notify admin after payment
+    if (isAdmin) {
+      await sendAdminNewEventNotification(newEvent);
+    }
 
     if (isAdmin) {
       // Admin created: Send approval email since event is already approved
