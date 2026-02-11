@@ -162,14 +162,21 @@ const ListEventContent = ({
   };
 
   const handleChange = (field: string, value: string) => {
+    // Enforce character limits for fields that have maxLength
+    const charLimits: Record<string, number> = {
+      title: 100,
+      description: 2000,
+      organiserName: 50,
+    };
+    if (charLimits[field] && value.length > charLimits[field]) {
+      value = value.slice(0, charLimits[field]);
+    }
+
     setFormData((prev) => {
       const newData = { ...prev, [field]: value };
       if (field === "startDate" && !prev.endDate) {
         newData.endDate = value;
       } else if (field === "startDate" && prev.endDate) {
-        // Optional: If you want to always replicate even if endDate exists, 
-        // but user said "replicated to end date i can change end date later"
-        // which implies initial replication.
         newData.endDate = value;
       }
       return newData;
