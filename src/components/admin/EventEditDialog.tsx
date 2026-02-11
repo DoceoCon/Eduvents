@@ -506,7 +506,7 @@ const EventEditDialog = ({
                     id="price"
                     type="number"
                     min="0"
-                    step="0.01"
+                    step="1"
                     value={formData.price || ""}
                     onChange={(e) =>
                       handleChange("price", parseFloat(e.target.value) || 0)
@@ -565,7 +565,7 @@ const EventEditDialog = ({
 
           {/* Booking Link */}
           <div>
-            <Label htmlFor="bookingUrl">External Booking Link</Label>
+            <Label htmlFor="bookingUrl">External Booking Link *</Label>
             <Input
               id="bookingUrl"
               type="url"
@@ -582,7 +582,7 @@ const EventEditDialog = ({
 
           {/* Event Image */}
           <div>
-            <Label>Event Image</Label>
+            <Label>Event Image *</Label>
             <div
               className={`mt-2 border-2 border-dashed ${errors.image ? "border-destructive" : isDragging ? "border-primary bg-primary/5" : "border-border"} rounded-lg p-3 text-center hover:border-primary transition-all duration-200`}
               onDragOver={handleDragOver}

@@ -693,7 +693,7 @@ const ListEventContent = ({
                       id="priceFrom"
                       type="number"
                       min="0"
-                      step="0.01"
+                      step="1"
                       value={formData.priceFrom}
                       onChange={(e) => handleChange("priceFrom", e.target.value)}
                       placeholder="50"
@@ -715,7 +715,7 @@ const ListEventContent = ({
                       id="priceTo"
                       type="number"
                       min="0"
-                      step="0.01"
+                      step="1"
                       value={formData.priceTo}
                       onChange={(e) => handleChange("priceTo", e.target.value)}
                       placeholder="150"
@@ -783,7 +783,7 @@ const ListEventContent = ({
 
       {/* Event Image */}
       <div className="bg-card rounded-lg p-3 shadow-card">
-        <h2 className="text-xl font-semibold mb-6">Event Image</h2>
+        <h2 className="text-xl font-semibold mb-6">Event Image *</h2>
 
         <div
           className={`border-2 border-dashed ${errors.image ? "border-destructive" : isDragging ? "border-primary bg-primary/5" : "border-border"} rounded-lg p-8 text-center hover:border-primary transition-all duration-200`}
@@ -839,7 +839,7 @@ const ListEventContent = ({
         <h2 className="text-xl font-semibold mb-6">Booking</h2>
 
         <div>
-          <Label htmlFor="bookingUrl">External Booking Link</Label>
+          <Label htmlFor="bookingUrl">External Booking Link *</Label>
           <Input
             id="bookingUrl"
             type="url"
@@ -990,34 +990,37 @@ const ListEventContent = ({
               <div className="border-t border-border mt-6 pt-6">
                 <h3 className="font-semibold mb-3">What&apos;s included:</h3>
                 <ul className="space-y-2 text-sm text-muted-foreground">
+
+                  <li className="flex items-start">
+                    <Check className="h-4 w-4 text-success mr-2 mt-0.5" />
+                    Listing live until event closes
+                  </li>
                   <li className="flex items-start">
                     <Check className="h-4 w-4 text-success mr-2 mt-0.5" />
                     Reach thousands of educators
                   </li>
-
+                  <li className="flex items-start">
+                    <Check className="h-4 w-4 text-success mr-2 mt-0.5" />
+                    Featured on category pages
+                  </li>
+                  <li className="flex items-start">
+                    <Check className="h-4 w-4 text-success mr-2 mt-0.5" />
+                    Social sharing tools
+                  </li>
                 </ul>
               </div>
-            </div>
-          </div>
-        </div>
-      </div>
 
-      {/* CTA Section */}
-      <div className="bg-gradient-hero py-20 mt-12">
-        <div className="container-tight">
-          <div className="max-w-2xl mx-auto text-center">
-            <h2 className="text-3xl md:text-4xl font-bold text-primary-foreground mb-4">
-              Are you running multiple events?
-            </h2>
-            <p className="text-lg text-primary-foreground/90 mb-8">
-              Contact our team for a custom quote and volume discounts.
-            </p>
-            <Link href="mailto:info@doceoconsulting.co.uk">
-              <Button size="lg" className="bg-primary-foreground text-primary hover:bg-primary-foreground/90 px-8">
-                Contact Us
-                <ArrowRight className="ml-2 h-5 w-5" />
-              </Button>
-            </Link>
+              <div className="bg-primary/5 border border-primary/10 rounded-lg p-5 mt-6 text-center">
+                <p className="text-sm font-medium text-foreground mb-3">
+                  Are you running multiple events? Contact our team for a custom quote.
+                </p>
+                <Link href="mailto:info@doceoconsulting.co.uk">
+                  <Button variant="outline" size="sm" className="w-full border-primary text-primary hover:bg-primary hover:text-white">
+                    Contact Us
+                  </Button>
+                </Link>
+              </div>
+            </div>
           </div>
         </div>
       </div>

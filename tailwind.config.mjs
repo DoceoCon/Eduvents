@@ -123,6 +123,10 @@ const config = {
                 "fade-in": "fade-in 0.3s ease-out",
                 "slide-in-from-bottom": "slide-in-from-bottom 0.5s ease-out",
             },
+            boxShadow: {
+                card: "var(--shadow-card)",
+                "card-hover": "var(--shadow-card-hover)",
+            },
         },
     },
     plugins: [require("tailwindcss-animate")],

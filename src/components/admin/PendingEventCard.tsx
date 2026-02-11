@@ -45,7 +45,7 @@ const PendingEventCard = ({
   const submittedDate = safeFormatDate(event.submissionDate || "", "MMM d, yyyy");
 
   return (
-    <div className="bg-card rounded-lg shadow-card overflow-hidden group">
+    <div className="bg-card rounded-lg border border-transparent hover:border-primary/20 shadow-card hover:shadow-card-hover transition-all duration-300 hover:-translate-y-1 overflow-hidden group">
       <div className="flex flex-col lg:flex-row">
         {/* Thumbnail */}
         <div className="lg:w-48 h-32 lg:h-auto flex-shrink-0 relative">

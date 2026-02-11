@@ -21,7 +21,7 @@ const EventCard = ({ event }: EventCardProps) => {
   const formattedEndTime = safeConvertTo12Hour(event.endTime);
 
   return (
-    <div className="group bg-card rounded-lg overflow-hidden shadow-card hover:shadow-card-hover transition-all duration-300 hover:-translate-y-1">
+    <div className="group bg-card rounded-lg overflow-hidden border border-transparent hover:border-primary/20 shadow-card hover:shadow-card-hover transition-all duration-300 hover:-translate-y-1">
       <div className="aspect-video relative overflow-hidden">
         <img
           src={event.image}
