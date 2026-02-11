@@ -95,7 +95,10 @@ const ListEventContent = ({
       newErrors.title = "Title must be 100 characters or less";
     }
     if (formData.description && formData.description.length > 2000) {
-      newErrors.description = "Description must be 2000 characters or less";
+      const cleanedDescription = formData.description.replace(/\s+/g, "");
+      if (cleanedDescription.length > 2000) {
+        newErrors.description = "Description must be 2000 characters or less ";
+      }
     }
     if (formData.organiserName && formData.organiserName.length > 50) {
       newErrors.organiserName = "Name must be 50 characters or less";
@@ -189,10 +192,15 @@ const ListEventContent = ({
         title: "Title must be 100 characters or less",
       }));
     } else if (field === "description" && value.length > 2000) {
-      setErrors((prev) => ({
-        ...prev,
-        description: "Description must be 2000 characters or less",
-      }));
+      const cleanedDescription = value.replace(/\s+/g, "");
+      if (cleanedDescription.length > 2000) {
+        setErrors((prev) => ({
+          ...prev,
+          description: "Description must be 2000 characters or less (excluding spaces)",
+        }));
+      } else {
+        setErrors((prev) => ({ ...prev, [field]: "" }));
+      }
     } else if (field === "organiserName" && value.length > 50) {
       setErrors((prev) => ({
         ...prev,
@@ -490,9 +498,9 @@ const ListEventContent = ({
               maxLength={2000}
             />
             <p
-              className={`text-sm mt-1 ${formData.description.length >= 2000 ? "text-destructive font-medium" : "text-muted-foreground"}`}
+              className={`text-sm mt-1 ${formData.description.replace(/\s+/g, "").length >= 2000 ? "text-destructive font-medium" : "text-muted-foreground"}`}
             >
-              {formData.description.length}/2000 characters
+              {formData.description.replace(/\s+/g, "").length}/2000 characters (excluding spaces)
             </p>
             {errors.description && (
               <p className="text-sm text-destructive mt-1">

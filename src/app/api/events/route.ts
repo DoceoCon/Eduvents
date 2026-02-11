@@ -55,8 +55,12 @@ export async function POST(req: NextRequest) {
       errors.title = "Title must be 100 characters or less";
 
     if (!description) errors.description = "Required";
-    else if (description.length > 2000)
-      errors.description = "Description must be less then 2000 characters ";
+    else {
+      const cleanedDescription = description.replace(/\s+/g, "");
+      if (cleanedDescription.length > 2000) {
+        errors.description = "Description must be less than 2000 characters (excluding spaces)";
+      }
+    }
 
     if (!organiser) errors.organiser = "Required";
     else if (organiser.length > 50)
