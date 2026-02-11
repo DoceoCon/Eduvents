@@ -22,7 +22,7 @@ export async function POST(req: NextRequest) {
                         currency: 'gbp',
                         product_data: {
                             name: `Event Listing Fee: ${title}`,
-                            description: 'Listing your event on EDUVENTS for 3 months.',
+
                         },
                         unit_amount: 9900, // £99.00
                     },
