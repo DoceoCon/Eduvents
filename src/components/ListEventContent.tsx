@@ -185,6 +185,17 @@ const ListEventContent = ({
       return newData;
     });
 
+    // Clear price errors when switching to "free"
+    if (field === "isFree" && value === "free") {
+      setErrors((prev) => {
+        const newErrors = { ...prev };
+        delete newErrors.priceFrom;
+        delete newErrors.priceTo;
+        return newErrors;
+      });
+      return;
+    }
+
     // Live validation for character limits
     if (field === "title" && value.length > 100) {
       setErrors((prev) => ({

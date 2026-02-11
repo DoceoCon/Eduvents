@@ -36,7 +36,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
 
         // Trigger status update email
         if (status === 'approved' || status === 'rejected') {
-            await sendStatusUpdateEmail(eventDoc.organiserEmail, eventDoc.organiser, eventDoc.title, status);
+            await sendStatusUpdateEmail(eventDoc.organiserEmail, eventDoc.organiser, eventDoc.title, status, eventDoc._id.toString());
         }
 
         return NextResponse.json({ success: true, event: eventDoc.toJSON() });

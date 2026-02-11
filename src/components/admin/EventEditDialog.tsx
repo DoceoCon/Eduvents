@@ -80,10 +80,15 @@ const EventEditDialog = ({
       typeof value === "string" &&
       value.length > 2000
     ) {
-      setErrors((prev) => ({
-        ...prev,
-        description: "Description must be 2000 characters or less",
-      }));
+      const cleanedDescription = value.replace(/\s+/g, "");
+      if (cleanedDescription.length > 2000) {
+        setErrors((prev) => ({
+          ...prev,
+          description: "Description must be 2000 characters or less",
+        }));
+      } else {
+        setErrors((prev) => ({ ...prev, [field]: "" }));
+      }
     } else if (
       field === "organiser" &&
       typeof value === "string" &&
@@ -143,8 +148,8 @@ const EventEditDialog = ({
       reader.onload = (e) => {
         const img = new Image();
         img.onload = () => {
-          const canvas = document.createElement('canvas');
-          const ctx = canvas.getContext('2d');
+          const canvas = document.createElement("canvas");
+          const ctx = canvas.getContext("2d");
 
           // Set target dimensions to 1200x675 (16:9 ratio)
           canvas.width = 1200;
@@ -152,7 +157,10 @@ const EventEditDialog = ({
 
           if (ctx) {
             // Calculate scaling to cover the canvas while maintaining aspect ratio
-            const scale = Math.max(canvas.width / img.width, canvas.height / img.height);
+            const scale = Math.max(
+              canvas.width / img.width,
+              canvas.height / img.height,
+            );
             const scaledWidth = img.width * scale;
             const scaledHeight = img.height * scale;
 
@@ -164,25 +172,29 @@ const EventEditDialog = ({
             ctx.drawImage(img, x, y, scaledWidth, scaledHeight);
 
             // Convert canvas to blob
-            canvas.toBlob((blob) => {
-              if (blob) {
-                const resizedFile = new File([blob], file.name, {
-                  type: file.type,
-                  lastModified: Date.now(),
-                });
-                resolve(resizedFile);
-              } else {
-                reject(new Error('Failed to resize image'));
-              }
-            }, file.type, 0.95);
+            canvas.toBlob(
+              (blob) => {
+                if (blob) {
+                  const resizedFile = new File([blob], file.name, {
+                    type: file.type,
+                    lastModified: Date.now(),
+                  });
+                  resolve(resizedFile);
+                } else {
+                  reject(new Error("Failed to resize image"));
+                }
+              },
+              file.type,
+              0.95,
+            );
           } else {
-            reject(new Error('Failed to get canvas context'));
+            reject(new Error("Failed to get canvas context"));
           }
         };
-        img.onerror = () => reject(new Error('Failed to load image'));
+        img.onerror = () => reject(new Error("Failed to load image"));
         img.src = e.target?.result as string;
       };
-      reader.onerror = () => reject(new Error('Failed to read file'));
+      reader.onerror = () => reject(new Error("Failed to read file"));
       reader.readAsDataURL(file);
     });
   };
@@ -221,7 +233,7 @@ const EventEditDialog = ({
       };
       reader.readAsDataURL(resizedFile);
     } catch (error) {
-      console.error('Error resizing image:', error);
+      console.error("Error resizing image:", error);
       setErrors((prev) => ({
         ...prev,
         image: "Failed to process image. Please try another image.",
@@ -255,8 +267,12 @@ const EventEditDialog = ({
       newErrors.title = "Title must be 100 characters or less";
 
     if (!formData.description?.trim()) newErrors.description = "Required";
-    else if (formData.description.length > 2000)
-      newErrors.description = "Description must be 2000 characters or less";
+    else if (formData.description.length > 2000) {
+      const cleanedDescription = formData.description.replace(/\s+/g, "");
+      if (cleanedDescription.length > 2000) {
+        newErrors.description = "Description must be 2000 characters or less";
+      }
+    }
 
     if (!formData.organiser?.trim()) newErrors.organiser = "Required";
     else if (formData.organiser.length > 50)
@@ -471,7 +487,9 @@ const EventEditDialog = ({
                 className={errors.startDate ? "border-destructive" : ""}
               />
               {errors.startDate && (
-                <p className="text-sm text-destructive mt-1">{errors.startDate}</p>
+                <p className="text-sm text-destructive mt-1">
+                  {errors.startDate}
+                </p>
               )}
             </div>
 
@@ -481,13 +499,17 @@ const EventEditDialog = ({
                 id="endDate"
                 type="date"
                 value={formData.endDate || ""}
-                min={formData.startDate || new Date().toISOString().split("T")[0]}
+                min={
+                  formData.startDate || new Date().toISOString().split("T")[0]
+                }
                 onChange={(e) => handleChange("endDate", e.target.value)}
                 onKeyDown={(e) => e.preventDefault()}
                 className={errors.endDate ? "border-destructive" : ""}
               />
               {errors.endDate && (
-                <p className="text-sm text-destructive mt-1">{errors.endDate}</p>
+                <p className="text-sm text-destructive mt-1">
+                  {errors.endDate}
+                </p>
               )}
             </div>
 
@@ -693,7 +715,12 @@ const EventEditDialog = ({
             <Button variant="outline" onClick={onClose}>
               Cancel
             </Button>
-            <Button onClick={handleSave} disabled={isSaving || Object.keys(errors).some(key => errors[key])}>
+            <Button
+              onClick={handleSave}
+              disabled={
+                isSaving || Object.keys(errors).some((key) => errors[key])
+              }
+            >
               {isSaving ? "Saving..." : "Save Changes"}
             </Button>
           </div>

@@ -13,7 +13,7 @@ const EventCard = ({ event }: EventCardProps) => {
   const formattedDate = event.startDate && event.endDate
     ? event.startDate === event.endDate
       ? safeFormatDate(event.startDate, 'EEEE, MMMM d, yyyy')
-      : `${safeFormatDate(event.startDate, 'MMM d')} - ${safeFormatDate(event.endDate, 'MMM d, yyyy')}`
+      : `${safeFormatDate(event.startDate, 'MMM d, yyyy')} - ${safeFormatDate(event.endDate, 'MMM d, yyyy')}`
     : event.date
       ? safeFormatDate(event.date, 'EEEE, MMMM d, yyyy')
       : '';

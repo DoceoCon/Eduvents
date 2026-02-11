@@ -145,7 +145,7 @@ export async function POST(req: NextRequest) {
 
     if (isAdmin) {
       // Admin created: Send approval email since event is already approved
-      await sendStatusUpdateEmail(organiserEmail, organiser, title, "approved");
+      await sendStatusUpdateEmail(organiserEmail, organiser, title, "approved", newEvent._id.toString());
       return NextResponse.json(
         {
           success: true,

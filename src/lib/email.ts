@@ -113,6 +113,7 @@ export async function sendStatusUpdateEmail(
   organiserName: string,
   eventTitle: string,
   status: "approved" | "rejected",
+  eventId: string,
 ) {
   try {
     const isApproved = status === "approved";
@@ -129,7 +130,7 @@ export async function sendStatusUpdateEmail(
                       isApproved
                         ? `<p>Your event has been <strong>approved</strong> and is now live on our website.</p>
                            <div style="margin: 30px 0;">
-                               <a href="${process.env.NEXT_PUBLIC_BASE_URL}/events" style="background-color: #3b82f6; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; font-weight: bold;">View Live Event</a>
+                               <a href="${process.env.NEXT_PUBLIC_BASE_URL}/event/${eventId}" style="background-color: #3b82f6; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; font-weight: bold;">View Live Event</a>
                            </div>`
                         : `<p>Unfortunately, your event submission has been <strong>rejected</strong> at this time. If you have any questions or would like to appeal this decision, please contact us.</p>`
                     }
