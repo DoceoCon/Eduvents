@@ -193,7 +193,7 @@ const EventsContent = () => {
                                         formatDate(dateRange.startDate, "MMM d, yyyy")
                                     )
                                 ) : (
-                                    "Select date range"
+                                    "Select date"
                                 )}
                             </span>
                         </Button>
