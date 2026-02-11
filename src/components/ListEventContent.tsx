@@ -144,7 +144,8 @@ const ListEventContent = ({
         const from = parseFloat(formData.priceFrom);
         const to = parseFloat(formData.priceTo);
         if (to < from) {
-          newErrors.priceTo = "Maximum price must be greater than or equal to minimum price";
+          newErrors.priceTo =
+            "Maximum price must be greater than or equal to minimum price";
         }
       }
     }
@@ -177,13 +178,20 @@ const ListEventContent = ({
 
     setFormData((prev) => {
       const newData = { ...prev, [field]: value };
-      if (field === "startDate" && !prev.endDate) {
-        newData.endDate = value;
-      } else if (field === "startDate" && prev.endDate) {
+      if (field === "startDate") {
         newData.endDate = value;
       }
       return newData;
     });
+
+    // Clear endDate error when auto-filling from startDate
+    if (field === "startDate" && value) {
+      setErrors((prev) => {
+        const newErrors = { ...prev };
+        delete newErrors.endDate;
+        return newErrors;
+      });
+    }
 
     // Clear price errors when switching to "free"
     if (field === "isFree" && value === "free") {
@@ -207,7 +215,8 @@ const ListEventContent = ({
       if (cleanedDescription.length > 2000) {
         setErrors((prev) => ({
           ...prev,
-          description: "Description must be 2000 characters or less (excluding spaces)",
+          description:
+            "Description must be 2000 characters or less (excluding spaces)",
         }));
       } else {
         setErrors((prev) => ({ ...prev, [field]: "" }));
@@ -236,8 +245,8 @@ const ListEventContent = ({
       reader.onload = (e) => {
         const img = new Image();
         img.onload = () => {
-          const canvas = document.createElement('canvas');
-          const ctx = canvas.getContext('2d');
+          const canvas = document.createElement("canvas");
+          const ctx = canvas.getContext("2d");
 
           // Set target dimensions to 1200x675 (16:9 ratio)
           canvas.width = 1200;
@@ -245,7 +254,10 @@ const ListEventContent = ({
 
           if (ctx) {
             // Calculate scaling to cover the canvas while maintaining aspect ratio
-            const scale = Math.max(canvas.width / img.width, canvas.height / img.height);
+            const scale = Math.max(
+              canvas.width / img.width,
+              canvas.height / img.height,
+            );
             const scaledWidth = img.width * scale;
             const scaledHeight = img.height * scale;
 
@@ -257,25 +269,29 @@ const ListEventContent = ({
             ctx.drawImage(img, x, y, scaledWidth, scaledHeight);
 
             // Convert canvas to blob
-            canvas.toBlob((blob) => {
-              if (blob) {
-                const resizedFile = new File([blob], file.name, {
-                  type: file.type,
-                  lastModified: Date.now(),
-                });
-                resolve(resizedFile);
-              } else {
-                reject(new Error('Failed to resize image'));
-              }
-            }, file.type, 0.95);
+            canvas.toBlob(
+              (blob) => {
+                if (blob) {
+                  const resizedFile = new File([blob], file.name, {
+                    type: file.type,
+                    lastModified: Date.now(),
+                  });
+                  resolve(resizedFile);
+                } else {
+                  reject(new Error("Failed to resize image"));
+                }
+              },
+              file.type,
+              0.95,
+            );
           } else {
-            reject(new Error('Failed to get canvas context'));
+            reject(new Error("Failed to get canvas context"));
           }
         };
-        img.onerror = () => reject(new Error('Failed to load image'));
+        img.onerror = () => reject(new Error("Failed to load image"));
         img.src = e.target?.result as string;
       };
-      reader.onerror = () => reject(new Error('Failed to read file'));
+      reader.onerror = () => reject(new Error("Failed to read file"));
       reader.readAsDataURL(file);
     });
   };
@@ -314,7 +330,7 @@ const ListEventContent = ({
       };
       reader.readAsDataURL(resizedFile);
     } catch (error) {
-      console.error('Error resizing image:', error);
+      console.error("Error resizing image:", error);
       setErrors((prev) => ({
         ...prev,
         image: "Failed to process image. Please try another image.",
@@ -567,12 +583,11 @@ const ListEventContent = ({
               placeholder="Describe your event in detail..."
               rows={5}
               className={errors.description ? "border-destructive" : ""}
-              maxLength={2000}
             />
             <p
-              className={`text-sm mt-1 ${formData.description.length >= 2000 ? "text-destructive font-medium" : "text-muted-foreground"}`}
+              className={`text-sm mt-1 ${formData.description.replace(/\s+/g, "").length >= 2000 ? "text-destructive font-medium" : "text-muted-foreground"}`}
             >
-              {formData.description.length}/2000 characters
+              {formData.description.replace(/\s+/g, "").length}/2000 characters
             </p>
             {errors.description && (
               <p className="text-sm text-destructive mt-1">
@@ -672,7 +687,9 @@ const ListEventContent = ({
                 className={errors.startDate ? "border-destructive" : ""}
               />
               {errors.startDate && (
-                <p className="text-sm text-destructive mt-1">{errors.startDate}</p>
+                <p className="text-sm text-destructive mt-1">
+                  {errors.startDate}
+                </p>
               )}
             </div>
 
@@ -682,13 +699,17 @@ const ListEventContent = ({
                 id="endDate"
                 type="date"
                 value={formData.endDate}
-                min={formData.startDate || new Date().toISOString().split("T")[0]}
+                min={
+                  formData.startDate || new Date().toISOString().split("T")[0]
+                }
                 onChange={(e) => handleChange("endDate", e.target.value)}
                 onKeyDown={(e) => e.preventDefault()}
                 className={errors.endDate ? "border-destructive" : ""}
               />
               {errors.endDate && (
-                <p className="text-sm text-destructive mt-1">{errors.endDate}</p>
+                <p className="text-sm text-destructive mt-1">
+                  {errors.endDate}
+                </p>
               )}
             </div>
           </div>
@@ -716,7 +737,9 @@ const ListEventContent = ({
                 className={errors.endTime ? "border-destructive" : ""}
               />
               {errors.endTime && (
-                <p className="text-sm text-destructive mt-1">{errors.endTime}</p>
+                <p className="text-sm text-destructive mt-1">
+                  {errors.endTime}
+                </p>
               )}
             </div>
           </div>
@@ -771,7 +794,12 @@ const ListEventContent = ({
               <Label>Ticket Price Range *</Label>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="priceFrom" className="text-sm text-muted-foreground">From</Label>
+                  <Label
+                    htmlFor="priceFrom"
+                    className="text-sm text-muted-foreground"
+                  >
+                    From
+                  </Label>
                   <div className="relative">
                     <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
                       £
@@ -782,18 +810,27 @@ const ListEventContent = ({
                       min="0"
                       step="1"
                       value={formData.priceFrom}
-                      onChange={(e) => handleChange("priceFrom", e.target.value)}
+                      onChange={(e) =>
+                        handleChange("priceFrom", e.target.value)
+                      }
                       placeholder="50"
                       className={`pl-7 ${errors.priceFrom ? "border-destructive" : ""}`}
                     />
                   </div>
                   {errors.priceFrom && (
-                    <p className="text-sm text-destructive mt-1">{errors.priceFrom}</p>
+                    <p className="text-sm text-destructive mt-1">
+                      {errors.priceFrom}
+                    </p>
                   )}
                 </div>
 
                 <div>
-                  <Label htmlFor="priceTo" className="text-sm text-muted-foreground">To</Label>
+                  <Label
+                    htmlFor="priceTo"
+                    className="text-sm text-muted-foreground"
+                  >
+                    To
+                  </Label>
                   <div className="relative">
                     <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
                       £
@@ -810,7 +847,9 @@ const ListEventContent = ({
                     />
                   </div>
                   {errors.priceTo && (
-                    <p className="text-sm text-destructive mt-1">{errors.priceTo}</p>
+                    <p className="text-sm text-destructive mt-1">
+                      {errors.priceTo}
+                    </p>
                   )}
                 </div>
               </div>
@@ -905,7 +944,8 @@ const ListEventContent = ({
                 Drag and drop your image here, or click to browse
               </p>
               <p className="text-sm text-muted-foreground">
-                Upload any image (JPG or PNG, max 25MB) - will be automatically resized to 1200x675px (16:9 ratio)
+                Upload any image (JPG or PNG, max 25MB) - will be automatically
+                resized to 1200x675px (16:9 ratio)
               </p>
               <input
                 type="file"
@@ -960,7 +1000,13 @@ const ListEventContent = ({
           >
             Cancel
           </Button>
-          <Button size="lg" onClick={handleSubmit} disabled={isSubmitting || Object.keys(errors).some(key => errors[key])}>
+          <Button
+            size="lg"
+            onClick={handleSubmit}
+            disabled={
+              isSubmitting || Object.keys(errors).some((key) => errors[key])
+            }
+          >
             {isSubmitting ? (
               <span className="flex items-center">
                 <svg
@@ -1023,7 +1069,10 @@ const ListEventContent = ({
                       Listing Fee
                     </p>
                     <p className="text-3xl font-bold text-primary my-2">
-                      £99 <span className="text-xs font-normal text-muted-foreground">(Exclusive of VAT)</span>
+                      £99{" "}
+                      <span className="text-xs font-normal text-muted-foreground">
+                        (Exclusive of VAT)
+                      </span>
                     </p>
                     <p className="text-sm text-muted-foreground">
                       One-time payment per listing
@@ -1036,7 +1085,9 @@ const ListEventContent = ({
                 size="lg"
                 className="w-full h-14 text-lg"
                 onClick={handleSubmit}
-                disabled={isSubmitting || Object.keys(errors).some(key => errors[key])}
+                disabled={
+                  isSubmitting || Object.keys(errors).some((key) => errors[key])
+                }
               >
                 {isSubmitting ? (
                   <span className="flex items-center">
@@ -1077,7 +1128,6 @@ const ListEventContent = ({
               <div className="border-t border-border mt-6 pt-6">
                 <h3 className="font-semibold mb-3">What&apos;s included:</h3>
                 <ul className="space-y-2 text-sm text-muted-foreground">
-
                   <li className="flex items-start">
                     <Check className="h-4 w-4 text-success mr-2 mt-0.5" />
                     Listing live until event closes
@@ -1099,10 +1149,15 @@ const ListEventContent = ({
 
               <div className="bg-primary/5 border border-primary/10 rounded-lg p-5 mt-6 text-center">
                 <p className="text-sm font-medium text-foreground mb-3">
-                  Are you running multiple events? Contact our team for a custom quote.
+                  Are you running multiple events? Contact our team for a custom
+                  quote.
                 </p>
                 <Link href="mailto:info@doceoconsulting.co.uk">
-                  <Button variant="outline" size="sm" className="w-full border-primary text-primary hover:bg-primary hover:text-white">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="w-full border-primary text-primary hover:bg-primary hover:text-white"
+                  >
                     Contact Us
                   </Button>
                 </Link>

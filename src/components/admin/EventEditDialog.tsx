@@ -388,12 +388,12 @@ const EventEditDialog = ({
                 onChange={(e) => handleChange("description", e.target.value)}
                 rows={4}
                 className={errors.description ? "border-destructive" : ""}
-                maxLength={2000}
               />
               <p
-                className={`text-sm mt-1 ${(formData.description?.length || 0) >= 2000 ? "text-destructive font-medium" : "text-muted-foreground"}`}
+                className={`text-sm mt-1 ${(formData.description || "").replace(/\s+/g, "").length >= 2000 ? "text-destructive font-medium" : "text-muted-foreground"}`}
               >
-                {formData.description?.length || 0}/2000 characters
+                {(formData.description || "").replace(/\s+/g, "").length}/2000
+                characters
               </p>
               {errors.description && (
                 <p className="text-sm text-destructive mt-1">
