@@ -40,7 +40,7 @@ const EventSchema = new Schema<IEvent>(
     description: {
       type: String,
       required: [true, "Required"],
-      maxlength: [2000, "Description must be less then 2000 characters "],
+      maxlength: [2000, "Description must be  2000 characters or less"],
     },
     fullDescription: {
       type: String,
