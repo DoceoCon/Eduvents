@@ -1,0 +1,10 @@
+name: AI PR Review
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  review:
+    uses: sprintx-official/.github/.github/workflows/pr-review.yml@main
+    secrets: inherit
