@@ -3,7 +3,7 @@
 import { useState, Suspense, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ArrowRight, Search } from "lucide-react";
+import { ArrowRight, Search, Loader2 } from "lucide-react";
 import Layout from "@/components/Layout";
 import FeaturedCarousel from "@/components/FeaturedCarousel";
 import EventCard from "@/components/EventCard";
@@ -112,7 +112,14 @@ export default function Home() {
               <ArrowRight className="ml-1 h-4 w-4" />
             </Link>
           </div>
-          <FeaturedCarousel events={featuredEvents} />
+          {isLoading ? (
+            <div className="flex flex-col items-center justify-center h-[400px] md:h-[500px] bg-muted/20 rounded-xl">
+              <Loader2 className="h-12 w-12 text-primary animate-spin mb-4" />
+              <p className="text-muted-foreground font-medium">Loading featured events...</p>
+            </div>
+          ) : (
+            <FeaturedCarousel events={featuredEvents} />
+          )}
         </div>
       </section>
 
@@ -132,7 +139,12 @@ export default function Home() {
             </Link>
           </div>
 
-          {latestEvents.length > 0 ? (
+          {isLoading ? (
+            <div className="flex flex-col items-center justify-center py-20">
+              <Loader2 className="h-10 w-10 text-primary animate-spin mb-4" />
+              <p className="text-muted-foreground font-medium">Loading latest events...</p>
+            </div>
+          ) : latestEvents.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {latestEvents.map((event, index) => (
                 <div
@@ -145,7 +157,7 @@ export default function Home() {
               ))}
             </div>
           ) : (
-            <div className="text-center py-16 bg-card rounded-lg">
+            <div className="text-center py-16 bg-card rounded-lg border-2 border-dashed border-muted-foreground/20">
               <div className="w-24 h-24 mb-6 rounded-full bg-muted flex items-center justify-center mx-auto">
                 <svg
                   className="w-12 h-12 text-muted-foreground/40"

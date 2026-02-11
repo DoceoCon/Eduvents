@@ -220,6 +220,8 @@ export async function GET(req: NextRequest) {
     const phase = searchParams.get("phase");
     const dateFrom = searchParams.get("dateFrom");
     const dateTo = searchParams.get("dateTo");
+    const minPrice = searchParams.get("minPrice");
+    const maxPrice = searchParams.get("maxPrice");
     const sort = searchParams.get("sort") || "newest";
 
     // Build query
@@ -232,48 +234,85 @@ export async function GET(req: NextRequest) {
       if (searchLower === "free") {
         query.isFree = true;
       } else {
-        // Day of week detection (support partial matches like "wed")
-        const days = [
-          "sunday",
-          "monday",
-          "tuesday",
-          "wednesday",
-          "thursday",
-          "friday",
-          "saturday",
-        ];
-        const matchedDayIndex = days.findIndex((d) =>
-          d.startsWith(searchLower),
-        );
+        // Price Range Detection (e.g., "50-100", "under 100", "over 50")
+        const rangeMatch = search.match(/(?:£)?\s*(\d+)\s*(?:-|to)\s*(?:£)?\s*(\d+)/i);
+        const underMatch = search.match(/(?:under|below|less than|max)\s*(?:£)?\s*(\d+)/i);
+        const overMatch = search.match(/(?:over|above|greater than|min)\s*(?:£)?\s*(\d+)/i);
 
-        const searchAsPrice = !isNaN(Number(search)) ? Number(search) : null;
+        let priceQuery: any = null;
+
+        if (rangeMatch) {
+          const min = parseFloat(rangeMatch[1]);
+          const max = parseFloat(rangeMatch[2]);
+          priceQuery = {
+            $or: [
+              { priceFrom: { $gte: min, $lte: max } },
+              { priceTo: { $gte: min, $lte: max } },
+              { price: { $gte: min, $lte: max } }
+            ]
+          };
+        } else if (underMatch) {
+          const max = parseFloat(underMatch[1]);
+          priceQuery = {
+            $or: [
+              { priceFrom: { $lte: max } },
+              { price: { $lte: max } }
+            ]
+          };
+        } else if (overMatch) {
+          const min = parseFloat(overMatch[1]);
+          priceQuery = {
+            $or: [
+              { priceTo: { $gte: min } },
+              { price: { $gte: min } }
+            ]
+          };
+        }
+
+        // Day of week detection
+        const days = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"];
+        const matchedDayIndex = days.findIndex((d) => d.startsWith(searchLower));
         const searchAsDay = matchedDayIndex !== -1 ? matchedDayIndex + 1 : null;
 
-        query.$or = [
-          { title: { $regex: search, $options: "i" } },
-          { description: { $regex: search, $options: "i" } },
-          { organiser: { $regex: search, $options: "i" } },
-          { location: { $regex: search, $options: "i" } },
-          { category: { $regex: search, $options: "i" } },
-          { format: { $regex: search, $options: "i" } },
-          { subjectAreas: { $in: [new RegExp(search, "i")] } },
-          { phases: { $in: [new RegExp(search, "i")] } },
+        const isPureNumber = /^\d+$/.test(search);
+        const searchRegex = isPureNumber ? new RegExp(`\\b${search}\\b`, "i") : new RegExp(search, "i");
+
+        const textSearchFields = [
+          "title", "description", "organiser", "location", "category", "format"
         ];
 
-        if (searchAsPrice !== null) {
-          query.$or.push({ price: searchAsPrice });
+        const orConditions: any[] = textSearchFields.map(field => ({
+          [field]: { $regex: searchRegex }
+        }));
+
+        // Add array fields
+        orConditions.push({ subjectAreas: { $in: [searchRegex] } });
+        orConditions.push({ phases: { $in: [searchRegex] } });
+
+        // Add price if it's just a number
+        const searchAsNumber = !isNaN(Number(search)) ? Number(search) : null;
+        if (searchAsNumber !== null) {
+          orConditions.push({ price: searchAsNumber });
+          orConditions.push({ priceFrom: { $lte: searchAsNumber }, priceTo: { $gte: searchAsNumber } });
+        }
+
+        // Add detected price query
+        if (priceQuery) {
+          orConditions.push(priceQuery);
         }
 
         if (searchAsDay) {
-          query.$or.push({
+          orConditions.push({
             $expr: {
               $eq: [
-                { $dayOfWeek: { $dateFromString: { dateString: "$date" } } },
+                { $dayOfWeek: { $dateFromString: { dateString: "$startDate" } } },
                 searchAsDay,
               ],
             },
           });
         }
+
+        query.$or = orConditions;
       }
     }
 
@@ -291,27 +330,83 @@ export async function GET(req: NextRequest) {
       query.phases = { $in: [phase] };
     }
     if (dateFrom || dateTo) {
-      // Filter events where date ranges overlap with the search range
-      const dateQuery: any = {};
+      query.$and = query.$and || [];
       if (dateFrom && dateTo) {
-        // Events that end on or after dateFrom AND start on or before dateTo
-        query.$and = [
-          { $or: [{ endDate: { $gte: dateFrom } }, { date: { $gte: dateFrom } }] },
-          { $or: [{ startDate: { $lte: dateTo } }, { date: { $lte: dateTo } }] }
-        ];
+        // Event interval [startDate, endDate] or [date, date] 
+        // Overlap with search interval [dateFrom, dateTo]
+
+        // Condition 1: Start of event (or legacy date) must be <= search end
+        query.$and.push({
+          $or: [
+            { startDate: { $lte: dateTo } },
+            { date: { $lte: dateTo } }
+          ]
+        });
+
+        // Condition 2: End of event (or legacy date) must be >= search start
+        query.$and.push({
+          $or: [
+            { endDate: { $gte: dateFrom } },
+            { date: { $gte: dateFrom } }
+          ]
+        });
       } else if (dateFrom) {
-        // Events that end on or after dateFrom
-        query.$or = [{ endDate: { $gte: dateFrom } }, { date: { $gte: dateFrom } }];
+        query.$and.push({
+          $or: [
+            { endDate: { $gte: dateFrom } },
+            { date: { $gte: dateFrom } }
+          ]
+        });
       } else if (dateTo) {
-        // Events that start on or before dateTo
-        query.$or = [{ startDate: { $lte: dateTo } }, { date: { $lte: dateTo } }];
+        query.$and.push({
+          $or: [
+            { startDate: { $lte: dateTo } },
+            { date: { $lte: dateTo } }
+          ]
+        });
+      }
+    }
+
+    if (minPrice || maxPrice) {
+      query.$and = query.$and || [];
+      const min = minPrice ? parseFloat(minPrice) : null;
+      const max = maxPrice ? parseFloat(maxPrice) : null;
+
+      if (min !== null && max !== null) {
+        // Range overlap: event[pFrom, pTo] overlaps search[min, max]
+        // pFrom <= max AND pTo >= min
+        query.$and.push({
+          $or: [
+            { price: { $gte: min, $lte: max } }, // Exact price within range
+            {
+              $and: [
+                { priceFrom: { $lte: max } },
+                { priceTo: { $gte: min } }
+              ]
+            }
+          ]
+        });
+      } else if (min !== null) {
+        query.$and.push({
+          $or: [
+            { price: { $gte: min } },
+            { priceTo: { $gte: min } }
+          ]
+        });
+      } else if (max !== null) {
+        query.$and.push({
+          $or: [
+            { price: { $lte: max } },
+            { priceFrom: { $lte: max } }
+          ]
+        });
       }
     }
 
     // Sort configuration
     let sortOption: any = { createdAt: -1 };
     if (sort === "date") {
-      sortOption = { date: 1 };
+      sortOption = { startDate: 1, date: 1 };
     } else if (sort === "popularity") {
       // Placeholder for popularity, if you have a views field
       sortOption = { createdAt: -1 };

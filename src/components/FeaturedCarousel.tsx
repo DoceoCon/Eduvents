@@ -70,7 +70,7 @@ const FeaturedCarousel = ({ events }: FeaturedCarouselProps) => {
               />
             </svg>
           </div>
-          <h3 className="text-2xl font-bold text-foreground mb-2">No Featured Events</h3>
+          <h3 className="text-2xl font-bold text-foreground mb-2 uppercase tracking-tight">NO FEATURED EVENTS</h3>
           <p className="text-muted-foreground max-w-md">
             There are no featured events at the moment. Check back soon for exciting educational opportunities!
           </p>

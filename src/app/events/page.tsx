@@ -2,12 +2,13 @@
 
 import { useState, useMemo, Suspense, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { Filter, X, Calendar as CalendarIcon } from 'lucide-react';
+import { Filter, X, Calendar as CalendarIcon, Search, Loader2 } from 'lucide-react';
 import Layout from '@/components/Layout';
 import EventCard from '@/components/EventCard';
 import SearchBar from '@/components/SearchBar';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Event, categories, formats, subjectAreas, eventPhases, EventCategory, EventFormat, SubjectArea, EventPhase } from '@/data/events';
@@ -36,6 +37,8 @@ const EventsContent = () => {
         key: 'selection'
     });
     const [sortBy, setSortBy] = useState<'newest' | 'date' | 'popularity'>('newest');
+    const [minPrice, setMinPrice] = useState<string>('');
+    const [maxPrice, setMaxPrice] = useState<string>('');
     const [currentPage, setCurrentPage] = useState(1);
     const [showMobileFilters, setShowMobileFilters] = useState(false);
 
@@ -63,6 +66,8 @@ const EventsContent = () => {
                 if (dateRange.endDate) {
                     params.append('dateTo', formatDate(dateRange.endDate, 'yyyy-MM-dd'));
                 }
+                if (minPrice) params.append('minPrice', minPrice);
+                if (maxPrice) params.append('maxPrice', maxPrice);
                 params.append('sort', sortBy);
 
                 const response = await fetch(`/api/events?${params.toString()}`);
@@ -77,7 +82,7 @@ const EventsContent = () => {
             }
         };
         fetchEvents();
-    }, [debouncedSearch, selectedCategory, selectedFormat, selectedSubject, selectedPhase, dateRange, sortBy]);
+    }, [debouncedSearch, selectedCategory, selectedFormat, selectedSubject, selectedPhase, dateRange, sortBy, minPrice, maxPrice]);
 
     const totalPages = Math.ceil(allEvents.length / ITEMS_PER_PAGE);
     const paginatedEvents = allEvents.slice(
@@ -95,12 +100,14 @@ const EventsContent = () => {
             endDate: undefined,
             key: 'selection'
         });
+        setMinPrice('');
+        setMaxPrice('');
         setSearchQuery('');
         setDebouncedSearch('');
         setCurrentPage(1);
     };
 
-    const hasActiveFilters = selectedCategory !== 'all' || selectedFormat !== 'all' || selectedSubject !== 'all' || selectedPhase !== 'all' || (dateRange.startDate || dateRange.endDate) || searchQuery;
+    const hasActiveFilters = selectedCategory !== 'all' || selectedFormat !== 'all' || selectedSubject !== 'all' || selectedPhase !== 'all' || (dateRange.startDate || dateRange.endDate) || searchQuery || minPrice || maxPrice;
 
     const activeFilterCount = [
         selectedCategory !== 'all',
@@ -108,7 +115,9 @@ const EventsContent = () => {
         selectedSubject !== 'all',
         selectedPhase !== 'all',
         dateRange.startDate || dateRange.endDate,
-        searchQuery
+        searchQuery,
+        minPrice,
+        maxPrice
     ].filter(Boolean).length;
 
     const renderFilterSection = () => (
@@ -171,6 +180,33 @@ const EventsContent = () => {
                         ))}
                     </SelectContent>
                 </Select>
+            </div>
+
+            <div className="space-y-4">
+                <Label className="text-sm font-medium block">Price Range (£)</Label>
+                <div className="flex items-center gap-2">
+                    <div className="relative flex-1">
+                        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground text-xs">£</span>
+                        <Input
+                            type="number"
+                            placeholder="Min"
+                            value={minPrice}
+                            onChange={(e) => { setMinPrice(e.target.value); setCurrentPage(1); }}
+                            className="bg-background h-10 pl-6 text-sm"
+                        />
+                    </div>
+                    <span className="text-muted-foreground font-bold"> - </span>
+                    <div className="relative flex-1">
+                        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground text-xs">£</span>
+                        <Input
+                            type="number"
+                            placeholder="Max"
+                            value={maxPrice}
+                            onChange={(e) => { setMaxPrice(e.target.value); setCurrentPage(1); }}
+                            className="bg-background h-10 pl-6 text-sm"
+                        />
+                    </div>
+                </div>
             </div>
 
             <div>
@@ -287,97 +323,72 @@ const EventsContent = () => {
                             </p>
                         )}
 
-                        {/* Loading State */}
+                        {/* Content Area */}
                         {isLoading ? (
-                            <div className="space-y-8">
-                                {/* Loading Spinner */}
-                                <div className="flex flex-col items-center justify-center py-16">
-                                    <div className="relative w-16 h-16 mb-6">
-                                        <div className="absolute top-0 left-0 w-full h-full border-4 border-primary/20 rounded-full"></div>
-                                        <div className="absolute top-0 left-0 w-full h-full border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
-                                    </div>
-                                    <p className="text-lg font-medium text-foreground mb-2">Loading events...</p>
-                                    <p className="text-sm text-muted-foreground">Please wait while we fetch the latest educational events</p>
-                                </div>
-
-                                {/* Skeleton Cards */}
+                            <div className="flex flex-col items-center justify-center py-24 bg-card rounded-lg shadow-sm">
+                                <Loader2 className="h-12 w-12 text-primary animate-spin mb-4" />
+                                <p className="text-lg font-bold text-foreground mb-1 uppercase tracking-tight">Loading events</p>
+                                <p className="text-sm text-muted-foreground">Finding the best educational opportunities for you...</p>
+                            </div>
+                        ) : paginatedEvents.length > 0 ? (
+                            <>
                                 <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-                                    {Array.from({ length: 6 }).map((_, index) => (
-                                        <div key={index} className="bg-card rounded-lg shadow-card overflow-hidden animate-pulse">
-                                            <div className="h-48 bg-muted"></div>
-                                            <div className="p-6 space-y-4">
-                                                <div className="flex gap-2">
-                                                    <div className="h-6 w-20 bg-muted rounded-full"></div>
-                                                    <div className="h-6 w-16 bg-muted rounded-full"></div>
-                                                </div>
-                                                <div className="h-6 bg-muted rounded w-3/4"></div>
-                                                <div className="space-y-2">
-                                                    <div className="h-4 bg-muted rounded"></div>
-                                                    <div className="h-4 bg-muted rounded w-5/6"></div>
-                                                </div>
-                                                <div className="space-y-2">
-                                                    <div className="h-4 bg-muted rounded w-2/3"></div>
-                                                    <div className="h-4 bg-muted rounded w-1/2"></div>
-                                                </div>
-                                                <div className="h-10 bg-muted rounded"></div>
-                                            </div>
+                                    {paginatedEvents.map((event, index) => (
+                                        <div key={event.id} className="animate-slide-up" style={{ animationDelay: `${index * 30}ms` }}>
+                                            <EventCard event={event} />
                                         </div>
                                     ))}
                                 </div>
-                            </div>
-                        ) : (
-                            /* Events Grid */
-                            paginatedEvents.length > 0 ? (
-                                <>
-                                    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-                                        {paginatedEvents.map((event, index) => (
-                                            <div key={event.id} className="animate-slide-up" style={{ animationDelay: `${index * 30}ms` }}>
-                                                <EventCard event={event} />
-                                            </div>
-                                        ))}
-                                    </div>
 
-                                    {/* Pagination */}
-                                    {totalPages > 1 && (
-                                        <div className="flex justify-center items-center gap-2 mt-12">
-                                            <Button
-                                                variant="outline"
-                                                disabled={currentPage === 1}
-                                                onClick={() => setCurrentPage(p => p - 1)}
-                                            >
-                                                Previous
-                                            </Button>
+                                {/* Pagination */}
+                                {totalPages > 1 && (
+                                    <div className="flex justify-center items-center gap-2 mt-12">
+                                        <Button
+                                            variant="outline"
+                                            disabled={currentPage === 1}
+                                            onClick={() => setCurrentPage(p => p - 1)}
+                                        >
+                                            Previous
+                                        </Button>
 
-                                            <div className="flex items-center gap-1">
-                                                {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-                                                    <Button
-                                                        key={page}
-                                                        variant={currentPage === page ? 'default' : 'outline'}
-                                                        size="sm"
-                                                        onClick={() => setCurrentPage(page)}
-                                                        className="w-10"
-                                                    >
-                                                        {page}
-                                                    </Button>
-                                                ))}
-                                            </div>
-
-                                            <Button
-                                                variant="outline"
-                                                disabled={currentPage === totalPages}
-                                                onClick={() => setCurrentPage(p => p + 1)}
-                                            >
-                                                Next
-                                            </Button>
+                                        <div className="flex items-center gap-1">
+                                            {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                                                <Button
+                                                    key={page}
+                                                    variant={currentPage === page ? 'default' : 'outline'}
+                                                    size="sm"
+                                                    onClick={() => setCurrentPage(page)}
+                                                    className="w-10"
+                                                >
+                                                    {page}
+                                                </Button>
+                                            ))}
                                         </div>
-                                    )}
-                                </>
-                            ) : (
-                                <div className="text-center py-16 bg-card rounded-lg">
-                                    <p className="text-muted-foreground text-lg mb-4">No events found matching your criteria</p>
-                                    <Button variant="outline" onClick={clearFilters}>Clear Filters</Button>
+
+                                        <Button
+                                            variant="outline"
+                                            disabled={currentPage === totalPages}
+                                            onClick={() => setCurrentPage(p => p + 1)}
+                                        >
+                                            Next
+                                        </Button>
+                                    </div>
+                                )}
+                            </>
+                        ) : (
+                            <div className="text-center py-20 bg-card rounded-lg border-2 border-dashed border-muted-foreground/20">
+                                <div className="w-20 h-20 mb-6 rounded-full bg-muted flex items-center justify-center mx-auto text-muted-foreground/40">
+                                    <Search className="h-10 w-10" />
                                 </div>
-                            )
+                                <h3 className="text-2xl font-bold text-foreground mb-2 uppercase tracking-tight">No events found</h3>
+                                <p className="text-muted-foreground max-w-sm mx-auto mb-8">
+                                    We couldn't find any events matching your current search or filters. Try adjusting them or clear all filters to start over.
+                                </p>
+                                <Button variant="outline" onClick={clearFilters} className="px-8 h-12">
+                                    <X className="h-4 w-4 mr-2" />
+                                    Clear All Filters
+                                </Button>
+                            </div>
                         )}
                     </div>
                 </div>
