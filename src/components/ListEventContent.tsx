@@ -498,9 +498,9 @@ const ListEventContent = ({
               maxLength={2000}
             />
             <p
-              className={`text-sm mt-1 ${formData.description.replace(/\s+/g, "").length >= 2000 ? "text-destructive font-medium" : "text-muted-foreground"}`}
+              className={`text-sm mt-1 ${formData.description.length >= 2000 ? "text-destructive font-medium" : "text-muted-foreground"}`}
             >
-              {formData.description.replace(/\s+/g, "").length}/2000 characters (excluding spaces)
+              {formData.description.length}/2000 characters
             </p>
             {errors.description && (
               <p className="text-sm text-destructive mt-1">
