@@ -263,7 +263,7 @@ const EventsContent = () => {
             <div className="bg-gradient-hero py-12">
                 <div className="container-tight">
                     <h1 className="text-3xl md:text-4xl font-bold text-primary-foreground mb-2">Discover Your Ideal Educational Event</h1>
-                    <p className="text-primary-foreground/80">Discover professional development opportunities near you</p>
+                    <p className="text-primary-foreground/80">Filter by event category, format, subject and educational phase</p>
                 </div>
             </div>
 
@@ -290,7 +290,7 @@ const EventsContent = () => {
                             <div className="flex gap-4">
                                 <Button
                                     variant="outline"
-                                    className="lg:hidden"
+                                    className="lg:hidden w-[160px] h-12"
                                     onClick={() => setShowMobileFilters(true)}
                                 >
                                     <div className="relative mr-2">

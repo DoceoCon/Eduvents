@@ -219,12 +219,62 @@ const ListEventContent = ({
     setFormData((prev) => ({ ...prev, phases }));
   };
 
+  const resizeImage = (file: File): Promise<File> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          const ctx = canvas.getContext('2d');
+
+          // Set target dimensions to 1200x675 (16:9 ratio)
+          canvas.width = 1200;
+          canvas.height = 675;
+
+          if (ctx) {
+            // Calculate scaling to cover the canvas while maintaining aspect ratio
+            const scale = Math.max(canvas.width / img.width, canvas.height / img.height);
+            const scaledWidth = img.width * scale;
+            const scaledHeight = img.height * scale;
+
+            // Center the image
+            const x = (canvas.width - scaledWidth) / 2;
+            const y = (canvas.height - scaledHeight) / 2;
+
+            // Draw image
+            ctx.drawImage(img, x, y, scaledWidth, scaledHeight);
+
+            // Convert canvas to blob
+            canvas.toBlob((blob) => {
+              if (blob) {
+                const resizedFile = new File([blob], file.name, {
+                  type: file.type,
+                  lastModified: Date.now(),
+                });
+                resolve(resizedFile);
+              } else {
+                reject(new Error('Failed to resize image'));
+              }
+            }, file.type, 0.95);
+          } else {
+            reject(new Error('Failed to get canvas context'));
+          }
+        };
+        img.onerror = () => reject(new Error('Failed to load image'));
+        img.src = e.target?.result as string;
+      };
+      reader.onerror = () => reject(new Error('Failed to read file'));
+      reader.readAsDataURL(file);
+    });
+  };
+
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) handleImageFile(file);
   };
 
-  const handleImageFile = (file: File) => {
+  const handleImageFile = async (file: File) => {
     const allowedTypes = ["image/png", "image/jpeg", "image/jpg"];
     if (!allowedTypes.includes(file.type)) {
       setErrors((prev) => ({
@@ -241,13 +291,24 @@ const ListEventContent = ({
       return;
     }
 
-    setSelectedFile(file);
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      setImagePreview(reader.result as string);
-      setErrors((prev) => ({ ...prev, image: "" }));
-    };
-    reader.readAsDataURL(file);
+    try {
+      // Resize the image to 1200x675
+      const resizedFile = await resizeImage(file);
+      setSelectedFile(resizedFile);
+
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result as string);
+        setErrors((prev) => ({ ...prev, image: "" }));
+      };
+      reader.readAsDataURL(resizedFile);
+    } catch (error) {
+      console.error('Error resizing image:', error);
+      setErrors((prev) => ({
+        ...prev,
+        image: "Failed to process image. Please try another image.",
+      }));
+    }
   };
 
   const handleDragOver = (e: React.DragEvent) => {
@@ -833,7 +894,7 @@ const ListEventContent = ({
                 Drag and drop your image here, or click to browse
               </p>
               <p className="text-sm text-muted-foreground">
-                Recommended: 1200x675px (16:9 ratio), JPG or PNG, max 25MB
+                Upload any image (JPG or PNG, max 25MB) - will be automatically resized to 1200x675px (16:9 ratio)
               </p>
               <input
                 type="file"

@@ -231,7 +231,7 @@ const EventDetail = () => {
       </div>
 
       {/* Hero Image */}
-      <div className="relative w-full aspect-video max-h-[500px]">
+      <div className="relative w-full aspect-video overflow-hidden">
         <img
           src={event.image}
           alt={event.title}
