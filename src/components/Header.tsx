@@ -50,7 +50,7 @@ const Header = () => {
               <Link
                 key={link.path}
                 href={link.path}
-                className={`text-lg font-medium transition-colors hover:text-primary font-league-gothic  tracking-wide ${
+                className={`text-base font-medium transition-colors hover:text-primary font-league-gothic  tracking-wide ${
                   isActive(link.path) ? "text-primary" : "text-muted-foreground"
                 }`}
               >
@@ -60,7 +60,7 @@ const Header = () => {
             {pathname !== "/login" && (
               <button
                 onClick={handleAdminClick}
-                className={`text-lg font-medium transition-colors hover:text-primary font-league-gothic  tracking-wide ${
+                className={`text-base font-medium transition-colors hover:text-primary font-league-gothic  tracking-wide ${
                   pathname.startsWith("/admin") || pathname === "/login"
                     ? "text-primary"
                     : "text-muted-foreground"
@@ -72,7 +72,7 @@ const Header = () => {
             {isAuthenticated && (
               <button
                 onClick={logout}
-                className="text-lg font-medium text-red-500 hover:text-red-600 transition-colors font-league-gothic  tracking-wide"
+                className="text-base font-medium text-red-500 hover:text-red-600 transition-colors font-league-gothic  tracking-wide"
               >
                 Logout
               </button>
@@ -102,7 +102,7 @@ const Header = () => {
                   key={link.path}
                   href={link.path}
                   onClick={() => setIsMenuOpen(false)}
-                  className={`text-lg font-medium transition-colors hover:text-primary font-league-gothic uppercase tracking-wide ${
+                  className={`text-base font-medium transition-colors hover:text-primary font-league-gothic uppercase tracking-wide ${
                     isActive(link.path)
                       ? "text-primary"
                       : "text-muted-foreground"
@@ -117,7 +117,7 @@ const Header = () => {
                     handleAdminClick();
                     setIsMenuOpen(false);
                   }}
-                  className={`text-lg font-medium transition-colors hover:text-primary text-left font-league-gothic uppercase tracking-wide ${
+                  className={`text-base font-medium transition-colors hover:text-primary text-left font-league-gothic uppercase tracking-wide ${
                     pathname.startsWith("/admin") || pathname === "/login"
                       ? "text-primary"
                       : "text-muted-foreground"
@@ -132,7 +132,7 @@ const Header = () => {
                     logout();
                     setIsMenuOpen(false);
                   }}
-                  className="text-lg font-medium text-red-500 hover:text-red-600 transition-colors text-left font-league-gothic uppercase tracking-wide"
+                  className="text-base font-medium text-red-500 hover:text-red-600 transition-colors text-left font-league-gothic uppercase tracking-wide"
                 >
                   Logout
                 </button>
