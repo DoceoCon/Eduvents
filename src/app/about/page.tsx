@@ -4,7 +4,8 @@ import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "About Us - Eduvents",
-  description: "Learn about Eduvents, the dedicated education events marketplace for teachers and education professionals.",
+  description:
+    "Learn about Eduvents, the dedicated education events marketplace for teachers and education professionals.",
 };
 
 export default function About() {
@@ -27,10 +28,15 @@ export default function About() {
           <div className="bg-card rounded-lg p-8 md:p-12 shadow-card">
             <div className="flex items-start gap-4 mb-4">
               <Info className="h-6 w-6 text-primary flex-shrink-0 mt-1" />
-              <h2 className="text-2xl font-semibold text-foreground">About company</h2>
+              <h2 className="text-2xl font-semibold text-foreground">
+                About company
+              </h2>
             </div>
-            <p className="text-lg text-muted-foreground leading-relaxed">
-              Eduvents is a dedicated education events marketplace designed to make it simple for teachers and education professionals to find the most relevant conferences, festivals, CPD, training and webinars in one place.
+            <p className="text-muted-foreground leading-relaxed">
+              Eduvents is a dedicated education events marketplace designed to
+              make it simple for teachers and education professionals to find
+              the most relevant conferences, festivals, CPD, training and
+              webinars in one place.
             </p>
           </div>
 
@@ -38,10 +44,16 @@ export default function About() {
           <div className="bg-card rounded-lg p-8 md:p-12 shadow-card">
             <div className="flex items-start gap-4 mb-4">
               <Users className="h-6 w-6 text-primary flex-shrink-0 mt-1" />
-              <h2 className="text-2xl font-semibold text-foreground">Who we are</h2>
+              <h2 className="text-2xl font-semibold text-foreground">
+                Who we are
+              </h2>
             </div>
             <p className="text-muted-foreground leading-relaxed">
-              Eduvents brings together educational events from across the UK and internationally into a single, easy-to-navigate platform focused on teaching and learning. Our aim is to remove the noise and help educators quickly discover opportunities that genuinely support their professional growth and networking.
+              Eduvents brings together educational events from across the UK and
+              internationally into a single, easy-to-navigate platform focused
+              on teaching and learning. Our aim is to remove the noise and help
+              educators quickly discover opportunities that genuinely support
+              their professional growth and networking.
             </p>
           </div>
 
@@ -49,10 +61,17 @@ export default function About() {
           <div className="bg-card rounded-lg p-8 md:p-12 shadow-card">
             <div className="flex items-start gap-4 mb-4">
               <Target className="h-6 w-6 text-primary flex-shrink-0 mt-1" />
-              <h2 className="text-2xl font-semibold text-foreground">Our mission</h2>
+              <h2 className="text-2xl font-semibold text-foreground">
+                Our mission
+              </h2>
             </div>
             <p className="text-muted-foreground leading-relaxed">
-              Our mission is to connect teachers with the best networking and professional development opportunities across the education sector via a clear, intuitive search experience. Whether you are looking for subject-specific CPD, leadership conferences, SEND training, or large-scale festivals and exhibitions, Eduvents is built to surface the right events at the right time.
+              Our mission is to connect teachers with the best networking and
+              professional development opportunities across the education sector
+              via a clear, intuitive search experience. Whether you are looking
+              for subject-specific CPD, leadership conferences, SEND training,
+              or large-scale festivals and exhibitions, Eduvents is built to
+              surface the right events at the right time.
             </p>
           </div>
 
@@ -60,7 +79,9 @@ export default function About() {
           <div className="bg-card rounded-lg p-8 md:p-12 shadow-card">
             <div className="flex items-start gap-4 mb-6">
               <Heart className="h-6 w-6 text-primary flex-shrink-0 mt-1" />
-              <h2 className="text-2xl font-semibold text-foreground">What we offer educators</h2>
+              <h2 className="text-2xl font-semibold text-foreground">
+                What we offer educators
+              </h2>
             </div>
             <p className="text-muted-foreground mb-4">
               On Eduvents, educators can:
@@ -68,7 +89,10 @@ export default function About() {
             <ul className="space-y-3">
               <li className="flex items-start gap-3 text-muted-foreground">
                 <CheckCircle className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
-                <span>Search and filter events by category (webinar, conference, CPD training, awards, festivals, exhibitions and more).</span>
+                <span>
+                  Search and filter events by category (webinar, conference, CPD
+                  training, awards, festivals, exhibitions and more).
+                </span>
               </li>
               <li className="flex items-start gap-3 text-muted-foreground">
                 <CheckCircle className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
@@ -76,7 +100,11 @@ export default function About() {
               </li>
               <li className="flex items-start gap-3 text-muted-foreground">
                 <CheckCircle className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
-                <span>See key details at a glance: dates, times, location or online link, cost, and organiser information, with a clear route to book directly with the event organiser.</span>
+                <span>
+                  See key details at a glance: dates, times, location or online
+                  link, cost, and organiser information, with a clear route to
+                  book directly with the event organiser.
+                </span>
               </li>
             </ul>
           </div>
@@ -85,10 +113,17 @@ export default function About() {
           <div className="bg-card rounded-lg p-8 md:p-12 shadow-card">
             <div className="flex items-start gap-4 mb-4">
               <CheckCircle className="h-6 w-6 text-primary flex-shrink-0 mt-1" />
-              <h2 className="text-2xl font-semibold text-foreground">What we offer event organisers</h2>
+              <h2 className="text-2xl font-semibold text-foreground">
+                What we offer event organisers
+              </h2>
             </div>
             <p className="text-muted-foreground leading-relaxed">
-              For event organisers, Eduvents provides a focused channel to reach engaged educators actively looking for high-quality professional opportunities. Organisers can submit events through a simple online form, with paid listings processed securely via Stripe. Featured listing options and homepage visibility are available to amplify reach and drive more targeted attendance.
+              For event organisers, Eduvents provides a focused channel to reach
+              engaged educators actively looking for high-quality professional
+              opportunities. Organisers can submit events through a simple
+              online form, with paid listings processed securely via Stripe.
+              Featured listing options and homepage visibility are available to
+              amplify reach and drive more targeted attendance.
             </p>
           </div>
 
@@ -96,10 +131,13 @@ export default function About() {
           <div className="bg-card rounded-lg p-8 md:p-12 shadow-card">
             <div className="flex items-start gap-4 mb-6">
               <Mail className="h-6 w-6 text-primary flex-shrink-0 mt-1" />
-              <h2 className="text-2xl font-semibold text-foreground">How to get in touch</h2>
+              <h2 className="text-2xl font-semibold text-foreground">
+                How to get in touch
+              </h2>
             </div>
             <p className="text-muted-foreground mb-6">
-              If you have any questions about listing an event, using the platform, or potential partnerships, you can contact us at:
+              If you have any questions about listing an event, using the
+              platform, or potential partnerships, you can contact us at:
             </p>
             <div className="flex items-center gap-3 text-muted-foreground">
               <Mail className="h-5 w-5 text-primary" />
