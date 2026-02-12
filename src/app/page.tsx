@@ -55,7 +55,7 @@ export default function Home() {
             <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold text-primary-foreground mb-6">
               Educations Events That Inspire
             </h1>
-            <p className="text-lg md:text-xl text-primary-foreground/90 mb-10 font-league-gothic tracking-wide uppercase">
+            <p className="text-lg md:text-xl text-primary-foreground/90 mb-10 font-league-gothic tracking-wide ">
               Discover CPD training, Webinars, Conferences, Award Shows and more
               globally.
             </p>
@@ -115,7 +115,9 @@ export default function Home() {
           {isLoading ? (
             <div className="flex flex-col items-center justify-center h-[400px] md:h-[500px] bg-muted/20 rounded-xl">
               <Loader2 className="h-12 w-12 text-primary animate-spin mb-4" />
-              <p className="text-muted-foreground font-medium">Loading featured events...</p>
+              <p className="text-muted-foreground font-medium">
+                Loading featured events...
+              </p>
             </div>
           ) : (
             <FeaturedCarousel events={featuredEvents} />
@@ -142,7 +144,9 @@ export default function Home() {
           {isLoading ? (
             <div className="flex flex-col items-center justify-center py-20">
               <Loader2 className="h-10 w-10 text-primary animate-spin mb-4" />
-              <p className="text-muted-foreground font-medium">Loading latest events...</p>
+              <p className="text-muted-foreground font-medium">
+                Loading latest events...
+              </p>
             </div>
           ) : latestEvents.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

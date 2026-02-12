@@ -1,12 +1,12 @@
 "use client";
 
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { Menu, X } from 'lucide-react';
-import { useState } from 'react';
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { Menu, X } from "lucide-react";
+import { useState } from "react";
 
-import { useAuth } from '@/context/AuthContext';
-import { useRouter } from 'next/navigation';
+import { useAuth } from "@/context/AuthContext";
+import { useRouter } from "next/navigation";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -15,18 +15,18 @@ const Header = () => {
   const router = useRouter();
 
   const navLinks = [
-    { path: '/', label: 'Home' },
-    { path: '/events', label: 'Find Events' },
-    { path: '/list-event', label: 'List Your Event' },
-    { path: '/about', label: 'About Us' },
-    { path: '/contact', label: 'Contact Us' },
+    { path: "/", label: "Home" },
+    { path: "/events", label: "Find Events" },
+    { path: "/list-event", label: "List Your Event" },
+    { path: "/about", label: "About Us" },
+    { path: "/contact", label: "Contact Us" },
   ];
 
   const handleAdminClick = () => {
     if (isAuthenticated) {
-      router.push('/admin');
+      router.push("/admin");
     } else {
-      router.push('/login');
+      router.push("/login");
     }
   };
 
@@ -37,30 +37,34 @@ const Header = () => {
       <div className="container-tight">
         <div className="flex h-16 items-center justify-between">
           <Link href="/" className="flex items-center">
-            <img src="/logo.png" alt="EDUVENTS" className="h-25 w-auto object-contain" />
+            <img
+              src="/logo.png"
+              alt="EDUVENTS"
+              className="h-41 w-auto object-contain"
+            />
           </Link>
 
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center space-x-8">
+          <nav className="hidden md:flex items-center space-x-5">
             {navLinks.map((link) => (
               <Link
                 key={link.path}
                 href={link.path}
-                className={`text-lg font-medium transition-colors hover:text-primary font-league-gothic uppercase tracking-wide ${isActive(link.path)
-                  ? 'text-primary'
-                  : 'text-muted-foreground'
-                  }`}
+                className={`text-lg font-medium transition-colors hover:text-primary font-league-gothic  tracking-wide ${
+                  isActive(link.path) ? "text-primary" : "text-muted-foreground"
+                }`}
               >
                 {link.label}
               </Link>
             ))}
-            {pathname !== '/login' && (
+            {pathname !== "/login" && (
               <button
                 onClick={handleAdminClick}
-                className={`text-lg font-medium transition-colors hover:text-primary font-league-gothic uppercase tracking-wide ${pathname.startsWith('/admin') || pathname === '/login'
-                  ? 'text-primary'
-                  : 'text-muted-foreground'
-                  }`}
+                className={`text-lg font-medium transition-colors hover:text-primary font-league-gothic  tracking-wide ${
+                  pathname.startsWith("/admin") || pathname === "/login"
+                    ? "text-primary"
+                    : "text-muted-foreground"
+                }`}
               >
                 Admin
               </button>
@@ -68,7 +72,7 @@ const Header = () => {
             {isAuthenticated && (
               <button
                 onClick={logout}
-                className="text-lg font-medium text-red-500 hover:text-red-600 transition-colors font-league-gothic uppercase tracking-wide"
+                className="text-lg font-medium text-red-500 hover:text-red-600 transition-colors font-league-gothic  tracking-wide"
               >
                 Logout
               </button>
@@ -81,7 +85,11 @@ const Header = () => {
             onClick={() => setIsMenuOpen(!isMenuOpen)}
             aria-label="Toggle menu"
           >
-            {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+            {isMenuOpen ? (
+              <X className="h-6 w-6" />
+            ) : (
+              <Menu className="h-6 w-6" />
+            )}
           </button>
         </div>
 
@@ -94,24 +102,26 @@ const Header = () => {
                   key={link.path}
                   href={link.path}
                   onClick={() => setIsMenuOpen(false)}
-                  className={`text-lg font-medium transition-colors hover:text-primary font-league-gothic uppercase tracking-wide ${isActive(link.path)
-                    ? 'text-primary'
-                    : 'text-muted-foreground'
-                    }`}
+                  className={`text-lg font-medium transition-colors hover:text-primary font-league-gothic uppercase tracking-wide ${
+                    isActive(link.path)
+                      ? "text-primary"
+                      : "text-muted-foreground"
+                  }`}
                 >
                   {link.label}
                 </Link>
               ))}
-              {pathname !== '/login' && (
+              {pathname !== "/login" && (
                 <button
                   onClick={() => {
                     handleAdminClick();
                     setIsMenuOpen(false);
                   }}
-                  className={`text-lg font-medium transition-colors hover:text-primary text-left font-league-gothic uppercase tracking-wide ${pathname.startsWith('/admin') || pathname === '/login'
-                    ? 'text-primary'
-                    : 'text-muted-foreground'
-                    }`}
+                  className={`text-lg font-medium transition-colors hover:text-primary text-left font-league-gothic uppercase tracking-wide ${
+                    pathname.startsWith("/admin") || pathname === "/login"
+                      ? "text-primary"
+                      : "text-muted-foreground"
+                  }`}
                 >
                   Admin
                 </button>

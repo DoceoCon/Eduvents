@@ -38,7 +38,6 @@ import { useEffect, useState } from "react";
 import { useAuth } from "@/context/AuthContext";
 import EventEditDialog from "@/components/admin/EventEditDialog";
 
-
 const EventDetail = () => {
   const params = useParams();
   const { isAuthenticated } = useAuth();
@@ -154,17 +153,20 @@ const EventDetail = () => {
     );
   }
 
-  const formattedDate = event.startDate && event.endDate
-    ? event.startDate === event.endDate
-      ? safeFormatDate(event.startDate, "EEEE, MMMM d, yyyy")
-      : `${safeFormatDate(event.startDate, "MMM d")} - ${safeFormatDate(event.endDate, "MMM d, yyyy")}`
-    : event.date
-      ? safeFormatDate(event.date, "EEEE, MMMM d, yyyy")
-      : "";
+  const formattedDate =
+    event.startDate && event.endDate
+      ? event.startDate === event.endDate
+        ? safeFormatDate(event.startDate, "EEEE, MMMM d, yyyy")
+        : `${safeFormatDate(event.startDate, "MMM d, yyyy")} - ${safeFormatDate(event.endDate, "MMM d, yyyy")}`
+      : event.date
+        ? safeFormatDate(event.date, "EEEE, MMMM d, yyyy")
+        : "";
   const formattedStartTime = event.startTime
     ? safeConvertTo12Hour(event.startTime)
     : "";
-  const formattedEndTime = event.endTime ? safeConvertTo12Hour(event.endTime) : "";
+  const formattedEndTime = event.endTime
+    ? safeConvertTo12Hour(event.endTime)
+    : "";
   const shareText = `Check out this event: ${event.title}`;
 
   const handleShare = (platform: string) => {
@@ -231,13 +233,14 @@ const EventDetail = () => {
       </div>
 
       {/* Hero Image */}
-      <div className="relative w-full aspect-video overflow-hidden">
-        <img
-          src={event.image}
-          alt={event.title}
-          className="w-full h-full object-cover"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-foreground/60 to-transparent" />
+      <div className="container-tight py-4">
+        <div className="relative w-full overflow-hidden rounded-xl">
+          <img
+            src={event.image}
+            alt={event.title}
+            className="w-full h-auto object-contain"
+          />
+        </div>
       </div>
 
       <div className="container-tight py-8 md:py-12">

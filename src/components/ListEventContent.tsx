@@ -211,12 +211,11 @@ const ListEventContent = ({
         title: "Title must be 100 characters or less",
       }));
     } else if (field === "description" && value.length > 2000) {
-      const cleanedDescription = value.replace(/\s+/g, "");
+      const cleanedDescription = value;
       if (cleanedDescription.length > 2000) {
         setErrors((prev) => ({
           ...prev,
-          description:
-            "Description must be 2000 characters or less (excluding spaces)",
+          description: "Description must be 2000 characters or less",
         }));
       } else {
         setErrors((prev) => ({ ...prev, [field]: "" }));
@@ -585,9 +584,9 @@ const ListEventContent = ({
               className={errors.description ? "border-destructive" : ""}
             />
             <p
-              className={`text-sm mt-1 ${formData.description.replace(/\s+/g, "").length >= 2000 ? "text-destructive font-medium" : "text-muted-foreground"}`}
+              className={`text-sm mt-1 ${formData.description.length >= 2000 ? "text-destructive font-medium" : "text-muted-foreground"}`}
             >
-              {formData.description.replace(/\s+/g, "").length}/2000 characters
+              {formData.description.length}/2000 characters
             </p>
             {errors.description && (
               <p className="text-sm text-destructive mt-1">

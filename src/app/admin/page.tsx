@@ -123,6 +123,24 @@ const AdminDashboard = () => {
         router.push(`/event/${event.id}`);
     };
 
+    const handleDelete = async (eventId: string) => {
+        try {
+            const response = await fetch(`/api/admin/events/${eventId}`, {
+                method: 'DELETE',
+            });
+            const data = await response.json();
+            if (data.success) {
+                setEventsList(prev => prev.filter(event => event.id !== eventId));
+                toast.success('Event deleted successfully!');
+            } else {
+                toast.error(data.message || 'Failed to delete event');
+            }
+        } catch (error) {
+            console.error('Error deleting event:', error);
+            toast.error('Failed to delete event');
+        }
+    };
+
     return (
         <Layout>
             <div className="container-tight py-8 md:py-12">
@@ -223,6 +241,7 @@ const AdminDashboard = () => {
                                                 event={event}
                                                 onFeaturedToggle={handleFeaturedToggle}
                                                 onEdit={setEditingEvent}
+                                                onDelete={handleDelete}
                                                 showActions={false}
                                             />
                                         ))}
@@ -244,6 +263,7 @@ const AdminDashboard = () => {
                                                 key={event.id}
                                                 event={event}
                                                 onFeaturedToggle={handleFeaturedToggle}
+                                                onDelete={handleDelete}
                                                 showActions={false}
                                             />
                                         ))}
@@ -266,6 +286,7 @@ const AdminDashboard = () => {
                                                 onStatusChange={event.status === 'pending' ? handleStatusChange : undefined}
                                                 onFeaturedToggle={handleFeaturedToggle}
                                                 onEdit={event.status === 'approved' ? setEditingEvent : undefined}
+                                                onDelete={handleDelete}
                                                 showActions={event.status === 'pending'}
                                             />
                                         ))}

@@ -6,6 +6,7 @@ import {
   MapPin,
   PoundSterling,
   Star,
+  Trash2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
@@ -30,6 +31,7 @@ interface PendingEventCardProps {
   onReject: (eventId: string) => void;
   onViewDetails: (event: Event) => void;
   onFeaturedToggle: (eventId: string, featured: boolean) => void;
+  onDelete?: (eventId: string) => void;
 }
 
 const PendingEventCard = ({
@@ -38,6 +40,7 @@ const PendingEventCard = ({
   onReject,
   onViewDetails,
   onFeaturedToggle,
+  onDelete,
 }: PendingEventCardProps) => {
   const startDate = safeFormatDate(event.startDate || event.date || "", "MMM d, yyyy");
   const endDate = safeFormatDate(event.endDate || event.date || "", "MMM d, yyyy");
@@ -197,6 +200,39 @@ const PendingEventCard = ({
               <Eye className="h-4 w-4 mr-1" />
               View Details
             </Button>
+
+            {onDelete && (
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button size="sm" variant="destructive">
+                    <Trash2 className="h-4 w-4 mr-1" />
+                    Delete
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Delete Event</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      Are you sure you want to delete "
+                      {event.title.length > 60
+                        ? event.title.substring(0, 60) + "..."
+                        : event.title}
+                      "? This action cannot be undone and will permanently
+                      remove the event from the system.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction
+                      onClick={() => onDelete(event.id)}
+                      className="bg-destructive text-white hover:bg-destructive/90"
+                    >
+                      Delete Event
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            )}
           </div>
         </div>
       </div>

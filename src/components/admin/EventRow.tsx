@@ -1,4 +1,4 @@
-import { Check, X, Clock, Star, Pencil } from "lucide-react";
+import { Check, X, Clock, Star, Pencil, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Event } from "@/data/events";
@@ -24,6 +24,7 @@ interface EventRowProps {
   ) => void;
   onFeaturedToggle: (eventId: string, featured: boolean) => void;
   onEdit?: (event: Event) => void;
+  onDelete?: (eventId: string) => void;
   showActions?: boolean;
 }
 
@@ -32,6 +33,7 @@ const EventRow = ({
   onStatusChange,
   onFeaturedToggle,
   onEdit,
+  onDelete,
   showActions = true,
 }: EventRowProps) => (
   <div className="flex flex-col lg:flex-row lg:items-center gap-4 p-4 bg-card rounded-lg shadow-sm hover:shadow-card transition-shadow">
@@ -123,6 +125,40 @@ const EventRow = ({
           <Pencil className="h-4 w-4 mr-1" />
           Edit
         </Button>
+      )}
+
+      {/* Delete Button - For all events */}
+      {onDelete && (
+        <AlertDialog>
+          <AlertDialogTrigger asChild>
+            <Button size="sm" variant="destructive">
+              <Trash2 className="h-4 w-4 mr-1" />
+              Delete
+            </Button>
+          </AlertDialogTrigger>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Delete Event</AlertDialogTitle>
+              <AlertDialogDescription>
+                Are you sure you want to delete "
+                {event.title.length > 60
+                  ? event.title.substring(0, 60) + "..."
+                  : event.title}
+                "? This action cannot be undone and will permanently remove the
+                event from the system.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction
+                onClick={() => onDelete(event.id)}
+                className="bg-destructive text-white hover:bg-destructive/90"
+              >
+                Delete Event
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       )}
 
       {/* Action Buttons - For pending events */}
