@@ -58,15 +58,15 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
         const updateData: any = {};
         const fields = [
             'title', 'description', 'category', 'format',
-            'date', 'startTime', 'endTime', 'location', 'organiser',
-            'organiserEmail', 'bookingUrl', 'isFree', 'price'
+            'date', 'startDate', 'endDate', 'startTime', 'endTime', 'location', 'organiser',
+            'organiserEmail', 'bookingUrl', 'isFree', 'priceFrom', 'priceTo'
         ];
 
         fields.forEach(field => {
             const val = formData.get(field);
             if (val !== null) {
                 if (field === 'isFree') updateData[field] = val === 'true';
-                else if (field === 'price') updateData[field] = parseFloat(val as string);
+                else if (field === 'priceFrom' || field === 'priceTo') updateData[field] = parseFloat(val as string);
                 else updateData[field] = val;
             }
         });

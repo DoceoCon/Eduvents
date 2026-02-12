@@ -52,13 +52,23 @@ const EventEditDialog = ({
   const [isDragging, setIsDragging] = useState(false);
 
   useEffect(() => {
-    if (event) {
-      setFormData({
-        ...event,
-      });
-      setImagePreview(event.image);
+    if (isOpen && event?.id) {
+      // Fetch fresh event data when dialog opens
+      fetch(`/api/admin/events/${event.id}`)
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.success) {
+            setFormData({ ...data.event });
+            setImagePreview(data.event.image);
+            setSelectedFile(null);
+            setErrors({});
+          }
+        })
+        .catch((error) => {
+          console.error("Error fetching event:", error);
+        });
     }
-  }, [event?.id]);
+  }, [isOpen, event?.id]);
 
   const handleChange = (field: string, value: string | boolean | number) => {
     setFormData((prev) => {
@@ -388,6 +398,7 @@ const EventEditDialog = ({
                 onChange={(e) => handleChange("description", e.target.value)}
                 rows={4}
                 className={errors.description ? "border-destructive" : ""}
+                maxLength={2000}
               />
               <p
                 className={`text-sm mt-1 ${(formData.description || "").length >= 2000 ? "text-destructive font-medium" : "text-muted-foreground"}`}
@@ -578,29 +589,55 @@ const EventEditDialog = ({
             </RadioGroup>
 
             {!formData.isFree && (
-              <div>
-                <Label htmlFor="price">Ticket Price *</Label>
-                <div className="relative">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
-                    £
-                  </span>
-                  <Input
-                    id="price"
-                    type="number"
-                    min="0"
-                    step="1"
-                    value={formData.price || ""}
-                    onChange={(e) =>
-                      handleChange("price", parseFloat(e.target.value) || 0)
-                    }
-                    className={`pl-7 ${errors.price ? "border-destructive" : ""}`}
-                  />
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="priceFrom">Price From *</Label>
+                  <div className="relative">
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
+                      £
+                    </span>
+                    <Input
+                      id="priceFrom"
+                      type="number"
+                      min="0"
+                      step="1"
+                      value={formData.priceFrom || ""}
+                      onChange={(e) =>
+                        handleChange("priceFrom", parseFloat(e.target.value) || 0)
+                      }
+                      className={`pl-7 ${errors.priceFrom ? "border-destructive" : ""}`}
+                    />
+                  </div>
+                  {errors.priceFrom && (
+                    <p className="text-sm text-destructive mt-1">
+                      {errors.priceFrom}
+                    </p>
+                  )}
                 </div>
-                {errors.price && (
-                  <p className="text-sm text-destructive mt-1">
-                    {errors.price}
-                  </p>
-                )}
+                <div>
+                  <Label htmlFor="priceTo">Price To *</Label>
+                  <div className="relative">
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
+                      £
+                    </span>
+                    <Input
+                      id="priceTo"
+                      type="number"
+                      min="0"
+                      step="1"
+                      value={formData.priceTo || ""}
+                      onChange={(e) =>
+                        handleChange("priceTo", parseFloat(e.target.value) || 0)
+                      }
+                      className={`pl-7 ${errors.priceTo ? "border-destructive" : ""}`}
+                    />
+                  </div>
+                  {errors.priceTo && (
+                    <p className="text-sm text-destructive mt-1">
+                      {errors.priceTo}
+                    </p>
+                  )}
+                </div>
               </div>
             )}
           </div>
@@ -665,48 +702,92 @@ const EventEditDialog = ({
           {/* Event Image */}
           <div>
             <Label>Event Image *</Label>
-            <div
-              className={`mt-2 border-2 border-dashed ${errors.image ? "border-destructive" : isDragging ? "border-primary bg-primary/5" : "border-border"} rounded-lg p-3 text-center hover:border-primary transition-all duration-200`}
-              onDragOver={handleDragOver}
-              onDragLeave={handleDragLeave}
-              onDrop={handleDrop}
-            >
-              {imagePreview ? (
-                <div className="relative">
-                  <img
-                    src={imagePreview}
-                    alt="Preview"
-                    className="max-h-40 mx-auto rounded-lg"
-                  />
+            {imagePreview ? (
+              <div className="mt-2 border-2 border-border rounded-lg p-4">
+                <img
+                  src={imagePreview}
+                  alt="Preview"
+                  className="max-h-48 mx-auto rounded-lg object-contain"
+                />
+                <div className="flex gap-2 justify-center mt-4">
                   <Button
                     type="button"
-                    variant="outline"
+                    variant="destructive"
                     size="sm"
-                    className="mt-4"
                     onClick={() => {
                       setImagePreview(null);
                       setSelectedFile(null);
                     }}
                   >
-                    Change Image
+                    Remove Image
                   </Button>
+                  <label htmlFor="change-image">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => document.getElementById("change-image")?.click()}
+                    >
+                      Change Image
+                    </Button>
+                  </label>
+                  <Input
+                    id="change-image"
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageChange}
+                    className="hidden"
+                  />
                 </div>
-              ) : (
-                <label className="cursor-pointer">
-                  <div className="flex flex-col items-center">
-                    <span className="text-muted-foreground mb-2">
-                      Click to upload new image
-                    </span>
-                    <Input
-                      type="file"
-                      accept="image/*"
-                      onChange={handleImageChange}
-                      className="max-w-xs mx-auto"
-                    />
+              </div>
+            ) : (
+              <div
+                className={`mt-2 border-2 border-dashed ${errors.image ? "border-destructive" : isDragging ? "border-primary bg-primary/5" : "border-border"} rounded-lg p-8 text-center hover:border-primary transition-all duration-200 cursor-pointer`}
+                onDragOver={handleDragOver}
+                onDragLeave={handleDragLeave}
+                onDrop={handleDrop}
+                onClick={() => document.getElementById("upload-image")?.click()}
+              >
+                <div className="flex flex-col items-center gap-3">
+                  <div className="w-16 h-16 rounded-full bg-muted flex items-center justify-center">
+                    <svg
+                      className="w-8 h-8 text-muted-foreground"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                      />
+                    </svg>
                   </div>
-                </label>
-              )}
-            </div>
+                  <div>
+                    <p className="text-base font-medium text-foreground mb-1">
+                      Click to upload new image
+                    </p>
+                    <p className="text-sm text-muted-foreground">
+                      or drag and drop your image here
+                    </p>
+                    <p className="text-xs text-muted-foreground mt-2">
+                      PNG or JPG (max 25MB)
+                    </p>
+                  </div>
+                </div>
+                <Input
+                  id="upload-image"
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageChange}
+                  className="hidden"
+                />
+              </div>
+            )}
+            {errors.image && (
+              <p className="text-sm text-destructive mt-2">{errors.image}</p>
+            )}
           </div>
 
           {/* Actions */}
