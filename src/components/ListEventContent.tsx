@@ -943,8 +943,7 @@ const ListEventContent = ({
                 Drag and drop your image here, or click to browse
               </p>
               <p className="text-sm text-muted-foreground">
-                Upload any image (JPG or PNG, max 25MB) - will be automatically
-                resized to 1200x675px (16:9 ratio)
+                Upload any image (JPG or PNG)
               </p>
               <input
                 type="file"
