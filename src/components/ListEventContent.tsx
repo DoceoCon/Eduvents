@@ -94,11 +94,8 @@ const ListEventContent = ({
     if (formData.title && formData.title.length > 100) {
       newErrors.title = "Title must be 100 characters or less";
     }
-    if (formData.description && formData.description.length > 2000) {
-      const cleanedDescription = formData.description.replace(/\s+/g, "");
-      if (cleanedDescription.length > 2000) {
-        newErrors.description = "Description must be 2000 characters or less ";
-      }
+    if (formData.description && formData.description.replace(/\s+/g, "").length > 2000) {
+      newErrors.description = "Description must be 2000 characters or less (excluding spaces)";
     }
     if (formData.organiserName && formData.organiserName.length > 50) {
       newErrors.organiserName = "Name must be 50 characters or less";
@@ -165,15 +162,25 @@ const ListEventContent = ({
     return Object.keys(newErrors).length === 0;
   };
 
+  const getCharCount = (text: string) => text.replace(/\s+/g, "").length;
+
   const handleChange = (field: string, value: string) => {
     // Enforce character limits for fields that have maxLength
     const charLimits: Record<string, number> = {
       title: 100,
-      description: 2000,
       organiserName: 50,
     };
     if (charLimits[field] && value.length > charLimits[field]) {
       value = value.slice(0, charLimits[field]);
+    }
+
+    // Block description input if character count (excluding spaces/newlines) reaches 2000
+    if (field === "description") {
+      const newCharCount = getCharCount(value);
+      const prevCharCount = getCharCount(formData.description);
+      if (newCharCount > 2000 && newCharCount > prevCharCount) {
+        return;
+      }
     }
 
     setFormData((prev) => {
@@ -210,16 +217,11 @@ const ListEventContent = ({
         ...prev,
         title: "Title must be 100 characters or less",
       }));
-    } else if (field === "description" && value.length > 2000) {
-      const cleanedDescription = value;
-      if (cleanedDescription.length > 2000) {
-        setErrors((prev) => ({
-          ...prev,
-          description: "Description must be 2000 characters or less",
-        }));
-      } else {
-        setErrors((prev) => ({ ...prev, [field]: "" }));
-      }
+    } else if (field === "description" && getCharCount(value) > 2000) {
+      setErrors((prev) => ({
+        ...prev,
+        description: "Description must be 2000 characters or less (excluding spaces)",
+      }));
     } else if (field === "organiserName" && value.length > 50) {
       setErrors((prev) => ({
         ...prev,
@@ -584,9 +586,9 @@ const ListEventContent = ({
               className={errors.description ? "border-destructive" : ""}
             />
             <p
-              className={`text-sm mt-1 ${formData.description.length >= 2000 ? "text-destructive font-medium" : "text-muted-foreground"}`}
+              className={`text-sm mt-1 ${getCharCount(formData.description) >= 2000 ? "text-destructive font-medium" : "text-muted-foreground"}`}
             >
-              {formData.description.length}/2000 characters
+              {getCharCount(formData.description)}/2000 characters
             </p>
             {errors.description && (
               <p className="text-sm text-destructive mt-1">

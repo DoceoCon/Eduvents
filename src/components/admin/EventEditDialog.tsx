@@ -70,7 +70,18 @@ const EventEditDialog = ({
     }
   }, [isOpen, event?.id]);
 
+  const getCharCount = (text: string) => text.replace(/\s+/g, "").length;
+
   const handleChange = (field: string, value: string | boolean | number) => {
+    // Block description input if character count (excluding spaces/newlines) reaches 2000
+    if (field === "description" && typeof value === "string") {
+      const newCharCount = getCharCount(value);
+      const prevCharCount = getCharCount(formData.description || "");
+      if (newCharCount > 2000 && newCharCount > prevCharCount) {
+        return;
+      }
+    }
+
     setFormData((prev) => {
       const newData = { ...prev, [field]: value };
       if (field === "startDate" && typeof value === "string") {
@@ -85,20 +96,6 @@ const EventEditDialog = ({
         ...prev,
         title: "Title must be 100 characters or less",
       }));
-    } else if (
-      field === "description" &&
-      typeof value === "string" &&
-      value.length > 2000
-    ) {
-      const cleanedDescription = value.replace(/\s+/g, "");
-      if (cleanedDescription.length > 2000) {
-        setErrors((prev) => ({
-          ...prev,
-          description: "Description must be 2000 characters or less",
-        }));
-      } else {
-        setErrors((prev) => ({ ...prev, [field]: "" }));
-      }
     } else if (
       field === "organiser" &&
       typeof value === "string" &&
@@ -277,11 +274,8 @@ const EventEditDialog = ({
       newErrors.title = "Title must be 100 characters or less";
 
     if (!formData.description?.trim()) newErrors.description = "Required";
-    else if (formData.description.length > 2000) {
-      const cleanedDescription = formData.description.replace(/\s+/g, "");
-      if (cleanedDescription.length > 2000) {
-        newErrors.description = "Description must be 2000 characters or less";
-      }
+    else if (getCharCount(formData.description) > 2000) {
+      newErrors.description = "Description must be 2000 characters or less (excluding spaces)";
     }
 
     if (!formData.organiser?.trim()) newErrors.organiser = "Required";
@@ -315,7 +309,12 @@ const EventEditDialog = ({
         if (key === "subjectAreas" || key === "phases") {
           data.append(key, JSON.stringify(value));
         } else if (key !== "image") {
-          data.append(key, String(value));
+          // Trim text fields to avoid extra whitespace
+          const stringValue = String(value);
+          const trimmedValue = (key === "title" || key === "description" || key === "organiser" || key === "location")
+            ? stringValue.trim()
+            : stringValue;
+          data.append(key, trimmedValue);
         }
       });
 
@@ -398,12 +397,11 @@ const EventEditDialog = ({
                 onChange={(e) => handleChange("description", e.target.value)}
                 rows={4}
                 className={errors.description ? "border-destructive" : ""}
-                maxLength={2000}
               />
               <p
-                className={`text-sm mt-1 ${(formData.description || "").length >= 2000 ? "text-destructive font-medium" : "text-muted-foreground"}`}
+                className={`text-sm mt-1 ${getCharCount(formData.description || "") >= 2000 ? "text-destructive font-medium" : "text-muted-foreground"}`}
               >
-                {(formData.description || "").length}/2000 characters
+                {getCharCount(formData.description || "")}/2000 characters
               </p>
               {errors.description && (
                 <p className="text-sm text-destructive mt-1">

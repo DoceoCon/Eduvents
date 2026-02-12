@@ -35,12 +35,10 @@ const EventSchema = new Schema<IEvent>(
     title: {
       type: String,
       required: [true, "Required"],
-
     },
     description: {
       type: String,
       required: [true, "Required"],
-
     },
     fullDescription: {
       type: String,
