@@ -107,7 +107,7 @@ const EventsContent = () => {
         setCurrentPage(1);
     };
 
-    const hasActiveFilters = selectedCategory !== 'all' || selectedFormat !== 'all' || selectedSubject !== 'all' || selectedPhase !== 'all' || (dateRange.startDate || dateRange.endDate) || searchQuery || minPrice || maxPrice;
+    const hasActiveFilters = selectedCategory !== 'all' || selectedFormat !== 'all' || selectedSubject !== 'all' || selectedPhase !== 'all' || (dateRange.startDate || dateRange.endDate) || minPrice || maxPrice;
 
     const activeFilterCount = [
         selectedCategory !== 'all',
