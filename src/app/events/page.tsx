@@ -381,12 +381,14 @@ const EventsContent = () => {
                                 </div>
                                 <h3 className="text-2xl font-bold text-foreground mb-2 uppercase tracking-tight">No events found</h3>
                                 <p className="text-muted-foreground max-w-sm mx-auto mb-8">
-                                    We couldn't find any events matching your current search or filters. Try adjusting them or clear all filters to start over.
+                                    We couldn't find any events matching your current search{hasActiveFilters ? ' or filters' : ''}. Try adjusting {hasActiveFilters ? 'them or clear all filters' : 'your search'} to start over.
                                 </p>
-                                <Button variant="outline" onClick={clearFilters} className="px-8 h-12">
-                                    <X className="h-4 w-4 mr-2" />
-                                    Clear All Filters
-                                </Button>
+                                {hasActiveFilters && (
+                                    <Button variant="outline" onClick={clearFilters} className="px-8 h-12">
+                                        <X className="h-4 w-4 mr-2" />
+                                        Clear All Filters
+                                    </Button>
+                                )}
                             </div>
                         )}
                     </div>
