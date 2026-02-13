@@ -115,7 +115,6 @@ const EventsContent = () => {
         selectedSubject !== 'all',
         selectedPhase !== 'all',
         dateRange.startDate || dateRange.endDate,
-        searchQuery,
         minPrice,
         maxPrice
     ].filter(Boolean).length;
