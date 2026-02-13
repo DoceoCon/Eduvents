@@ -51,8 +51,8 @@ export default function Home() {
       {/* Hero Section */}
       <section className="bg-gradient-hero py-10 md:py-16">
         <div className="container-tight">
-          <div className="max-w-3xl mx-auto text-center animate-slide-up">
-            <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold text-primary-foreground mb-6">
+          <div className="mx-auto text-center animate-slide-up">
+            <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold text-primary-foreground mb-6 md:whitespace-nowrap">
               Educations Events That Inspire
             </h1>
             <p className="text-lg md:text-xl text-primary-foreground/90 mb-10 font-league-gothic tracking-wide ">

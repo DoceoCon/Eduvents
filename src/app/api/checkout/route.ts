@@ -22,7 +22,7 @@ export async function POST(req: NextRequest) {
                         currency: 'gbp',
                         product_data: {
                             name: `Event Listing Fee: ${title}`,
-
+                            tax_code: 'txcd_10000000',
                         },
                         unit_amount: 9900, // £99.00
                     },
@@ -30,6 +30,7 @@ export async function POST(req: NextRequest) {
                 },
             ],
             mode: 'payment',
+            automatic_tax: { enabled: true },
             success_url: `${process.env.NEXT_PUBLIC_BASE_URL}/list-event?success=true&session_id={CHECKOUT_SESSION_ID}&event_id=${eventId}`,
             cancel_url: `${process.env.NEXT_PUBLIC_BASE_URL}/list-event?canceled=true`,
             metadata: {
