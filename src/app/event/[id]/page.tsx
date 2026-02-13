@@ -234,11 +234,11 @@ const EventDetail = () => {
 
       {/* Hero Image */}
       <div className="container-tight py-4">
-        <div className="relative w-full overflow-hidden rounded-xl">
+        <div className="relative w-full max-w-[1216px] mx-auto overflow-hidden rounded-xl">
           <img
             src={event.image}
             alt={event.title}
-            className="w-full h-auto object-contain"
+            className="w-full max-h-[600px] object-cover"
           />
         </div>
       </div>
