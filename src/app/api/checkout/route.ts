@@ -25,6 +25,7 @@ export async function POST(req: NextRequest) {
                             tax_code: 'txcd_10000000',
                         },
                         unit_amount: 9900, // £99.00
+                        tax_behavior: 'exclusive',
                     },
                     quantity: 1,
                 },
