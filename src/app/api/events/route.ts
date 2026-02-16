@@ -226,8 +226,11 @@ export async function GET(req: NextRequest) {
     const maxPrice = searchParams.get("maxPrice");
     const sort = searchParams.get("sort") || "newest";
 
-    // Build query
-    const query: any = { status: "approved" };
+    // Build query - Only show approved AND paid events publicly
+    const query: any = {
+      status: "approved",
+      paymentStatus: "paid"
+    };
 
     // Handle Search
     if (search) {
