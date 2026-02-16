@@ -22,7 +22,13 @@ export type SubjectArea =
   | 'Humanities'
   | 'Geography'
   | 'SEND'
-  | 'Governance';
+  | 'Governance'
+  | 'Art & Design'
+  | 'Behaviour'
+  | 'Drama'
+  | 'History'
+  | 'Music'
+  | 'NQT';
 
 export type EventPhase =
   | 'Primary'
@@ -673,7 +679,13 @@ export const subjectAreas: SubjectArea[] = [
   'Humanities',
   'Geography',
   'SEND',
-  'Governance'
+  'Governance',
+  'Art & Design',
+  'Behaviour',
+  'Drama',
+  'History',
+  'Music',
+  'NQT'
 ];
 
 export const formats: EventFormat[] = ['In-Person', 'Virtual', 'Hybrid'];
