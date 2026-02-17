@@ -56,8 +56,8 @@ const TimeInput = ({ value, onChange, className }: TimeInputProps) => {
   // Generate hours (1-12)
   const hours = Array.from({ length: 12 }, (_, i) => (i + 1).toString());
 
-  // Generate minutes (00-59)
-  const minutes = Array.from({ length: 60 }, (_, i) => i.toString().padStart(2, '0'));
+  // Generate minutes in 15-minute increments (00, 15, 30, 45)
+  const minutes = ['00', '15', '30', '45'];
 
   return (
     <div className={`flex gap-2 ${className || ''}`}>
