@@ -134,9 +134,6 @@ const ListEventContent = ({
       if (!formData.priceFrom) {
         newErrors.priceFrom = "Required";
       }
-      if (!formData.priceTo) {
-        newErrors.priceTo = "Required";
-      }
       if (formData.priceFrom && formData.priceTo) {
         const from = parseFloat(formData.priceFrom);
         const to = parseFloat(formData.priceTo);
@@ -792,7 +789,7 @@ const ListEventContent = ({
 
           {formData.isFree === "paid" && (
             <div className="animate-fade-in">
-              <Label>Ticket Price Range *</Label>
+              <Label>Ticket Price Range</Label>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <Label
@@ -830,7 +827,7 @@ const ListEventContent = ({
                     htmlFor="priceTo"
                     className="text-sm text-muted-foreground"
                   >
-                    To
+                    To (Optional)
                   </Label>
                   <div className="relative">
                     <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">

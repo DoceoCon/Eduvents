@@ -313,7 +313,7 @@ const EventDetail = () => {
                 <div className="flex items-start text-foreground">
                   <MapPin className="h-5 w-5 mr-3 text-primary flex-shrink-0 mt-1" />
                   <div className="flex-1 min-w-0">
-                    <p className="font-medium break-all">{event.location}</p>
+                    <p className="font-medium break-words">{event.location}</p>
                     <p className="text-sm text-muted-foreground">Location</p>
                   </div>
                 </div>
