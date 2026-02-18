@@ -28,7 +28,10 @@ export type SubjectArea =
   | 'Drama'
   | 'History'
   | 'Music'
-  | 'NQT';
+  | 'NQT'
+  | 'Languages'
+  | 'Sport'
+  | 'Computing';
 
 export type EventPhase =
   | 'Primary'
@@ -685,7 +688,10 @@ export const subjectAreas: SubjectArea[] = [
   'Drama',
   'History',
   'Music',
-  'NQT'
+  'NQT',
+  'Languages',
+  'Sport',
+  'Computing'
 ];
 
 export const formats: EventFormat[] = ['In-Person', 'Virtual', 'Hybrid'];
