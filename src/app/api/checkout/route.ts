@@ -36,9 +36,7 @@ export async function POST(req: NextRequest) {
       mode: "payment",
       automatic_tax: { enabled: true },
       billing_address_collection: "required",
-      shipping_address_collection: {
-        allowed_countries: ["GB"],
-      },
+      allow_promotion_codes: true,
       success_url: `${process.env.NEXT_PUBLIC_BASE_URL}/list-event?success=true&session_id={CHECKOUT_SESSION_ID}&event_id=${eventId}`,
       cancel_url: `${process.env.NEXT_PUBLIC_BASE_URL}/list-event?canceled=true`,
       metadata: {

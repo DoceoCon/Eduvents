@@ -94,8 +94,12 @@ const ListEventContent = ({
     if (formData.title && formData.title.length > 100) {
       newErrors.title = "Title must be 100 characters or less";
     }
-    if (formData.description && formData.description.replace(/\s+/g, "").length > 2000) {
-      newErrors.description = "Description must be 2000 characters or less (excluding spaces)";
+    if (
+      formData.description &&
+      formData.description.replace(/\s+/g, "").length > 2000
+    ) {
+      newErrors.description =
+        "Description must be 2000 characters or less (excluding spaces)";
     }
     if (formData.organiserName && formData.organiserName.length > 50) {
       newErrors.organiserName = "Name must be 50 characters or less";
@@ -217,7 +221,8 @@ const ListEventContent = ({
     } else if (field === "description" && getCharCount(value) > 2000) {
       setErrors((prev) => ({
         ...prev,
-        description: "Description must be 2000 characters or less (excluding spaces)",
+        description:
+          "Description must be 2000 characters or less (excluding spaces)",
       }));
     } else if (field === "organiserName" && value.length > 50) {
       setErrors((prev) => ({
@@ -796,7 +801,7 @@ const ListEventContent = ({
                     htmlFor="priceFrom"
                     className="text-sm text-muted-foreground"
                   >
-                    From
+                    From *
                   </Label>
                   <div className="relative">
                     <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
