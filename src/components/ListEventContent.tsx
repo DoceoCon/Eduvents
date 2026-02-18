@@ -138,7 +138,9 @@ const ListEventContent = ({
       if (!formData.priceFrom) {
         newErrors.priceFrom = "Required";
       }
-      if (formData.priceFrom && formData.priceTo) {
+      if (formData.priceTo && parseFloat(formData.priceTo) <= 0) {
+        newErrors.priceTo = "Price must be greater than 0";
+      } else if (formData.priceFrom && formData.priceTo) {
         const from = parseFloat(formData.priceFrom);
         const to = parseFloat(formData.priceTo);
         if (to < from) {
@@ -841,7 +843,7 @@ const ListEventContent = ({
                     <Input
                       id="priceTo"
                       type="number"
-                      min="0"
+                      min="1"
                       step="1"
                       value={formData.priceTo}
                       onChange={(e) => handleChange("priceTo", e.target.value)}
