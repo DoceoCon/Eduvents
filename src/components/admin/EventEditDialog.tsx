@@ -294,6 +294,12 @@ const EventEditDialog = ({
       }
     }
 
+    if (!formData.isFree) {
+      if (formData.priceTo !== undefined && formData.priceTo !== null && (formData.priceTo as number) <= 0) {
+        newErrors.priceTo = "Price To must be greater than 0";
+      }
+    }
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -599,10 +605,11 @@ const EventEditDialog = ({
                       type="number"
                       min="0"
                       step="1"
-                      value={formData.priceFrom || ""}
-                      onChange={(e) =>
-                        handleChange("priceFrom", parseFloat(e.target.value) || 0)
-                      }
+                      value={formData.priceFrom ?? ""}
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        handleChange("priceFrom", val === "" ? "" : parseFloat(val));
+                      }}
                       className={`pl-7 ${errors.priceFrom ? "border-destructive" : ""}`}
                     />
                   </div>
@@ -621,12 +628,13 @@ const EventEditDialog = ({
                     <Input
                       id="priceTo"
                       type="number"
-                      min="0"
+                      min="1"
                       step="1"
-                      value={formData.priceTo || ""}
-                      onChange={(e) =>
-                        handleChange("priceTo", parseFloat(e.target.value) || 0)
-                      }
+                      value={formData.priceTo ?? ""}
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        handleChange("priceTo", val === "" ? "" : parseFloat(val));
+                      }}
                       className={`pl-7 ${errors.priceTo ? "border-destructive" : ""}`}
                     />
                   </div>

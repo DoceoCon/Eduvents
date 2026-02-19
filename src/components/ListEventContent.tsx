@@ -135,12 +135,12 @@ const ListEventContent = ({
     }
 
     if (formData.isFree === "paid") {
-      if (!formData.priceFrom) {
+      if (formData.priceFrom.trim() === "") {
         newErrors.priceFrom = "Required";
       }
-      if (formData.priceTo && parseFloat(formData.priceTo) <= 0) {
-        newErrors.priceTo = "Price must be greater than 0";
-      } else if (formData.priceFrom && formData.priceTo) {
+      if (formData.priceTo.trim() !== "" && parseFloat(formData.priceTo) <= 0) {
+        newErrors.priceTo = "Price To must be greater than 0";
+      } else if (formData.priceFrom.trim() !== "" && formData.priceTo.trim() !== "") {
         const from = parseFloat(formData.priceFrom);
         const to = parseFloat(formData.priceTo);
         if (to < from) {
