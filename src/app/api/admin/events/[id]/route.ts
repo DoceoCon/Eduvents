@@ -66,7 +66,10 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
             const val = formData.get(field);
             if (val !== null) {
                 if (field === 'isFree') updateData[field] = val === 'true';
-                else if (field === 'priceFrom' || field === 'priceTo') updateData[field] = parseFloat(val as string);
+                else if (field === 'priceFrom' || field === 'priceTo') {
+                    const num = (val as string) === "" ? undefined : parseFloat(val as string);
+                    updateData[field] = num;
+                }
                 else updateData[field] = val;
             }
         });
