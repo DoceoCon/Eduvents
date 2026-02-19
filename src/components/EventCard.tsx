@@ -64,13 +64,13 @@ const EventCard = ({ event }: EventCardProps) => {
               <span className="px-2 py-0.5 text-xs font-medium bg-success/10 text-success rounded-full">
                 Free
               </span>
-            ) : event.priceFrom && event.priceTo ? (
+            ) : event.priceFrom != null && event.priceTo != null ? (
               <span className="px-2 py-0.5 text-xs font-medium bg-primary/10 text-primary rounded-full">
                 £{event.priceFrom} - £{event.priceTo}
               </span>
             ) : (
               <span className="px-2 py-0.5 text-xs font-medium bg-primary/10 text-primary rounded-full">
-                £{event.price || event.priceFrom || event.priceTo}
+                £{event.price ?? event.priceFrom ?? event.priceTo}
               </span>
             )}
           </div>
