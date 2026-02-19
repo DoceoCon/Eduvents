@@ -295,7 +295,7 @@ const EventEditDialog = ({
     }
 
     if (!formData.isFree) {
-      if (formData.priceTo !== undefined && formData.priceTo !== null && (formData.priceTo as number) <= 0) {
+      if (formData.priceTo !== undefined && formData.priceTo !== null && formData.priceTo !== "" && (formData.priceTo as number) <= 0) {
         newErrors.priceTo = "Price To must be greater than 0";
       }
     }
@@ -620,7 +620,7 @@ const EventEditDialog = ({
                   )}
                 </div>
                 <div>
-                  <Label htmlFor="priceTo">Price To *</Label>
+                  <Label htmlFor="priceTo">Price To (Optional)</Label>
                   <div className="relative">
                     <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
                       £
