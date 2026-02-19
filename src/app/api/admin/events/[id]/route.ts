@@ -67,7 +67,7 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
             if (val !== null) {
                 if (field === 'isFree') updateData[field] = val === 'true';
                 else if (field === 'priceFrom' || field === 'priceTo') {
-                    const num = (val as string) === "" ? undefined : parseFloat(val as string);
+                    const num = (val as string) === "" ? null : parseFloat(val as string);
                     updateData[field] = num;
                 }
                 else updateData[field] = val;
