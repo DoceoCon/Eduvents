@@ -295,7 +295,7 @@ const EventEditDialog = ({
     }
 
     if (!formData.isFree) {
-      if (formData.priceTo !== undefined && formData.priceTo !== null && formData.priceTo !== "" && (formData.priceTo as number) <= 0) {
+      if (formData.priceTo !== undefined && formData.priceTo !== null && (formData.priceTo as any) !== "" && (formData.priceTo as number) <= 0) {
         newErrors.priceTo = "Price To must be greater than 0";
       }
     }
