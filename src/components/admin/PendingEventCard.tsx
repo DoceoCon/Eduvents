@@ -116,12 +116,10 @@ const PendingEventCard = ({
               <PoundSterling className="h-4 w-4 mr-1 text-primary" />
               {event.isFree ? (
                 <span className="text-success font-medium">Free</span>
-              ) : event.priceFrom && event.priceTo ? (
+              ) : event.priceFrom != null && event.priceTo != null ? (
                 <span>£{event.priceFrom} - £{event.priceTo}</span>
-              ) : event.price ? (
-                <span>£{event.price}</span>
               ) : (
-                <span>Paid</span>
+                <span>£{event.price ?? event.priceFrom ?? event.priceTo ?? 'Paid'}</span>
               )}
             </div>
             <div className="text-muted-foreground/70">

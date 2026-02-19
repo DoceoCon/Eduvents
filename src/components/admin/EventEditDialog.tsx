@@ -295,8 +295,23 @@ const EventEditDialog = ({
     }
 
     if (!formData.isFree) {
-      if (formData.priceTo !== undefined && formData.priceTo !== null && (formData.priceTo as any) !== "" && (formData.priceTo as number) <= 0) {
+      const pFrom = formData.priceFrom as any;
+      const pTo = formData.priceTo as any;
+
+      if (pFrom === undefined || pFrom === null || pFrom === "") {
+        newErrors.priceFrom = "Required";
+      }
+
+      if (pTo !== undefined && pTo !== null && pTo !== "" && parseFloat(String(pTo)) <= 0) {
         newErrors.priceTo = "Price To must be greater than 0";
+      }
+
+      if (
+        pFrom !== undefined && pFrom !== null && pFrom !== "" &&
+        pTo !== undefined && pTo !== null && pTo !== "" &&
+        parseFloat(String(pTo)) < parseFloat(String(pFrom))
+      ) {
+        newErrors.priceTo = "Maximum price must be greater than or equal to minimum price";
       }
     }
 
@@ -578,7 +593,7 @@ const EventEditDialog = ({
 
           {/* Cost */}
           <div className="space-y-4">
-            <Label>Cost to Attend</Label>
+            <h2 className="text-xl font-semibold">Cost to Attend</h2>
             <RadioGroup
               value={formData.isFree ? "free" : "paid"}
               onValueChange={(v) => handleChange("isFree", v === "free")}
@@ -599,57 +614,75 @@ const EventEditDialog = ({
             </RadioGroup>
 
             {!formData.isFree && (
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="priceFrom">Price From *</Label>
-                  <div className="relative">
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
-                      £
-                    </span>
-                    <Input
-                      id="priceFrom"
-                      type="number"
-                      min="0"
-                      step="1"
-                      value={formData.priceFrom ?? ""}
-                      onChange={(e) => {
-                        const val = e.target.value;
-                        handleChange("priceFrom", val === "" ? "" : parseFloat(val));
-                      }}
-                      className={`pl-7 ${errors.priceFrom ? "border-destructive" : ""}`}
-                    />
+              <div className="animate-fade-in">
+                <Label>Ticket Price Range</Label>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <Label
+                      htmlFor="priceFrom"
+                      className="text-sm text-muted-foreground"
+                    >
+                      From *
+                    </Label>
+                    <div className="relative">
+                      <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
+                        £
+                      </span>
+                      <Input
+                        id="priceFrom"
+                        type="number"
+                        min="0"
+                        step="1"
+                        value={formData.priceFrom ?? ""}
+                        onChange={(e) => {
+                          const val = e.target.value;
+                          handleChange("priceFrom", val === "" ? "" : parseFloat(val));
+                        }}
+                        placeholder="50"
+                        className={`pl-7 ${errors.priceFrom ? "border-destructive" : ""}`}
+                      />
+                    </div>
+                    {errors.priceFrom && (
+                      <p className="text-sm text-destructive mt-1">
+                        {errors.priceFrom}
+                      </p>
+                    )}
                   </div>
-                  {errors.priceFrom && (
-                    <p className="text-sm text-destructive mt-1">
-                      {errors.priceFrom}
-                    </p>
-                  )}
-                </div>
-                <div>
-                  <Label htmlFor="priceTo">Price To (Optional)</Label>
-                  <div className="relative">
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
-                      £
-                    </span>
-                    <Input
-                      id="priceTo"
-                      type="number"
-                      min="1"
-                      step="1"
-                      value={formData.priceTo ?? ""}
-                      onChange={(e) => {
-                        const val = e.target.value;
-                        handleChange("priceTo", val === "" ? "" : parseFloat(val));
-                      }}
-                      className={`pl-7 ${errors.priceTo ? "border-destructive" : ""}`}
-                    />
+                  <div>
+                    <Label
+                      htmlFor="priceTo"
+                      className="text-sm text-muted-foreground"
+                    >
+                      To (Optional)
+                    </Label>
+                    <div className="relative">
+                      <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
+                        £
+                      </span>
+                      <Input
+                        id="priceTo"
+                        type="number"
+                        min="1"
+                        step="1"
+                        value={formData.priceTo ?? ""}
+                        onChange={(e) => {
+                          const val = e.target.value;
+                          handleChange("priceTo", val === "" ? "" : parseFloat(val));
+                        }}
+                        placeholder="150"
+                        className={`pl-7 ${errors.priceTo ? "border-destructive" : ""}`}
+                      />
+                    </div>
+                    {errors.priceTo && (
+                      <p className="text-sm text-destructive mt-1">
+                        {errors.priceTo}
+                      </p>
+                    )}
                   </div>
-                  {errors.priceTo && (
-                    <p className="text-sm text-destructive mt-1">
-                      {errors.priceTo}
-                    </p>
-                  )}
                 </div>
+                <p className="text-sm text-muted-foreground mt-1">
+                  Enter the price range for tickets (e.g., £50 - £150)
+                </p>
               </div>
             )}
           </div>
