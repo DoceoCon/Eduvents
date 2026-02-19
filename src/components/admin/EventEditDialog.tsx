@@ -314,8 +314,14 @@ const EventEditDialog = ({
       Object.entries(formData).forEach(([key, value]) => {
         if (key === "subjectAreas" || key === "phases") {
           data.append(key, JSON.stringify(value));
-        } else if (key !== "image") {
-          // Trim text fields to avoid extra whitespace
+        } else if (key === "image") {
+          // skip — handled separately below
+        } else if (key === "priceFrom" || key === "priceTo") {
+          // Send empty string for cleared/unset price fields so API stores undefined
+          const numVal = value as number | string | undefined | null;
+          data.append(key, (numVal === undefined || numVal === null || numVal === "") ? "" : String(numVal));
+        } else if (value !== undefined && value !== null) {
+          // Skip undefined/null to avoid sending "undefined"/"null" as strings
           const stringValue = String(value);
           const trimmedValue = (key === "title" || key === "description" || key === "organiser" || key === "location")
             ? stringValue.trim()
