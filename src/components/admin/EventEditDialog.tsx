@@ -381,392 +381,393 @@ const EventEditDialog = ({
 
         <div className="space-y-6 mt-4">
           {/* Featured Toggle */}
-          <div className="flex items-center gap-4 p-4 bg-accent rounded-lg">
-            <Switch
-              checked={formData.featured || false}
-              onCheckedChange={handleFeaturedToggle}
-              className="data-[state=checked]:bg-yellow-400"
-            />
-            <div className="flex items-center gap-2">
-              <Star
-                className={`h-5 w-5 ${formData.featured ? "text-yellow-400 fill-yellow-400" : "text-muted-foreground"}`}
+          <div className="bg-card rounded-lg p-3 shadow-card">
+            <div className="flex items-center gap-4 p-4 bg-accent rounded-lg">
+              <Switch
+                checked={formData.featured || false}
+                onCheckedChange={handleFeaturedToggle}
+                className="data-[state=checked]:bg-yellow-400"
               />
-              <span className="font-medium">Featured Event</span>
+              <div className="flex items-center gap-2">
+                <Star
+                  className={`h-5 w-5 ${formData.featured ? "text-yellow-400 fill-yellow-400" : "text-muted-foreground"}`}
+                />
+                <span className="font-medium">Featured Event</span>
+              </div>
             </div>
           </div>
 
           {/* Event Details */}
-          <div className="space-y-4">
-            <div>
-              <Label htmlFor="title">Event Title *</Label>
-              <Input
-                id="title"
-                value={formData.title || ""}
-                onChange={(e) => handleChange("title", e.target.value)}
-                className={errors.title ? "border-destructive" : ""}
-                maxLength={100}
-              />
-              <p
-                className={`text-sm mt-1 ${(formData.title?.length || 0) >= 100 ? "text-destructive font-medium" : "text-muted-foreground"}`}
-              >
-                {formData.title?.length || 0}/100 characters
-              </p>
-              {errors.title && (
-                <p className="text-sm text-destructive mt-1">{errors.title}</p>
-              )}
-            </div>
-
-            <div>
-              <Label htmlFor="description">Description *</Label>
-              <Textarea
-                id="description"
-                value={formData.description || ""}
-                onChange={(e) => handleChange("description", e.target.value)}
-                rows={4}
-                className={errors.description ? "border-destructive" : ""}
-              />
-              <p
-                className={`text-sm mt-1 ${getCharCount(formData.description || "") >= 2000 ? "text-destructive font-medium" : "text-muted-foreground"}`}
-              >
-                {getCharCount(formData.description || "")}/2000 characters
-              </p>
-              {errors.description && (
-                <p className="text-sm text-destructive mt-1">
-                  {errors.description}
+          <div className="bg-card rounded-lg p-3 shadow-card">
+            <h2 className="text-xl font-semibold mb-6">Event Details</h2>
+            <div className="space-y-4">
+              <div>
+                <Label htmlFor="title">Event Title *</Label>
+                <Input
+                  id="title"
+                  value={formData.title || ""}
+                  onChange={(e) => handleChange("title", e.target.value)}
+                  className={errors.title ? "border-destructive" : ""}
+                  maxLength={100}
+                />
+                <p
+                  className={`text-sm mt-1 ${(formData.title?.length || 0) >= 100 ? "text-destructive font-medium" : "text-muted-foreground"}`}
+                >
+                  {formData.title?.length || 0}/100 characters
                 </p>
-              )}
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <Label>Category *</Label>
-                <Select
-                  value={formData.category}
-                  onValueChange={(v) => handleChange("category", v)}
-                >
-                  <SelectTrigger
-                    className={errors.category ? "border-destructive" : ""}
-                  >
-                    <SelectValue placeholder="Select category" />
-                  </SelectTrigger>
-                  <SelectContent className="bg-card">
-                    {categories.map((cat) => (
-                      <SelectItem key={cat} value={cat}>
-                        {cat}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                {errors.category && (
-                  <p className="text-sm text-destructive mt-1">
-                    {errors.category}
-                  </p>
+                {errors.title && (
+                  <p className="text-sm text-destructive mt-1">{errors.title}</p>
                 )}
               </div>
 
               <div>
-                <Label>Event Format *</Label>
-                <Select
-                  value={formData.format}
-                  onValueChange={(v) => handleChange("format", v)}
+                <Label htmlFor="description">Description *</Label>
+                <Textarea
+                  id="description"
+                  value={formData.description || ""}
+                  onChange={(e) => handleChange("description", e.target.value)}
+                  rows={5}
+                  className={errors.description ? "border-destructive" : ""}
+                />
+                <p
+                  className={`text-sm mt-1 ${getCharCount(formData.description || "") >= 2000 ? "text-destructive font-medium" : "text-muted-foreground"}`}
                 >
-                  <SelectTrigger
-                    className={errors.format ? "border-destructive" : ""}
-                  >
-                    <SelectValue placeholder="Select format" />
-                  </SelectTrigger>
-                  <SelectContent className="bg-card">
-                    {formats.map((format) => (
-                      <SelectItem key={format} value={format}>
-                        {format}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                {errors.format && (
+                  {getCharCount(formData.description || "")}/2000 characters
+                </p>
+                {errors.description && (
                   <p className="text-sm text-destructive mt-1">
-                    {errors.format}
+                    {errors.description}
                   </p>
                 )}
               </div>
-            </div>
 
-            <div>
-              <Label>Subject Areas</Label>
-              <SubjectTagInput
-                selectedSubjects={formData.subjectAreas || []}
-                onChange={handleSubjectChange}
-              />
-            </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <Label>Category *</Label>
+                  <Select
+                    value={formData.category}
+                    onValueChange={(v) => handleChange("category", v)}
+                  >
+                    <SelectTrigger
+                      className={errors.category ? "border-destructive" : ""}
+                    >
+                      <SelectValue placeholder="Select category" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-card">
+                      {categories.map((cat) => (
+                        <SelectItem key={cat} value={cat}>
+                          {cat}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  {errors.category && (
+                    <p className="text-sm text-destructive mt-1">
+                      {errors.category}
+                    </p>
+                  )}
+                </div>
 
-            <div>
-              <Label>Educational Phases</Label>
-              <PhaseTagInput
-                selectedPhases={formData.phases || []}
-                onChange={handlePhaseChange}
-              />
+                <div>
+                  <Label>Event Format *</Label>
+                  <Select
+                    value={formData.format}
+                    onValueChange={(v) => handleChange("format", v)}
+                  >
+                    <SelectTrigger
+                      className={errors.format ? "border-destructive" : ""}
+                    >
+                      <SelectValue placeholder="Select format" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-card">
+                      {formats.map((format) => (
+                        <SelectItem key={format} value={format}>
+                          {format}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  {errors.format && (
+                    <p className="text-sm text-destructive mt-1">
+                      {errors.format}
+                    </p>
+                  )}
+                </div>
+              </div>
+
+              <div>
+                <Label>Subject Areas (Optional)</Label>
+                <SubjectTagInput
+                  selectedSubjects={formData.subjectAreas || []}
+                  onChange={handleSubjectChange}
+                />
+              </div>
+
+              <div>
+                <Label>Educational Phases (Optional)</Label>
+                <PhaseTagInput
+                  selectedPhases={formData.phases || []}
+                  onChange={handlePhaseChange}
+                />
+                <p className="text-sm text-muted-foreground mt-1">
+                  Select the education levels this event is relevant to
+                </p>
+              </div>
             </div>
           </div>
 
           {/* Date & Time */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <div>
-              <Label htmlFor="startDate">Start Date *</Label>
-              <Input
-                id="startDate"
-                type="date"
-                value={formData.startDate || ""}
-                min={new Date().toISOString().split("T")[0]}
-                onChange={(e) => handleChange("startDate", e.target.value)}
-                onKeyDown={(e) => e.preventDefault()}
-                className={errors.startDate ? "border-destructive" : ""}
-              />
-              {errors.startDate && (
-                <p className="text-sm text-destructive mt-1">
-                  {errors.startDate}
-                </p>
-              )}
-            </div>
+          <div className="bg-card rounded-lg p-3 shadow-card">
+            <h2 className="text-xl font-semibold mb-6">Date & Time</h2>
+            <div className="space-y-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="startDate">Start Date *</Label>
+                  <Input
+                    id="startDate"
+                    type="date"
+                    value={formData.startDate || ""}
+                    min={new Date().toISOString().split("T")[0]}
+                    onChange={(e) => handleChange("startDate", e.target.value)}
+                    onKeyDown={(e) => e.preventDefault()}
+                    className={errors.startDate ? "border-destructive" : ""}
+                  />
+                  {errors.startDate && (
+                    <p className="text-sm text-destructive mt-1">
+                      {errors.startDate}
+                    </p>
+                  )}
+                </div>
 
-            <div>
-              <Label htmlFor="endDate">End Date *</Label>
-              <Input
-                id="endDate"
-                type="date"
-                value={formData.endDate || ""}
-                min={
-                  formData.startDate || new Date().toISOString().split("T")[0]
-                }
-                onChange={(e) => handleChange("endDate", e.target.value)}
-                onKeyDown={(e) => e.preventDefault()}
-                className={errors.endDate ? "border-destructive" : ""}
-              />
-              {errors.endDate && (
-                <p className="text-sm text-destructive mt-1">
-                  {errors.endDate}
-                </p>
-              )}
-            </div>
+                <div>
+                  <Label htmlFor="endDate">End Date *</Label>
+                  <Input
+                    id="endDate"
+                    type="date"
+                    value={formData.endDate || ""}
+                    min={
+                      formData.startDate || new Date().toISOString().split("T")[0]
+                    }
+                    onChange={(e) => handleChange("endDate", e.target.value)}
+                    onKeyDown={(e) => e.preventDefault()}
+                    className={errors.endDate ? "border-destructive" : ""}
+                  />
+                  {errors.endDate && (
+                    <p className="text-sm text-destructive mt-1">
+                      {errors.endDate}
+                    </p>
+                  )}
+                </div>
+              </div>
 
-            <div>
-              <Label htmlFor="startTime">Start Time *</Label>
-              <TimeInput
-                value={formData.startTime || ""}
-                onChange={(value) => handleChange("startTime", value)}
-                className={errors.startTime ? "border-destructive" : ""}
-              />
-              {errors.startTime && (
-                <p className="text-sm text-destructive mt-1">
-                  {errors.startTime}
-                </p>
-              )}
-            </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="startTime">Start Time *</Label>
+                  <TimeInput
+                    value={formData.startTime || ""}
+                    onChange={(value) => handleChange("startTime", value)}
+                    className={errors.startTime ? "border-destructive" : ""}
+                  />
+                  {errors.startTime && (
+                    <p className="text-sm text-destructive mt-1">
+                      {errors.startTime}
+                    </p>
+                  )}
+                </div>
 
-            <div>
-              <Label htmlFor="endTime">End Time *</Label>
-              <TimeInput
-                value={formData.endTime || ""}
-                onChange={(value) => handleChange("endTime", value)}
-                className={errors.endTime ? "border-destructive" : ""}
-              />
-              {errors.endTime && (
-                <p className="text-sm text-destructive mt-1">
-                  {errors.endTime}
-                </p>
-              )}
+                <div>
+                  <Label htmlFor="endTime">End Time *</Label>
+                  <TimeInput
+                    value={formData.endTime || ""}
+                    onChange={(value) => handleChange("endTime", value)}
+                    className={errors.endTime ? "border-destructive" : ""}
+                  />
+                  {errors.endTime && (
+                    <p className="text-sm text-destructive mt-1">
+                      {errors.endTime}
+                    </p>
+                  )}
+                </div>
+              </div>
             </div>
           </div>
 
           {/* Location */}
-          <div>
-            <Label htmlFor="location">Location *</Label>
-            <Input
-              id="location"
-              value={formData.location || ""}
-              onChange={(e) => handleChange("location", e.target.value)}
-              className={errors.location ? "border-destructive" : ""}
-            />
-            {errors.location && (
-              <p className="text-sm text-destructive mt-1">{errors.location}</p>
-            )}
+          <div className="bg-card rounded-lg p-3 shadow-card">
+            <h2 className="text-xl font-semibold mb-6">Location</h2>
+            <div>
+              <Label htmlFor="location">Venue or Platform *</Label>
+              <Input
+                id="location"
+                value={formData.location || ""}
+                onChange={(e) => handleChange("location", e.target.value)}
+                placeholder="Enter venue address or online platform"
+                className={errors.location ? "border-destructive" : ""}
+              />
+              {errors.location && (
+                <p className="text-sm text-destructive mt-1">{errors.location}</p>
+              )}
+            </div>
           </div>
 
-          {/* Cost */}
-          <div className="space-y-4">
-            <h2 className="text-xl font-semibold">Cost to Attend</h2>
-            <RadioGroup
-              value={formData.isFree ? "free" : "paid"}
-              onValueChange={(v) => handleChange("isFree", v === "free")}
-              className="flex gap-6"
-            >
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="free" id="edit-free" />
-                <Label htmlFor="edit-free" className="cursor-pointer">
-                  Free
-                </Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="paid" id="edit-paid" />
-                <Label htmlFor="edit-paid" className="cursor-pointer">
-                  Paid
-                </Label>
-              </div>
-            </RadioGroup>
-
-            {!formData.isFree && (
-              <div className="animate-fade-in">
-                <Label>Ticket Price Range</Label>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div>
-                    <Label
-                      htmlFor="priceFrom"
-                      className="text-sm text-muted-foreground"
-                    >
-                      From *
-                    </Label>
-                    <div className="relative">
-                      <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
-                        £
-                      </span>
-                      <Input
-                        id="priceFrom"
-                        type="number"
-                        min="0"
-                        step="1"
-                        value={formData.priceFrom ?? ""}
-                        onChange={(e) => {
-                          const val = e.target.value;
-                          handleChange("priceFrom", val === "" ? "" : parseFloat(val));
-                        }}
-                        placeholder="50"
-                        className={`pl-7 ${errors.priceFrom ? "border-destructive" : ""}`}
-                      />
-                    </div>
-                    {errors.priceFrom && (
-                      <p className="text-sm text-destructive mt-1">
-                        {errors.priceFrom}
-                      </p>
-                    )}
-                  </div>
-                  <div>
-                    <Label
-                      htmlFor="priceTo"
-                      className="text-sm text-muted-foreground"
-                    >
-                      To (Optional)
-                    </Label>
-                    <div className="relative">
-                      <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
-                        £
-                      </span>
-                      <Input
-                        id="priceTo"
-                        type="number"
-                        min="1"
-                        step="1"
-                        value={formData.priceTo ?? ""}
-                        onChange={(e) => {
-                          const val = e.target.value;
-                          handleChange("priceTo", val === "" ? "" : parseFloat(val));
-                        }}
-                        placeholder="150"
-                        className={`pl-7 ${errors.priceTo ? "border-destructive" : ""}`}
-                      />
-                    </div>
-                    {errors.priceTo && (
-                      <p className="text-sm text-destructive mt-1">
-                        {errors.priceTo}
-                      </p>
-                    )}
-                  </div>
+          {/* Cost to Attend */}
+          <div className="bg-card rounded-lg p-3 shadow-card">
+            <h2 className="text-xl font-semibold mb-6">Cost to Attend</h2>
+            <div className="space-y-4">
+              <RadioGroup
+                value={formData.isFree ? "free" : "paid"}
+                onValueChange={(v) => handleChange("isFree", v === "free")}
+                className="flex gap-6"
+              >
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="free" id="edit-free" />
+                  <Label htmlFor="edit-free" className="cursor-pointer">
+                    Free
+                  </Label>
                 </div>
-                <p className="text-sm text-muted-foreground mt-1">
-                  Enter the price range for tickets (e.g., £50 - £150)
-                </p>
-              </div>
-            )}
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="paid" id="edit-paid" />
+                  <Label htmlFor="edit-paid" className="cursor-pointer">
+                    Paid
+                  </Label>
+                </div>
+              </RadioGroup>
+
+              {!formData.isFree && (
+                <div className="animate-fade-in">
+                  <Label>Ticket Price Range</Label>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <Label
+                        htmlFor="priceFrom"
+                        className="text-sm text-muted-foreground"
+                      >
+                        From *
+                      </Label>
+                      <div className="relative">
+                        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
+                          £
+                        </span>
+                        <Input
+                          id="priceFrom"
+                          type="number"
+                          min="0"
+                          step="1"
+                          value={formData.priceFrom ?? ""}
+                          onChange={(e) => {
+                            const val = e.target.value;
+                            handleChange("priceFrom", val === "" ? "" : parseFloat(val));
+                          }}
+                          placeholder="50"
+                          className={`pl-7 ${errors.priceFrom ? "border-destructive" : ""}`}
+                        />
+                      </div>
+                      {errors.priceFrom && (
+                        <p className="text-sm text-destructive mt-1">
+                          {errors.priceFrom}
+                        </p>
+                      )}
+                    </div>
+                    <div>
+                      <Label
+                        htmlFor="priceTo"
+                        className="text-sm text-muted-foreground"
+                      >
+                        To (Optional)
+                      </Label>
+                      <div className="relative">
+                        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
+                          £
+                        </span>
+                        <Input
+                          id="priceTo"
+                          type="number"
+                          min="1"
+                          step="1"
+                          value={formData.priceTo ?? ""}
+                          onChange={(e) => {
+                            const val = e.target.value;
+                            handleChange("priceTo", val === "" ? "" : parseFloat(val));
+                          }}
+                          placeholder="150"
+                          className={`pl-7 ${errors.priceTo ? "border-destructive" : ""}`}
+                        />
+                      </div>
+                      {errors.priceTo && (
+                        <p className="text-sm text-destructive mt-1">
+                          {errors.priceTo}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                  <p className="text-sm text-muted-foreground mt-1">
+                    Enter the price range for tickets (e.g., £50 - £150)
+                  </p>
+                </div>
+              )}
+            </div>
           </div>
 
           {/* Organiser Information */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <Label htmlFor="organiser">Organisation Name *</Label>
-              <Input
-                id="organiser"
-                value={formData.organiser || ""}
-                onChange={(e) => handleChange("organiser", e.target.value)}
-                className={errors.organiser ? "border-destructive" : ""}
-                maxLength={50}
-              />
-              <p
-                className={`text-sm mt-1 ${(formData.organiser?.length || 0) >= 50 ? "text-destructive font-medium" : "text-muted-foreground"}`}
-              >
-                {formData.organiser?.length || 0}/50 characters
-              </p>
-              {errors.organiser && (
-                <p className="text-sm text-destructive mt-1">
-                  {errors.organiser}
+          <div className="bg-card rounded-lg p-3 shadow-card">
+            <h2 className="text-xl font-semibold mb-6">Organiser Information</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="organiser">Organisation Name *</Label>
+                <Input
+                  id="organiser"
+                  value={formData.organiser || ""}
+                  onChange={(e) => handleChange("organiser", e.target.value)}
+                  className={errors.organiser ? "border-destructive" : ""}
+                  maxLength={50}
+                />
+                <p
+                  className={`text-sm mt-1 ${(formData.organiser?.length || 0) >= 50 ? "text-destructive font-medium" : "text-muted-foreground"}`}
+                >
+                  {formData.organiser?.length || 0}/50 characters
                 </p>
-              )}
-            </div>
+                {errors.organiser && (
+                  <p className="text-sm text-destructive mt-1">
+                    {errors.organiser}
+                  </p>
+                )}
+              </div>
 
-            <div>
-              <Label htmlFor="organiserEmail">Contact Email *</Label>
-              <Input
-                id="organiserEmail"
-                type="email"
-                value={formData.organiserEmail || ""}
-                onChange={(e) => handleChange("organiserEmail", e.target.value)}
-                className={errors.organiserEmail ? "border-destructive" : ""}
-              />
-              {errors.organiserEmail && (
-                <p className="text-sm text-destructive mt-1">
-                  {errors.organiserEmail}
-                </p>
-              )}
+              <div>
+                <Label htmlFor="organiserEmail">Contact Email *</Label>
+                <Input
+                  id="organiserEmail"
+                  type="email"
+                  value={formData.organiserEmail || ""}
+                  onChange={(e) => handleChange("organiserEmail", e.target.value)}
+                  className={errors.organiserEmail ? "border-destructive" : ""}
+                />
+                {errors.organiserEmail && (
+                  <p className="text-sm text-destructive mt-1">
+                    {errors.organiserEmail}
+                  </p>
+                )}
+              </div>
             </div>
-          </div>
-
-          {/* Booking Link */}
-          <div>
-            <Label htmlFor="bookingUrl">External Booking Link *</Label>
-            <Input
-              id="bookingUrl"
-              type="url"
-              value={formData.bookingUrl || ""}
-              onChange={(e) => handleChange("bookingUrl", e.target.value)}
-              className={errors.bookingUrl ? "border-destructive" : ""}
-            />
-            {errors.bookingUrl && (
-              <p className="text-sm text-destructive mt-1">
-                {errors.bookingUrl}
-              </p>
-            )}
           </div>
 
           {/* Event Image */}
-          <div>
-            <Label>Event Image *</Label>
-            {imagePreview ? (
-              <div className="mt-2 border-2 border-border rounded-lg p-4">
-                <img
-                  src={imagePreview}
-                  alt="Preview"
-                  className="max-h-48 mx-auto rounded-lg object-contain"
-                />
-                <div className="flex gap-2 justify-center mt-4">
-                  <Button
-                    type="button"
-                    variant="destructive"
-                    size="sm"
-                    onClick={() => {
-                      setImagePreview(null);
-                      setSelectedFile(null);
-                    }}
-                  >
-                    Remove Image
-                  </Button>
-                  <label htmlFor="change-image">
+          <div className="bg-card rounded-lg p-3 shadow-card">
+            <h2 className="text-xl font-semibold mb-6">Event Image *</h2>
+            <div
+              className={`border-2 border-dashed ${errors.image ? "border-destructive" : isDragging ? "border-primary bg-primary/5" : "border-border"} rounded-lg p-8 text-center hover:border-primary transition-all duration-200`}
+              onDragOver={handleDragOver}
+              onDragLeave={handleDragLeave}
+              onDrop={handleDrop}
+            >
+              {imagePreview ? (
+                <div className="relative">
+                  <img
+                    src={imagePreview}
+                    alt="Preview"
+                    className="max-h-48 mx-auto rounded-lg object-contain"
+                  />
+                  <div className="flex gap-2 justify-center mt-4">
                     <Button
                       type="button"
                       variant="outline"
@@ -775,78 +776,131 @@ const EventEditDialog = ({
                     >
                       Change Image
                     </Button>
-                  </label>
+                    <Button
+                      type="button"
+                      variant="destructive"
+                      size="sm"
+                      onClick={() => {
+                        setImagePreview(null);
+                        setSelectedFile(null);
+                      }}
+                    >
+                      Remove Image
+                    </Button>
+                    <Input
+                      id="change-image"
+                      type="file"
+                      accept="image/*"
+                      onChange={handleImageChange}
+                      className="hidden"
+                    />
+                  </div>
+                </div>
+              ) : (
+                <label className="cursor-pointer">
+                  <div className="flex flex-col items-center gap-3">
+                    <div className="w-16 h-16 rounded-full bg-muted flex items-center justify-center">
+                      <svg
+                        className="w-8 h-8 text-muted-foreground"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                        />
+                      </svg>
+                    </div>
+                    <div>
+                      <p className="text-muted-foreground mb-2">
+                        Drag and drop your image here, or click to browse
+                      </p>
+                      <p className="text-sm text-muted-foreground">
+                        PNG or JPG (max 25MB)
+                      </p>
+                    </div>
+                  </div>
                   <Input
-                    id="change-image"
+                    id="upload-image"
                     type="file"
                     accept="image/*"
                     onChange={handleImageChange}
                     className="hidden"
                   />
-                </div>
-              </div>
-            ) : (
-              <div
-                className={`mt-2 border-2 border-dashed ${errors.image ? "border-destructive" : isDragging ? "border-primary bg-primary/5" : "border-border"} rounded-lg p-8 text-center hover:border-primary transition-all duration-200 cursor-pointer`}
-                onDragOver={handleDragOver}
-                onDragLeave={handleDragLeave}
-                onDrop={handleDrop}
-                onClick={() => document.getElementById("upload-image")?.click()}
-              >
-                <div className="flex flex-col items-center gap-3">
-                  <div className="w-16 h-16 rounded-full bg-muted flex items-center justify-center">
-                    <svg
-                      className="w-8 h-8 text-muted-foreground"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
-                      />
-                    </svg>
-                  </div>
-                  <div>
-                    <p className="text-base font-medium text-foreground mb-1">
-                      Click to upload new image
-                    </p>
-                    <p className="text-sm text-muted-foreground">
-                      or drag and drop your image here
-                    </p>
-                    <p className="text-xs text-muted-foreground mt-2">
-                      PNG or JPG (max 25MB)
-                    </p>
-                  </div>
-                </div>
-                <Input
-                  id="upload-image"
-                  type="file"
-                  accept="image/*"
-                  onChange={handleImageChange}
-                  className="hidden"
-                />
-              </div>
-            )}
+                </label>
+              )}
+            </div>
             {errors.image && (
               <p className="text-sm text-destructive mt-2">{errors.image}</p>
             )}
           </div>
 
+          {/* Booking Link */}
+          <div className="bg-card rounded-lg p-3 shadow-card">
+            <h2 className="text-xl font-semibold mb-6">Booking</h2>
+            <div>
+              <Label htmlFor="bookingUrl">External Booking Link *</Label>
+              <Input
+                id="bookingUrl"
+                type="url"
+                value={formData.bookingUrl || ""}
+                onChange={(e) => handleChange("bookingUrl", e.target.value)}
+                placeholder="https://your-booking-page.com"
+                className={errors.bookingUrl ? "border-destructive" : ""}
+              />
+              <p className="text-sm text-muted-foreground mt-1">
+                Link where attendees can register
+              </p>
+              {errors.bookingUrl && (
+                <p className="text-sm text-destructive mt-1">
+                  {errors.bookingUrl}
+                </p>
+              )}
+            </div>
+          </div>
+
           {/* Actions */}
-          <div className="flex justify-end gap-4 pt-4 border-t">
-            <Button variant="outline" onClick={onClose}>
+          <div className="flex justify-end gap-4">
+            <Button variant="outline" size="lg" onClick={onClose}>
               Cancel
             </Button>
             <Button
+              size="lg"
               onClick={handleSave}
               disabled={
                 isSaving || Object.keys(errors).some((key) => errors[key])
               }
             >
-              {isSaving ? "Saving..." : "Save Changes"}
+              {isSaving ? (
+                <span className="flex items-center">
+                  <svg
+                    className="animate-spin -ml-1 mr-3 h-5 w-5"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                    ></circle>
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                    ></path>
+                  </svg>
+                  Saving...
+                </span>
+              ) : (
+                "Save Changes"
+              )}
             </Button>
           </div>
         </div>
