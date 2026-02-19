@@ -326,7 +326,7 @@ const EventDetail = () => {
                           Free
                         </span>
                       </p>
-                    ) : event.priceFrom && event.priceTo ? (
+                    ) : event.priceFrom != null && event.priceTo != null ? (
                       <p className="font-medium">
                         <span className="px-3 py-1 text-sm bg-primary/10 text-primary rounded-full">
                           £{event.priceFrom} - £{event.priceTo}
@@ -335,7 +335,7 @@ const EventDetail = () => {
                     ) : (
                       <p className="font-medium">
                         <span className="px-3 py-1 text-sm bg-primary/10 text-primary rounded-full">
-                          £{event.price || event.priceFrom || event.priceTo}
+                          £{event.price ?? event.priceFrom ?? event.priceTo}
                         </span>
                       </p>
                     )}
