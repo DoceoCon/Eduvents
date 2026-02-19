@@ -4,6 +4,7 @@ import Event from '@/models/Event';
 import { uploadToS3 } from '@/lib/s3';
 import path from 'path';
 import fs from 'fs';
+import os from 'os';
 import { v4 as uuidv4 } from 'uuid';
 
 import { sendStatusUpdateEmail } from '@/lib/email';
@@ -85,7 +86,7 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
         if (file && typeof file !== 'string') {
             const buffer = Buffer.from(await file.arrayBuffer());
             const fileName = `${uuidv4()}-${file.name}`;
-            const uploadDir = path.join(process.cwd(), 'tmp/uploads');
+            const uploadDir = path.join(os.tmpdir(), 'uploads');
             if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
             const filePath = path.join(uploadDir, fileName);
             fs.writeFileSync(filePath, buffer);
