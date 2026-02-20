@@ -384,14 +384,14 @@ export async function GET(req: NextRequest) {
       if (min !== null && max !== null) {
         const conditions: any[] = [
           { price: { $gte: min, $lte: max } },
-          { $and: [{ priceFrom: { $lte: max } }, { priceTo: { $gte: min } }] }
+          { $and: [{ priceFrom: { $gte: min } }, { priceTo: { $lte: max } }] }
         ];
         if (min === 0) conditions.push({ isFree: true });
         query.$and.push({ $or: conditions });
       } else if (min !== null) {
         const conditions: any[] = [
           { price: { $gte: min } },
-          { priceTo: { $gte: min } }
+          { priceFrom: { $gte: min } }
         ];
         if (min === 0) conditions.push({ isFree: true });
         query.$and.push({ $or: conditions });
@@ -399,7 +399,7 @@ export async function GET(req: NextRequest) {
         query.$and.push({
           $or: [
             { price: { $lte: max } },
-            { $and: [{ priceFrom: { $lte: max } }, { priceTo: { $lte: max } }] },
+            { priceTo: { $lte: max } },
             { isFree: true }
           ]
         });
