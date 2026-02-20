@@ -491,7 +491,7 @@ const EventDetail = () => {
       <EventEditDialog
         event={event}
         isOpen={isEditing}
-        onClose={() => setIsEditing(false)}
+        onClose={() => { setIsEditing(false); fetchEvent(); }}
         onSave={(updated) => {
           setEvent(updated);
           fetchEvent();
