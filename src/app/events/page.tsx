@@ -189,6 +189,7 @@ const EventsContent = () => {
                         <Input
                             type="number"
                             placeholder="Min"
+                            min="0"
                             value={minPrice}
                             onChange={(e) => { setMinPrice(e.target.value); setCurrentPage(1); }}
                             className="bg-background h-10 pl-6 text-sm"
@@ -200,6 +201,7 @@ const EventsContent = () => {
                         <Input
                             type="number"
                             placeholder="Max"
+                            min="0"
                             value={maxPrice}
                             onChange={(e) => { setMaxPrice(e.target.value); setCurrentPage(1); }}
                             className="bg-background h-10 pl-6 text-sm"
