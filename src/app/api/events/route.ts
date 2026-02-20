@@ -399,7 +399,7 @@ export async function GET(req: NextRequest) {
         query.$and.push({
           $or: [
             { price: { $lte: max } },
-            { priceFrom: { $lte: max } },
+            { $and: [{ priceFrom: { $lte: max } }, { priceTo: { $lte: max } }] },
             { isFree: true }
           ]
         });
