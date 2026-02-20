@@ -66,8 +66,8 @@ const EventsContent = () => {
                 if (dateRange.endDate) {
                     params.append('dateTo', formatDate(dateRange.endDate, 'yyyy-MM-dd'));
                 }
-                if (minPrice) params.append('minPrice', minPrice);
-                if (maxPrice) params.append('maxPrice', maxPrice);
+                if (minPrice !== '' && parseFloat(minPrice) >= 0) params.append('minPrice', minPrice);
+                if (maxPrice !== '' && parseFloat(maxPrice) >= 0) params.append('maxPrice', maxPrice);
                 params.append('sort', sortBy);
 
                 const response = await fetch(`/api/events?${params.toString()}`);
