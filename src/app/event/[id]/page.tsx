@@ -494,7 +494,6 @@ const EventDetail = () => {
         onClose={() => setIsEditing(false)}
         onSave={(updated) => {
           setEvent(updated);
-          setIsEditing(false);
           fetchEvent();
         }}
       />
