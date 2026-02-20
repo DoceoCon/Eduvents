@@ -319,7 +319,8 @@ const EventEditDialog = ({
         pTo !== "" &&
         parseFloat(String(pTo)) < parseFloat(String(pFrom))
       ) {
-        newErrors.priceTo = "Price To must be greater than 0";
+        newErrors.priceTo =
+          "Maximum price must be greater than or equal to minimum price";
       }
     }
 
