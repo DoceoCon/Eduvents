@@ -273,7 +273,8 @@ const EventEditDialog = ({
 
     if (!formData.description?.trim()) newErrors.description = "Required";
     else if (getCharCount(formData.description) > 2000) {
-      newErrors.description = "Description must be 2000 characters or less (excluding spaces)";
+      newErrors.description =
+        "Description must be 2000 characters or less (excluding spaces)";
     }
 
     if (!formData.organiser?.trim()) newErrors.organiser = "Required";
@@ -300,16 +301,25 @@ const EventEditDialog = ({
         newErrors.priceFrom = "Required";
       }
 
-      if (pTo !== undefined && pTo !== null && pTo !== "" && parseFloat(String(pTo)) <= 0) {
+      if (
+        pTo !== undefined &&
+        pTo !== null &&
+        pTo !== "" &&
+        parseFloat(String(pTo)) <= 0
+      ) {
         newErrors.priceTo = "Price To must be greater than 0";
       }
 
       if (
-        pFrom !== undefined && pFrom !== null && pFrom !== "" &&
-        pTo !== undefined && pTo !== null && pTo !== "" &&
+        pFrom !== undefined &&
+        pFrom !== null &&
+        pFrom !== "" &&
+        pTo !== undefined &&
+        pTo !== null &&
+        pTo !== "" &&
         parseFloat(String(pTo)) < parseFloat(String(pFrom))
       ) {
-        newErrors.priceTo = "Maximum price must be greater than or equal to minimum price";
+        newErrors.priceTo = "Price To must be greater than 0";
       }
     }
 
@@ -332,13 +342,22 @@ const EventEditDialog = ({
         } else if (key === "priceFrom" || key === "priceTo") {
           // Send empty string for cleared/unset price fields so API stores undefined
           const numVal = value as number | string | undefined | null;
-          data.append(key, (numVal === undefined || numVal === null || numVal === "") ? "" : String(numVal));
+          data.append(
+            key,
+            numVal === undefined || numVal === null || numVal === ""
+              ? ""
+              : String(numVal),
+          );
         } else if (value !== undefined && value !== null) {
           // Skip undefined/null to avoid sending "undefined"/"null" as strings
           const stringValue = String(value);
-          const trimmedValue = (key === "title" || key === "description" || key === "organiser" || key === "location")
-            ? stringValue.trim()
-            : stringValue;
+          const trimmedValue =
+            key === "title" ||
+            key === "description" ||
+            key === "organiser" ||
+            key === "location"
+              ? stringValue.trim()
+              : stringValue;
           data.append(key, trimmedValue);
         }
       });
@@ -414,7 +433,9 @@ const EventEditDialog = ({
                   {formData.title?.length || 0}/100 characters
                 </p>
                 {errors.title && (
-                  <p className="text-sm text-destructive mt-1">{errors.title}</p>
+                  <p className="text-sm text-destructive mt-1">
+                    {errors.title}
+                  </p>
                 )}
               </div>
 
@@ -544,7 +565,8 @@ const EventEditDialog = ({
                     type="date"
                     value={formData.endDate || ""}
                     min={
-                      formData.startDate || new Date().toISOString().split("T")[0]
+                      formData.startDate ||
+                      new Date().toISOString().split("T")[0]
                     }
                     onChange={(e) => handleChange("endDate", e.target.value)}
                     onKeyDown={(e) => e.preventDefault()}
@@ -603,7 +625,9 @@ const EventEditDialog = ({
                 className={errors.location ? "border-destructive" : ""}
               />
               {errors.location && (
-                <p className="text-sm text-destructive mt-1">{errors.location}</p>
+                <p className="text-sm text-destructive mt-1">
+                  {errors.location}
+                </p>
               )}
             </div>
           </div>
@@ -654,7 +678,10 @@ const EventEditDialog = ({
                           value={formData.priceFrom ?? ""}
                           onChange={(e) => {
                             const val = e.target.value;
-                            handleChange("priceFrom", val === "" ? "" : parseFloat(val));
+                            handleChange(
+                              "priceFrom",
+                              val === "" ? "" : parseFloat(val),
+                            );
                           }}
                           placeholder="50"
                           className={`pl-7 ${errors.priceFrom ? "border-destructive" : ""}`}
@@ -685,7 +712,10 @@ const EventEditDialog = ({
                           value={formData.priceTo ?? ""}
                           onChange={(e) => {
                             const val = e.target.value;
-                            handleChange("priceTo", val === "" ? "" : parseFloat(val));
+                            handleChange(
+                              "priceTo",
+                              val === "" ? "" : parseFloat(val),
+                            );
                           }}
                           placeholder="150"
                           className={`pl-7 ${errors.priceTo ? "border-destructive" : ""}`}
@@ -708,7 +738,9 @@ const EventEditDialog = ({
 
           {/* Organiser Information */}
           <div className="bg-card rounded-lg p-3 shadow-card">
-            <h2 className="text-xl font-semibold mb-6">Organiser Information</h2>
+            <h2 className="text-xl font-semibold mb-6">
+              Organiser Information
+            </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <Label htmlFor="organiser">Organisation Name *</Label>
@@ -737,7 +769,9 @@ const EventEditDialog = ({
                   id="organiserEmail"
                   type="email"
                   value={formData.organiserEmail || ""}
-                  onChange={(e) => handleChange("organiserEmail", e.target.value)}
+                  onChange={(e) =>
+                    handleChange("organiserEmail", e.target.value)
+                  }
                   className={errors.organiserEmail ? "border-destructive" : ""}
                 />
                 {errors.organiserEmail && (
@@ -770,7 +804,9 @@ const EventEditDialog = ({
                       type="button"
                       variant="outline"
                       size="sm"
-                      onClick={() => document.getElementById("change-image")?.click()}
+                      onClick={() =>
+                        document.getElementById("change-image")?.click()
+                      }
                     >
                       Change Image
                     </Button>
