@@ -376,37 +376,31 @@ export async function GET(req: NextRequest) {
       }
     }
 
-    if (minPrice || maxPrice) {
+    if (minPrice !== null || maxPrice !== null) {
       query.$and = query.$and || [];
-      const min = minPrice ? parseFloat(minPrice) : null;
-      const max = maxPrice ? parseFloat(maxPrice) : null;
+      const min = minPrice !== null ? parseFloat(minPrice) : null;
+      const max = maxPrice !== null ? parseFloat(maxPrice) : null;
 
       if (min !== null && max !== null) {
-        // Range overlap: event[pFrom, pTo] overlaps search[min, max]
-        // pFrom <= max AND pTo >= min
-        query.$and.push({
-          $or: [
-            { price: { $gte: min, $lte: max } }, // Exact price within range
-            {
-              $and: [
-                { priceFrom: { $lte: max } },
-                { priceTo: { $gte: min } }
-              ]
-            }
-          ]
-        });
+        const conditions: any[] = [
+          { price: { $gte: min, $lte: max } },
+          { $and: [{ priceFrom: { $lte: max } }, { priceTo: { $gte: min } }] }
+        ];
+        if (min === 0) conditions.push({ isFree: true });
+        query.$and.push({ $or: conditions });
       } else if (min !== null) {
-        query.$and.push({
-          $or: [
-            { price: { $gte: min } },
-            { priceTo: { $gte: min } }
-          ]
-        });
+        const conditions: any[] = [
+          { price: { $gte: min } },
+          { priceTo: { $gte: min } }
+        ];
+        if (min === 0) conditions.push({ isFree: true });
+        query.$and.push({ $or: conditions });
       } else if (max !== null) {
         query.$and.push({
           $or: [
             { price: { $lte: max } },
-            { priceFrom: { $lte: max } }
+            { priceFrom: { $lte: max } },
+            { isFree: true }
           ]
         });
       }

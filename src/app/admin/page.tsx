@@ -307,7 +307,7 @@ const AdminDashboard = () => {
             <EventEditDialog
                 event={editingEvent}
                 isOpen={!!editingEvent}
-                onClose={() => setEditingEvent(null)}
+                onClose={() => { setEditingEvent(null); fetchEvents(); }}
                 onSave={handleEventSave}
             />
         </Layout>
