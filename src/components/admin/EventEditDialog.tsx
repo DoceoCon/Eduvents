@@ -136,8 +136,6 @@ const EventEditDialog = ({
         toast.success(
           checked ? "Event marked as featured" : "Event removed from featured",
         );
-        // Notify parent to update the list, but our useEffect now prevents form wipe
-        onSave(result.event);
       } else {
         toast.error("Failed to update featured status");
         handleChange("featured", !checked);
