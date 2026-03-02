@@ -140,7 +140,10 @@ const ListEventContent = ({
       }
       if (formData.priceTo.trim() !== "" && parseFloat(formData.priceTo) <= 0) {
         newErrors.priceTo = "Price To must be greater than 0";
-      } else if (formData.priceFrom.trim() !== "" && formData.priceTo.trim() !== "") {
+      } else if (
+        formData.priceFrom.trim() !== "" &&
+        formData.priceTo.trim() !== ""
+      ) {
         const from = parseFloat(formData.priceFrom);
         const to = parseFloat(formData.priceTo);
         if (to < from) {
@@ -1052,7 +1055,7 @@ const ListEventContent = ({
             List Your Event
           </h1>
           <p className="text-primary-foreground/80">
-            Share your educational event with thousands of educators
+            Share your education event with thousands of educators
           </p>
         </div>
       </div>
