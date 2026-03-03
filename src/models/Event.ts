@@ -1,6 +1,7 @@
 import mongoose, { Schema, model, models } from "mongoose";
 
 export interface IEvent {
+  slug: string;
   title: string;
   description: string;
   fullDescription?: string;
@@ -30,8 +31,43 @@ export interface IEvent {
   stripeSessionId?: string;
 }
 
+export function generateSlug(title: string): string {
+  return title
+    .trim()
+    .replace(/[^a-zA-Z0-9\s-]/g, "")
+    .replace(/\s+/g, "-")
+    .replace(/-+/g, "-")
+    .substring(0, 100);
+}
+
+export async function generateUniqueSlug(
+  title: string,
+  excludeId?: string,
+): Promise<string> {
+  const EventModel = mongoose.models.Event;
+  const baseSlug = generateSlug(title);
+  let slug = baseSlug;
+  let counter = 1;
+
+  while (true) {
+    const query: any = { slug };
+    if (excludeId) query._id = { $ne: excludeId };
+    const existing = await EventModel?.findOne(query);
+    if (!existing) break;
+    slug = `${baseSlug}-${counter}`;
+    counter++;
+  }
+
+  return slug;
+}
+
 const EventSchema = new Schema<IEvent>(
   {
+    slug: {
+      type: String,
+      unique: true,
+      index: true,
+    },
     title: {
       type: String,
       required: [true, "Required"],
@@ -113,6 +149,16 @@ const EventSchema = new Schema<IEvent>(
     },
   },
 );
+
+EventSchema.pre("save", async function (next) {
+  if (this.isNew || this.isModified("title")) {
+    this.slug = await generateUniqueSlug(
+      this.title,
+      this._id?.toString(),
+    );
+  }
+  next();
+});
 
 const Event = models.Event || model<IEvent>("Event", EventSchema);
 

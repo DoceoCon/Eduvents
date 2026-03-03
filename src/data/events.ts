@@ -46,6 +46,7 @@ export type EventPhase =
 
 export interface Event {
   id: string;
+  slug?: string;
   title: string;
   description: string;
   fullDescription?: string;

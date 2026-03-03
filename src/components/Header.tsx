@@ -6,13 +6,10 @@ import { Menu, X } from "lucide-react";
 import { useState } from "react";
 
 import { useAuth } from "@/context/AuthContext";
-import { useRouter } from "next/navigation";
-
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const pathname = usePathname();
   const { isAuthenticated, logout } = useAuth();
-  const router = useRouter();
 
   const navLinks = [
     { path: "/", label: "Home" },
@@ -21,14 +18,6 @@ const Header = () => {
     { path: "/about", label: "About Us" },
     { path: "/contact", label: "Contact Us" },
   ];
-
-  const handleAdminClick = () => {
-    if (isAuthenticated) {
-      router.push("/admin");
-    } else {
-      router.push("/login");
-    }
-  };
 
   const isActive = (path: string) => pathname === path;
 
@@ -57,18 +46,6 @@ const Header = () => {
                 {link.label}
               </Link>
             ))}
-            {pathname !== "/login" && (
-              <button
-                onClick={handleAdminClick}
-                className={`text-base font-medium transition-colors hover:text-primary font-league-gothic  tracking-wide ${
-                  pathname.startsWith("/admin") || pathname === "/login"
-                    ? "text-primary"
-                    : "text-muted-foreground"
-                }`}
-              >
-                Admin
-              </button>
-            )}
             {isAuthenticated && (
               <button
                 onClick={logout}
@@ -111,21 +88,6 @@ const Header = () => {
                   {link.label}
                 </Link>
               ))}
-              {pathname !== "/login" && (
-                <button
-                  onClick={() => {
-                    handleAdminClick();
-                    setIsMenuOpen(false);
-                  }}
-                  className={`text-base font-medium transition-colors hover:text-primary text-left font-league-gothic uppercase tracking-wide ${
-                    pathname.startsWith("/admin") || pathname === "/login"
-                      ? "text-primary"
-                      : "text-muted-foreground"
-                  }`}
-                >
-                  Admin
-                </button>
-              )}
               {isAuthenticated && (
                 <button
                   onClick={() => {

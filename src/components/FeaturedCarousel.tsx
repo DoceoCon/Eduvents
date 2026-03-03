@@ -126,7 +126,7 @@ const FeaturedCarousel = ({ events }: FeaturedCarouselProps) => {
                   )}
                 </div>
 
-                <Link href={`/event/${event.id}`}>
+                <Link href={`/event/${event.slug || event.id}`}>
                   <Button size="lg" className="bg-white text-primary hover:bg-white/90">
                     View Event
                   </Button>

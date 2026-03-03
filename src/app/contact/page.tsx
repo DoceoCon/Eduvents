@@ -3,8 +3,12 @@ import { Mail, MapPin } from "lucide-react";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Eduvents",
-  description: "Get in touch with the EDUVENTS team.",
+  title: "Contact Eduvents | We're Here to Help",
+  description:
+    "Get in touch with the Eduvents team for questions about events, listings, or support. We're ready to help teachers and educators.",
+  alternates: {
+    canonical: "/contact",
+  },
 };
 
 export default function Contact() {

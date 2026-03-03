@@ -3,6 +3,7 @@
 import { useState, useMemo, Suspense, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import {
+  ArrowRight,
   Filter,
   X,
   Calendar as CalendarIcon,
@@ -365,13 +366,29 @@ const EventsContent = () => {
   return (
     <Layout>
       <div className="bg-gradient-hero py-12">
-        <div className="container-tight">
-          <h1 className="text-3xl md:text-4xl font-bold text-primary-foreground mb-2">
-            Discover Your Ideal Education Event
-          </h1>
-          <p className="text-primary-foreground/80">
-            Filter by event category, format, subject and educational phase
-          </p>
+        <div className="container-tight flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl md:text-4xl font-bold text-primary-foreground mb-2">
+              Discover Your Ideal Education Event
+            </h1>
+            <p className="text-primary-foreground/80">
+              Filter by event category, format, subject and educational phase
+            </p>
+          </div>
+          <a
+            href="https://mailchi.mp/e537847c5924/eduvents"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <Button
+              variant="outline"
+              size="lg"
+              className="bg-transparent border-primary-foreground text-primary-foreground hover:bg-primary-foreground hover:text-primary px-8 hidden md:flex"
+            >
+              Join our mailing list
+              <ArrowRight className="ml-2 h-4 w-4" />
+            </Button>
+          </a>
         </div>
       </div>
 

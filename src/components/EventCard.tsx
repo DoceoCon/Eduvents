@@ -92,7 +92,7 @@ const EventCard = ({ event }: EventCardProps) => {
           </div>
         )}
 
-        <Link href={`/event/${event.id}`}>
+        <Link href={`/event/${event.slug || event.id}`}>
           <Button variant="outline" className="w-full group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
             View Details
           </Button>

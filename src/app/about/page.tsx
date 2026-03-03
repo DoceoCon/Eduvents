@@ -3,9 +3,12 @@ import { Mail, Target, Users, Heart, CheckCircle, Info } from "lucide-react";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "About Us - Eduvents",
+  title: "About Eduvents | Connecting Educators & Learning Opportunities",
   description:
-    "Learn about Eduvents, the dedicated education events marketplace for teachers and education professionals.",
+    "Learn about Eduvents, the platform that helps teachers and school staff discover workshops, conferences, and CPD events to grow professionally.",
+  alternates: {
+    canonical: "/about",
+  },
 };
 
 export default function About() {

@@ -42,9 +42,10 @@ const EventDetail = () => {
   const params = useParams();
   const { isAuthenticated } = useAuth();
   const router = useRouter();
-  const id = params?.id as string;
+  const slug = params?.slug as string;
 
   const [event, setEvent] = useState<Event | null>(null);
+  const [eventId, setEventId] = useState<string>("");
   const [isLoading, setIsLoading] = useState(true);
   const [shareUrl, setShareUrl] = useState("");
   const [isEditing, setIsEditing] = useState(false);
@@ -54,16 +55,19 @@ const EventDetail = () => {
   const fetchEvent = async () => {
     setIsLoading(true);
     try {
-      const response = await fetch(`/api/admin/events/${id}`);
-      const data = await response.json();
-      if (data.success) {
-        setEvent(data.event);
-      } else {
-        // If not found in admin, try public
-        const pubRes = await fetch(`/api/events/${id}`);
-        const pubData = await pubRes.json();
-        if (pubData.success) {
-          setEvent(pubData.event);
+      // Fetch by slug via public API
+      const pubRes = await fetch(`/api/events/${slug}`);
+      const pubData = await pubRes.json();
+      if (pubData.success) {
+        setEvent(pubData.event);
+        setEventId(pubData.event.id);
+      } else if (isAuthenticated) {
+        // Fallback: try admin API for pending/rejected events
+        const response = await fetch(`/api/admin/events/${slug}`);
+        const data = await response.json();
+        if (data.success) {
+          setEvent(data.event);
+          setEventId(data.event.id);
         }
       }
     } catch (error) {
@@ -74,15 +78,15 @@ const EventDetail = () => {
   };
 
   useEffect(() => {
-    if (id) fetchEvent();
+    if (slug) fetchEvent();
     if (typeof window !== "undefined") {
       setShareUrl(window.location.href);
     }
-  }, [id]);
+  }, [slug]);
 
   const handleStatusChange = async (newStatus: string) => {
     try {
-      const response = await fetch(`/api/admin/events/${id}`, {
+      const response = await fetch(`/api/admin/events/${eventId}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ status: newStatus }),
@@ -109,7 +113,7 @@ const EventDetail = () => {
 
   const handleFeaturedToggle = async (featured: boolean) => {
     try {
-      const response = await fetch(`/api/admin/events/${id}`, {
+      const response = await fetch(`/api/admin/events/${eventId}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ featured }),

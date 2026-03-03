@@ -40,13 +40,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     await dbConnect();
 
     // Fetch all approved events
-    const events = await Event.find({ status: 'approved' })
-      .select('_id updatedAt')
+    const events = await Event.find({ status: 'approved', slug: { $exists: true, $ne: null } })
+      .select('slug updatedAt')
       .lean()
       .exec();
 
     eventRoutes = events.map((event) => ({
-      url: `${baseUrl}/event/${event._id}`,
+      url: `${baseUrl}/event/${event.slug}`,
       lastModified: event.updatedAt || new Date(),
       changeFrequency: 'weekly' as const,
       priority: 0.7,

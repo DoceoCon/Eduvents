@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import dbConnect from '@/lib/mongodb';
-import Event from '@/models/Event';
+import Event, { generateUniqueSlug } from '@/models/Event';
 import { uploadToS3 } from '@/lib/s3';
 import path from 'path';
 import fs from 'fs';
@@ -37,7 +37,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
 
         // Trigger status update email
         if (status === 'approved' || status === 'rejected') {
-            await sendStatusUpdateEmail(eventDoc.organiserEmail, eventDoc.organiser, eventDoc.title, status, eventDoc._id.toString());
+            await sendStatusUpdateEmail(eventDoc.organiserEmail, eventDoc.organiser, eventDoc.title, status, eventDoc.slug);
         }
 
         return NextResponse.json({ success: true, event: eventDoc.toJSON() });
@@ -93,6 +93,11 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
 
             const uploadResult = await uploadToS3(filePath, 'events');
             updateData.image = uploadResult.url;
+        }
+
+        // Regenerate slug if title changed
+        if (updateData.title) {
+            updateData.slug = await generateUniqueSlug(updateData.title, eventId);
         }
 
         const updatedEvent = await Event.findByIdAndUpdate(eventId, updateData, { new: true });

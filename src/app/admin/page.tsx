@@ -120,7 +120,7 @@ const AdminDashboard = () => {
     };
 
     const handleViewDetails = (event: Event) => {
-        router.push(`/event/${event.id}`);
+        router.push(`/event/${event.slug || event.id}`);
     };
 
     const handleDelete = async (eventId: string) => {
